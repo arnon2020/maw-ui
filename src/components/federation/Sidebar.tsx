@@ -17,7 +17,8 @@ function timeAgo(ts: number): string {
 type Tab = "agents" | "messages";
 
 export function Sidebar() {
-  const { agents, edges, machines, statuses, selected, setSelected, liveMessages, messageLog, clearMessages } = useFederationStore();
+  const { agents, edges, machines, statuses, selected, setSelected, liveMessages, messageLog, clearMessages, activeOnly } = useFederationStore();
+  const listAgents = activeOnly ? agents.filter(a => statuses[a.id]) : agents;
   const [tab, setTab] = useState<Tab>("agents");
   const prevLiveCount = useRef(liveMessages.length);
 
@@ -144,14 +145,14 @@ export function Sidebar() {
             <p className="text-[10px] text-white/40 mb-1">Click an agent node</p>
             <p className="text-[9px] text-white/20 mb-3">Scroll to zoom &middot; Drag to pan</p>
             {machines.map(m => {
-              const mAgents = agents.filter(a => a.node === m);
+              const mAgents = listAgents.filter(a => a.node === m);
               return (
                 <div key={m} className="mb-3">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="w-2.5 h-2.5 rounded-full"
                       style={{ background: machineColor(m), boxShadow: `0 0 6px ${machineColor(m)}40` }} />
                     <span className="text-[11px] font-mono font-bold" style={{ color: machineColor(m) }}>{m}</span>
-                    <span className="text-[9px] font-mono text-white/30 ml-auto">{mAgents.length}</span>
+                    <span className="text-[9px] font-mono text-white/30 ml-auto">{activeOnly ? `${mAgents.length}/${agents.filter(a => a.node === m).length}` : mAgents.length}</span>
                   </div>
                   {mAgents.map(a => (
                     <div key={a.id} className="flex items-center gap-2 px-3 py-0.5 text-[10px] font-mono cursor-pointer hover:bg-white/[0.05] rounded"

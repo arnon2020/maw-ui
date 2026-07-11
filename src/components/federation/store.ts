@@ -37,6 +37,7 @@ interface FederationStore {
   edgePulses: Record<string, number>; // edge key -> timestamp of last pulse
   showLineage: boolean;
   showHistoryEdges: boolean;
+  activeOnly: boolean;
   layout: string;
 
   setGraph: (agents: AgentNode[], edges: AgentEdge[], particles: Map<string, Particle[]>) => void;
@@ -48,6 +49,7 @@ interface FederationStore {
   setMessageLog: (messages: MessageEntry[]) => void;
   clearMessages: () => void;
   toggleLineage: () => void;
+  toggleActiveOnly: () => void;
   setLayout: (layout: string) => void;
   handleFeedEvent: (e: FeedEvent) => void;
   handleFeedHistory: (events: FeedEvent[]) => void;
@@ -71,6 +73,7 @@ export const useFederationStore = create<FederationStore>((set) => ({
   edgePulses: {},
   showLineage: false,
   showHistoryEdges: true,
+  activeOnly: false,
   layout: "force",
 
   setGraph: (agents, edges, particles) => set({
@@ -96,6 +99,7 @@ export const useFederationStore = create<FederationStore>((set) => ({
   }),
   clearMessages: () => set({ messageLog: [], liveMessages: [] }),
   toggleLineage: () => set((s) => ({ showLineage: !s.showLineage })),
+  toggleActiveOnly: () => set((s) => ({ activeOnly: !s.activeOnly })),
   setLayout: (layout) => set({ layout }),
 
   handleFeedEvent: (e) => set((s) => {

@@ -34,7 +34,11 @@ export function Canvas2D() {
       time += 16;
       const W = canvas!.getBoundingClientRect().width;
       const H = canvas!.getBoundingClientRect().height;
-      const { agents, edges, statuses, selected: sel, hovered: hov, flashes: fl, particles, edgePulses, showLineage, showHistoryEdges } = storeRef.current;
+      const { agents, edges, statuses, selected: sel, hovered: hov, flashes: fl, particles, edgePulses, showLineage, showHistoryEdges, activeOnly } = storeRef.current;
+      // activeOnly: only agents seen in the recent feed (statuses has an entry)
+      const visAgents = activeOnly ? agents.filter(a => statuses[a.id]) : agents;
+      const visIds = new Set(visAgents.map(a => a.id));
+      const visEdges = activeOnly ? edges.filter(e => visIds.has(e.source) && visIds.has(e.target)) : edges;
       const cam = camRef.current;
 
       // Background
@@ -49,14 +53,14 @@ export function Canvas2D() {
       ctx.scale(cam.zoom, cam.zoom);
 
       drawGrid(ctx, cam, W, H, time);
-      drawClusterLabels(ctx, agents);
+      drawClusterLabels(ctx, visAgents);
 
-      const byId = new Map(agents.map(a => [a.id, a]));
-      drawEdges(ctx, edges, byId, sel, hov, particles, time, edgePulses, showLineage, showHistoryEdges);
-      drawAgents(ctx, agents, edges, statuses, sel, hov, fl, time);
+      const byId = new Map(visAgents.map(a => [a.id, a]));
+      drawEdges(ctx, visEdges, byId, sel, hov, particles, time, edgePulses, showLineage, showHistoryEdges);
+      drawAgents(ctx, visAgents, visEdges, statuses, sel, hov, fl, time);
 
       ctx.restore();
-      drawLegend(ctx, agents, H);
+      drawLegend(ctx, visAgents, H);
 
       animId = requestAnimationFrame(draw);
     }
@@ -73,7 +77,9 @@ export function Canvas2D() {
 
   const hitTest = useCallback((sx: number, sy: number): string | null => {
     const { x: wx, y: wy } = screenToWorld(sx, sy);
+    const { activeOnly, statuses } = storeRef.current;
     for (const a of storeRef.current.agents) {
+      if (activeOnly && !statuses[a.id]) continue;
       const dx = wx - a.x, dy = wy - a.y;
       if (dx * dx + dy * dy < (15 / camRef.current.zoom) ** 2) return a.id;
     }
