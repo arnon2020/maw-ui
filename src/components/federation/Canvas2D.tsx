@@ -62,6 +62,25 @@ export function Canvas2D() {
       ctx.restore();
       drawLegend(ctx, visAgents, H);
 
+      // Fly-to: ease camera toward the focus target, release when settled
+      const { focusTarget } = storeRef.current;
+      if (focusTarget) {
+        const t = agents.find(a => a.id === focusTarget);
+        if (!t) {
+          useFederationStore.getState().clearFocus();
+        } else {
+          const targetZoom = Math.max(cam.zoom, 1.4);
+          const tx = W / 2 - t.x * targetZoom;
+          const ty = H / 2 - t.y * targetZoom;
+          cam.zoom += (targetZoom - cam.zoom) * 0.12;
+          cam.x += (tx - cam.x) * 0.12;
+          cam.y += (ty - cam.y) * 0.12;
+          if (Math.abs(tx - cam.x) < 1.5 && Math.abs(ty - cam.y) < 1.5 && Math.abs(targetZoom - cam.zoom) < 0.01) {
+            useFederationStore.getState().clearFocus();
+          }
+        }
+      }
+
       animId = requestAnimationFrame(draw);
     }
 
@@ -90,6 +109,7 @@ export function Canvas2D() {
     const rect = canvasRef.current!.getBoundingClientRect();
     const sx = e.clientX - rect.left, sy = e.clientY - rect.top;
     const hit = hitTest(sx, sy);
+    useFederationStore.getState().clearFocus(); // manual input wins over fly-to
     if (hit) {
       dragRef.current = { id: hit, startX: sx, startY: sy, moved: false };
     } else {
@@ -136,6 +156,7 @@ export function Canvas2D() {
 
   const handleWheel = useCallback((e: React.WheelEvent<HTMLCanvasElement>) => {
     e.preventDefault();
+    useFederationStore.getState().clearFocus();
     const rect = canvasRef.current!.getBoundingClientRect();
     const sx = e.clientX - rect.left, sy = e.clientY - rect.top;
     const cam = camRef.current;

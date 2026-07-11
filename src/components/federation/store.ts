@@ -38,6 +38,7 @@ interface FederationStore {
   showLineage: boolean;
   showHistoryEdges: boolean;
   activeOnly: boolean;
+  focusTarget: string | null;
   layout: string;
 
   setGraph: (agents: AgentNode[], edges: AgentEdge[], particles: Map<string, Particle[]>) => void;
@@ -50,6 +51,8 @@ interface FederationStore {
   clearMessages: () => void;
   toggleLineage: () => void;
   toggleActiveOnly: () => void;
+  requestFocus: (id: string) => void;
+  clearFocus: () => void;
   setLayout: (layout: string) => void;
   handleFeedEvent: (e: FeedEvent) => void;
   handleFeedHistory: (events: FeedEvent[]) => void;
@@ -74,6 +77,7 @@ export const useFederationStore = create<FederationStore>((set) => ({
   showLineage: false,
   showHistoryEdges: true,
   activeOnly: false,
+  focusTarget: null,
   layout: "force",
 
   setGraph: (agents, edges, particles) => set({
@@ -100,6 +104,14 @@ export const useFederationStore = create<FederationStore>((set) => ({
   clearMessages: () => set({ messageLog: [], liveMessages: [] }),
   toggleLineage: () => set((s) => ({ showLineage: !s.showLineage })),
   toggleActiveOnly: () => set((s) => ({ activeOnly: !s.activeOnly })),
+  // Focus = select + ask the canvas to fly the camera to the node.
+  // A quiet target would be invisible under activeOnly — unhide in that case.
+  requestFocus: (id) => set((s) => ({
+    focusTarget: id,
+    selected: id,
+    activeOnly: s.activeOnly && !s.statuses[id] ? false : s.activeOnly,
+  })),
+  clearFocus: () => set({ focusTarget: null }),
   setLayout: (layout) => set({ layout }),
 
   handleFeedEvent: (e) => set((s) => {

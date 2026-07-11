@@ -17,7 +17,8 @@ function timeAgo(ts: number): string {
 type Tab = "agents" | "messages";
 
 export function Sidebar() {
-  const { agents, edges, machines, statuses, selected, setSelected, liveMessages, messageLog, clearMessages, activeOnly } = useFederationStore();
+  const { agents, edges, machines, statuses, selected, setSelected, liveMessages, messageLog, clearMessages, activeOnly, requestFocus } = useFederationStore();
+  const [query, setQuery] = useState("");
   const listAgents = activeOnly ? agents.filter(a => statuses[a.id]) : agents;
   const [tab, setTab] = useState<Tab>("agents");
   const prevLiveCount = useRef(liveMessages.length);
@@ -111,7 +112,7 @@ export function Sidebar() {
                 <div className="text-[9px] font-mono tracking-wider uppercase mb-1.5 text-white/40">Sync Peers</div>
                 {selAgent.syncPeers.map(p => (
                   <div key={p} className="flex items-center gap-2 px-2 py-1 text-[10px] font-mono cursor-pointer hover:bg-white/[0.03] rounded"
-                    onClick={() => setSelected(p)}>
+                    onClick={() => requestFocus(p)}>
                     <span className="w-1.5 h-1.5 rounded-full"
                       style={{ background: machineColor(agents.find(a => a.id === p)?.node || "") }} />
                     <span className="text-white/40">{p}</span>
@@ -130,7 +131,7 @@ export function Sidebar() {
                   const peer = e.source === selAgent.id ? e.target : e.source;
                   return (
                     <div key={peer} className="flex items-center gap-2 px-2 py-1 text-[10px] font-mono cursor-pointer hover:bg-white/[0.03] rounded"
-                      onClick={() => setSelected(peer)}>
+                      onClick={() => requestFocus(peer)}>
                       <span className="text-white/40">{e.source === selAgent.id ? "\u2192" : "\u2190"} {peer}</span>
                       <span className="text-white/15 ml-auto">{e.count}x</span>
                     </div>
@@ -142,9 +143,32 @@ export function Sidebar() {
         ) : (
           /* Agent list */
           <>
+            <input
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder="search agents..."
+              className="w-full mb-2 px-2 py-1.5 rounded text-[10px] font-mono outline-none"
+              style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.7)" }}
+            />
+            {query.trim() ? (
+              <div className="mb-3">
+                {agents.filter(a => a.id.toLowerCase().includes(query.trim().toLowerCase())).slice(0, 30).map(a => (
+                  <div key={a.id} className="flex items-center gap-2 px-2 py-1 text-[10px] font-mono cursor-pointer hover:bg-white/[0.05] rounded"
+                    onClick={() => { requestFocus(a.id); setQuery(""); }}>
+                    <span className="w-1.5 h-1.5 rounded-full"
+                      style={{ background: statusGlow(statuses[a.id] || "idle"), boxShadow: `0 0 4px ${statusGlow(statuses[a.id] || "idle")}60` }} />
+                    <span className="text-white/60">{a.id}</span>
+                    <span className="text-[8px] ml-auto" style={{ color: machineColor(a.node) }}>{a.node}</span>
+                  </div>
+                ))}
+                {agents.filter(a => a.id.toLowerCase().includes(query.trim().toLowerCase())).length === 0 && (
+                  <p className="text-[9px] text-white/20 text-center py-2">no match</p>
+                )}
+              </div>
+            ) : null}
             <p className="text-[10px] text-white/40 mb-1">Click an agent node</p>
             <p className="text-[9px] text-white/20 mb-3">Scroll to zoom &middot; Drag to pan</p>
-            {machines.map(m => {
+            {!query.trim() && machines.map(m => {
               const mAgents = listAgents.filter(a => a.node === m);
               return (
                 <div key={m} className="mb-3">
@@ -156,7 +180,7 @@ export function Sidebar() {
                   </div>
                   {mAgents.map(a => (
                     <div key={a.id} className="flex items-center gap-2 px-3 py-0.5 text-[10px] font-mono cursor-pointer hover:bg-white/[0.05] rounded"
-                      onClick={() => setSelected(a.id)}>
+                      onClick={() => requestFocus(a.id)}>
                       <span className="w-1.5 h-1.5 rounded-full"
                         style={{
                           background: statusGlow(statuses[a.id] || "idle"),
