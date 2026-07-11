@@ -2,13 +2,45 @@ import type { AgentNode, AgentEdge } from "./types";
 
 export type LayoutMode = "force" | "circle" | "grid" | "tree";
 
+/**
+ * Family key for an agent id: strip -oracle/-view, then climb dash-prefixes
+ * to the SHORTEST existing agent id ("atlas-codex-oracle" → "atlas" when the
+ * "atlas" agent exists; "ui-designer" stays its own family when "ui" doesn't).
+ */
+export function familyOf(id: string, ids: Set<string>): string {
+  const base = id.replace(/-oracle$/, "").replace(/-view$/, "");
+  let fam = base;
+  let cur = base;
+  while (cur.includes("-")) {
+    cur = cur.slice(0, cur.lastIndexOf("-"));
+    if (ids.has(cur)) fam = cur;
+  }
+  return fam;
+}
+
+/** Group agents by family (insertion order preserved). */
+export function familyGroups(agents: AgentNode[]): Map<string, AgentNode[]> {
+  const ids = new Set(agents.map(a => a.id));
+  const groups = new Map<string, AgentNode[]>();
+  for (const a of agents) {
+    const f = familyOf(a.id, ids);
+    const g = groups.get(f);
+    if (g) g.push(a);
+    else groups.set(f, [a]);
+  }
+  return groups;
+}
+
 export function layoutCircle(agents: AgentNode[], W: number, H: number) {
   const cx = W * 0.48, cy = H * 0.5;
   const machines = [...new Set(agents.map(a => a.node))];
+  const ids = new Set(agents.map(a => a.id));
   const r = Math.min(W, H) * 0.38;
   let idx = 0;
   for (const m of machines) {
-    const group = agents.filter(a => a.node === m);
+    // Families sit adjacent on the ring
+    const group = agents.filter(a => a.node === m)
+      .sort((a, b) => familyOf(a.id, ids).localeCompare(familyOf(b.id, ids)) || a.id.localeCompare(b.id));
     for (const a of group) {
       const angle = (idx / agents.length) * Math.PI * 2 - Math.PI / 2;
       a.x = cx + Math.cos(angle) * r;
@@ -70,11 +102,25 @@ export function simulate(agents: AgentNode[], edges: AgentEdge[], W: number, H: 
     clusterCenters[m] = { x: cx + Math.cos(angle) * clusterR, y: cy + Math.sin(angle) * clusterR };
   });
 
-  // Initialize positions near cluster center
+  // Family assignment (atlas / atlas-codex / atlas-codex-oracle share one family)
+  const ids = new Set(agents.map(a => a.id));
+  const famOf = new Map(agents.map(a => [a.id, familyOf(a.id, ids)]));
+  const famList = [...new Set(agents.map(a => famOf.get(a.id)!))];
+
+  // Seed each family at its own angle around the machine center so members
+  // start together and repulsion doesn't tear the family apart
+  const famSeed = new Map<string, { dx: number; dy: number }>();
+  famList.forEach((f, i) => {
+    const angle = (i / famList.length) * Math.PI * 2;
+    const rr = 120 + (i % 3) * 90;
+    famSeed.set(f, { dx: Math.cos(angle) * rr, dy: Math.sin(angle) * rr });
+  });
+
   for (const a of agents) {
     const cc = clusterCenters[a.node] || { x: cx, y: cy };
-    a.x = cc.x + (Math.random() - 0.5) * 140;
-    a.y = cc.y + (Math.random() - 0.5) * 140;
+    const seed = famSeed.get(famOf.get(a.id)!)!;
+    a.x = cc.x + seed.dx + (Math.random() - 0.5) * 60;
+    a.y = cc.y + seed.dy + (Math.random() - 0.5) * 60;
     a.vx = 0;
     a.vy = 0;
   }
@@ -85,13 +131,14 @@ export function simulate(agents: AgentNode[], edges: AgentEdge[], W: number, H: 
   for (let iter = 0; iter < 200; iter++) {
     const alpha = 0.3 * (1 - iter / 200);
 
-    // Repulsion between all agents
+    // Repulsion: family members pack tight, families keep their distance
     for (let i = 0; i < agents.length; i++) {
       for (let j = i + 1; j < agents.length; j++) {
         const a = agents[i], b = agents[j];
         let dx = b.x - a.x, dy = b.y - a.y;
         const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        const minDist = a.node === b.node ? 75 : 120;
+        const sameFam = famOf.get(a.id) === famOf.get(b.id);
+        const minDist = sameFam ? 55 : a.node === b.node ? 115 : 130;
         if (dist < minDist) {
           const force = (minDist - dist) / dist * alpha * 0.5;
           dx *= force; dy *= force;
@@ -101,13 +148,29 @@ export function simulate(agents: AgentNode[], edges: AgentEdge[], W: number, H: 
       }
     }
 
-    // Attraction to cluster center
+    // Attraction to machine cluster center
     for (const a of agents) {
       const cc = clusterCenters[a.node];
       if (!cc) continue;
       const dx = cc.x - a.x, dy = cc.y - a.y;
       a.vx += dx * alpha * 0.015;
       a.vy += dy * alpha * 0.015;
+    }
+
+    // Family cohesion: pull members toward their family centroid
+    const famCentroid = new Map<string, { x: number; y: number; n: number }>();
+    for (const a of agents) {
+      const f = famOf.get(a.id)!;
+      const c = famCentroid.get(f) || { x: 0, y: 0, n: 0 };
+      c.x += a.x; c.y += a.y; c.n++;
+      famCentroid.set(f, c);
+    }
+    for (const a of agents) {
+      const c = famCentroid.get(famOf.get(a.id)!)!;
+      if (c.n < 2) continue;
+      const dx = c.x / c.n - a.x, dy = c.y / c.n - a.y;
+      a.vx += dx * alpha * 0.06;
+      a.vy += dy * alpha * 0.06;
     }
 
     // Edge attraction (sync peers pull toward each other gently)
