@@ -3,7 +3,7 @@ import { useWebSocket } from "./useWebSocket";
 import { useMqtt } from "./useMqtt";
 import { apiUrl } from "../lib/api";
 import { useFederationStore } from "../components/federation/store";
-import { simulate } from "../components/federation/simulation";
+import { layoutOrbit } from "../components/federation/simulation";
 import type { AgentNode, AgentEdge, Particle } from "../components/federation/types";
 import type { FeedEvent } from "../lib/feed";
 
@@ -202,8 +202,9 @@ export function useFederationData() {
         }
       }
 
-      // Run force simulation
-      simulate(agentList, edgeList, W, H);
+      // Deterministic orbit layout (readability default) — active families first
+      const st = useFederationStore.getState().statuses;
+      layoutOrbit(agentList, W, H, (id) => !!st[id]);
 
       setGraph(agentList, edgeList, newParticles);
     }

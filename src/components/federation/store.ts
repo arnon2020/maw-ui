@@ -78,10 +78,10 @@ export const useFederationStore = create<FederationStore>((set) => ({
   edgePulses: {},
   showLineage: false,
   showHistoryEdges: true,
-  activeOnly: false,
+  activeOnly: true,
   focusTarget: null,
   replayTs: null,
-  layout: "force",
+  layout: "orbit",
 
   setGraph: (agents, edges, particles) => set({
     agents,

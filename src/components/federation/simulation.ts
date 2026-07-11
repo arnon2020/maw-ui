@@ -31,6 +31,112 @@ export function familyGroups(agents: AgentNode[]): Map<string, AgentNode[]> {
   return groups;
 }
 
+/**
+ * Deterministic "orbit" layout — the readability default.
+ * Families are ranked (active first, then size), the top family sits at the
+ * machine center and the rest fill concentric rings; members sit evenly on a
+ * small circle around their family anchor. Same input → same picture, so the
+ * eye can memorize where a family lives.
+ */
+export function layoutOrbit(
+  agents: AgentNode[],
+  W: number,
+  H: number,
+  isActive: (id: string) => boolean = () => false,
+) {
+  const machines = [...new Set(agents.map(a => a.node))];
+  const cx = W * 0.48, cy = H * 0.5;
+  const machineRingR = machines.length > 1 ? Math.min(W, H) * 0.3 : 0;
+
+  const famR = (n: number) => (n <= 1 ? 0 : Math.max(26, (n * 44) / (2 * Math.PI)));
+
+  function placeFamily(members: AgentNode[], fx: number, fy: number, baseAngle: number) {
+    const n = members.length;
+    if (n === 1) {
+      members[0].x = fx; members[0].y = fy;
+      members[0].vx = 0; members[0].vy = 0;
+      return;
+    }
+    const r = famR(n);
+    members.forEach((a, i) => {
+      const ang = baseAngle + (i / n) * Math.PI * 2;
+      a.x = fx + Math.cos(ang) * r;
+      a.y = fy + Math.sin(ang) * r;
+      a.vx = 0; a.vy = 0;
+    });
+  }
+
+  machines.forEach((m, mi) => {
+    const angle0 = (mi / machines.length) * Math.PI * 2 - Math.PI / 2;
+    const mcx = cx + Math.cos(angle0) * machineRingR;
+    const mcy = cy + Math.sin(angle0) * machineRingR;
+
+    const groups = [...familyGroups(agents.filter(a => a.node === m)).entries()]
+      .map(([fam, members]) => ({
+        fam,
+        members: [...members].sort((a, b) =>
+          Number(isActive(b.id)) - Number(isActive(a.id)) || a.id.localeCompare(b.id)),
+        active: members.some(x => isActive(x.id)),
+      }))
+      .sort((a, b) =>
+        Number(b.active) - Number(a.active)
+        || b.members.length - a.members.length
+        || a.fam.localeCompare(b.fam));
+
+    let idx = 0;
+    let ringR = 0;
+    while (idx < groups.length) {
+      if (ringR === 0) {
+        // most important family owns the center
+        placeFamily(groups[idx].members, mcx, mcy, angle0);
+        ringR = famR(groups[idx].members.length) + 120;
+        idx++;
+        continue;
+      }
+      // fill one ring: greedily take families while their diameters fit the circumference
+      const ring: typeof groups = [];
+      let arc = 0;
+      let maxD = 0;
+      while (idx < groups.length) {
+        const g = groups[idx];
+        const need = 2 * famR(g.members.length) + 80;
+        if (ring.length > 0 && arc + need > 2 * Math.PI * ringR) break;
+        ring.push(g);
+        arc += need;
+        maxD = Math.max(maxD, 2 * famR(g.members.length));
+        idx++;
+      }
+      let theta = -Math.PI / 2;
+      for (const g of ring) {
+        const share = ((2 * famR(g.members.length) + 80) / Math.max(arc, 1)) * Math.PI * 2;
+        const at = theta + share / 2;
+        placeFamily(g.members, mcx + Math.cos(at) * ringR, mcy + Math.sin(at) * ringR, at);
+        theta += share;
+      }
+      ringR += maxD / 2 + 140;
+    }
+  });
+
+  // Fit-to-viewport: scale the whole constellation down (never up) so outer
+  // rings are not cut off by the canvas edges.
+  if (agents.length > 1) {
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const a of agents) {
+      if (a.x < minX) minX = a.x;
+      if (a.y < minY) minY = a.y;
+      if (a.x > maxX) maxX = a.x;
+      if (a.y > maxY) maxY = a.y;
+    }
+    const scale = Math.min((W - 220) / Math.max(maxX - minX, 1), (H - 160) / Math.max(maxY - minY, 1), 1);
+    if (scale < 1) {
+      for (const a of agents) {
+        a.x = cx + (a.x - cx) * scale;
+        a.y = cy + (a.y - cy) * scale;
+      }
+    }
+  }
+}
+
 export function layoutCircle(agents: AgentNode[], W: number, H: number) {
   const cx = W * 0.48, cy = H * 0.5;
   const machines = [...new Set(agents.map(a => a.node))];

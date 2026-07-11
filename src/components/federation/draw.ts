@@ -1,5 +1,6 @@
 import type { AgentNode, AgentEdge, Particle } from "./types";
 import { machineColor, statusGlow, hexRgb } from "./colors";
+import { familyGroups } from "./simulation";
 
 export function drawGrid(
   ctx: CanvasRenderingContext2D,
@@ -44,6 +45,48 @@ export function drawClusterLabels(ctx: CanvasRenderingContext2D, agents: AgentNo
     ctx.fillStyle = `rgba(${r},${g},${b},0.45)`;
     ctx.textAlign = "center";
     ctx.fillText(name, mx, my + 70);
+  }
+}
+
+/**
+ * Soft ring per family (>=2 members) with ONE label at low zoom — the eye
+ * parses ~15 groups instead of 70 dots. Member labels take over when zoomed in.
+ */
+export function drawFamilyHulls(
+  ctx: CanvasRenderingContext2D,
+  agents: AgentNode[],
+  statuses: Record<string, string>,
+  zoom: number,
+) {
+  for (const [fam, members] of familyGroups(agents)) {
+    if (members.length < 2) continue;
+    let cxm = 0, cym = 0;
+    for (const m of members) { cxm += m.x; cym += m.y; }
+    cxm /= members.length; cym /= members.length;
+    let maxDist = 0;
+    for (const m of members) {
+      const d = Math.hypot(m.x - cxm, m.y - cym);
+      if (d > maxDist) maxDist = d;
+    }
+    const r = maxDist + 24;
+    const active = members.some(m => statuses[m.id] === "busy");
+
+    ctx.save();
+    ctx.fillStyle = active ? "rgba(0,245,212,0.025)" : "rgba(255,255,255,0.012)";
+    ctx.strokeStyle = active ? "rgba(0,245,212,0.14)" : "rgba(255,255,255,0.05)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cxm, cym, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    if (zoom < 1.1) {
+      ctx.font = "bold 9px monospace";
+      ctx.textAlign = "center";
+      ctx.fillStyle = active ? "rgba(0,245,212,0.55)" : "rgba(255,255,255,0.28)";
+      ctx.fillText(`${fam.toUpperCase()} \u00d7${members.length}`, cxm, cym - r - 6);
+    }
+    ctx.restore();
   }
 }
 
@@ -171,6 +214,9 @@ export function drawAgents(
   // zoomed in → label everything. Thresholds picked against the 70-node graph.
   const labelAll = zoom >= 1.1;
   const labelActive = zoom >= 0.6;
+  const labelCandidates: {
+    agent: AgentNode; dotR: number; dimmed: boolean | "" | null; isSel: boolean; isHov: boolean; priority: number;
+  }[] = [];
   for (const agent of agents) {
     const color = machineColor(agent.node);
     const [r, g, b] = hexRgb(color);
@@ -231,11 +277,27 @@ export function drawAgents(
 
     const labelVisible = isSel || isHov || labelAll || (labelActive && (status === "busy" || isFlashing));
     if (labelVisible) {
-      ctx.font = `${isSel ? "bold " : ""}8px monospace`;
-      ctx.fillStyle = `rgba(255,255,255,${dimmed ? 0.1 : isSel ? 0.9 : isHov ? 0.7 : 0.5})`;
-      ctx.textAlign = "center";
-      ctx.fillText(agent.id, agent.x, agent.y + dotR + 12);
+      labelCandidates.push({
+        agent, dotR, dimmed, isSel, isHov,
+        priority: isSel ? 3 : isHov ? 2 : (status === "busy" || isFlashing) ? 1 : 0,
+      });
     }
+  }
+
+  // Collision-culled label pass: higher-priority labels claim space first,
+  // anything that would overlap an already-placed label is skipped.
+  labelCandidates.sort((a, b) => b.priority - a.priority || a.agent.y - b.agent.y);
+  const placedRects: { x1: number; y1: number; x2: number; y2: number }[] = [];
+  ctx.textAlign = "center";
+  for (const c of labelCandidates) {
+    ctx.font = `${c.isSel ? "bold " : ""}8px monospace`;
+    const w = ctx.measureText(c.agent.id).width + 6;
+    const ly = c.agent.y + c.dotR + 12;
+    const rect = { x1: c.agent.x - w / 2, y1: ly - 8, x2: c.agent.x + w / 2, y2: ly + 2 };
+    if (placedRects.some(p => rect.x1 < p.x2 && rect.x2 > p.x1 && rect.y1 < p.y2 && rect.y2 > p.y1)) continue;
+    placedRects.push(rect);
+    ctx.fillStyle = `rgba(255,255,255,${c.dimmed ? 0.1 : c.isSel ? 0.9 : c.isHov ? 0.7 : 0.5})`;
+    ctx.fillText(c.agent.id, c.agent.x, ly);
   }
 }
 

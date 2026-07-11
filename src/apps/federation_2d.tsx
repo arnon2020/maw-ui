@@ -5,10 +5,10 @@ import { useFederationStore } from "../components/federation/store";
 import { Canvas2D } from "../components/federation/Canvas2D";
 import { Sidebar } from "../components/federation/Sidebar";
 import { Timeline } from "../components/federation/Timeline";
-import { simulate, layoutCircle } from "../components/federation/simulation";
+import { simulate, layoutCircle, layoutOrbit } from "../components/federation/simulation";
 import { machineColor } from "../components/federation/colors";
 
-const LAYOUTS = ["force", "circle"] as const;
+const LAYOUTS = ["orbit", "force", "circle"] as const;
 
 function App() {
   const { connected, mqttConnected, send } = useFederationData();
@@ -21,6 +21,7 @@ function App() {
     const H = (window.innerHeight - 52) || 600;
     const a = [...agents];
     if (next === "circle") layoutCircle(a, W, H);
+    else if (next === "orbit") layoutOrbit(a, W, H, (id) => !!statuses[id]);
     else simulate(a, edges, W, H);
     setLayout(next);
     setGraph(a, edges, particles);
@@ -98,7 +99,7 @@ function App() {
           <button onClick={reformat}
             className="px-3 py-2 rounded-lg border text-[10px] font-mono cursor-pointer hover:bg-white/[0.05] transition-colors"
             style={{ background: "rgba(3,10,24,0.9)", borderColor: "rgba(255,255,255,0.08)", color: "rgba(0,245,212,0.5)" }}>
-            {layout === "force" ? "\u26A1" : "\u2B55"} {layout}
+            {layout === "orbit" ? "\u25CE" : layout === "force" ? "\u26A1" : "\u2B55"} {layout}
           </button>
           <button onClick={() => useFederationStore.setState({ showHistoryEdges: !showHistoryEdges })}
             className="px-3 py-2 rounded-lg border text-[10px] font-mono cursor-pointer hover:bg-white/[0.05] transition-colors"

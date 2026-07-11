@@ -1,6 +1,6 @@
 import { useRef, useEffect, useCallback } from "react";
 import { useFederationStore } from "./store";
-import { drawGrid, drawClusterLabels, drawEdges, drawAgents, drawLegend } from "./draw";
+import { drawGrid, drawClusterLabels, drawEdges, drawAgents, drawLegend, drawFamilyHulls } from "./draw";
 
 export function Canvas2D() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -36,7 +36,8 @@ export function Canvas2D() {
       const H = canvas!.getBoundingClientRect().height;
       const { agents, edges, statuses, selected: sel, hovered: hov, flashes: fl, particles, edgePulses, showLineage, showHistoryEdges, activeOnly } = storeRef.current;
       // activeOnly: only agents seen in the recent feed (statuses has an entry)
-      const visAgents = activeOnly ? agents.filter(a => statuses[a.id]) : agents;
+      const anyActive = agents.some(a => statuses[a.id]);
+      const visAgents = activeOnly && anyActive ? agents.filter(a => statuses[a.id]) : agents;
       const visIds = new Set(visAgents.map(a => a.id));
       const visEdges = activeOnly ? edges.filter(e => visIds.has(e.source) && visIds.has(e.target)) : edges;
       const cam = camRef.current;
@@ -54,6 +55,7 @@ export function Canvas2D() {
 
       drawGrid(ctx, cam, W, H, time);
       drawClusterLabels(ctx, visAgents);
+      drawFamilyHulls(ctx, visAgents, statuses, cam.zoom);
 
       const byId = new Map(visAgents.map(a => [a.id, a]));
 
@@ -121,8 +123,9 @@ export function Canvas2D() {
   const hitTest = useCallback((sx: number, sy: number): string | null => {
     const { x: wx, y: wy } = screenToWorld(sx, sy);
     const { activeOnly, statuses } = storeRef.current;
+    const anyActive = storeRef.current.agents.some(a => statuses[a.id]);
     for (const a of storeRef.current.agents) {
-      if (activeOnly && !statuses[a.id]) continue;
+      if (activeOnly && anyActive && !statuses[a.id]) continue;
       const dx = wx - a.x, dy = wy - a.y;
       if (dx * dx + dy * dy < (15 / camRef.current.zoom) ** 2) return a.id;
     }

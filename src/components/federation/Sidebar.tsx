@@ -19,7 +19,8 @@ type Tab = "agents" | "messages";
 export function Sidebar({ send }: { send?: (data: object) => void } = {}) {
   const { agents, edges, machines, statuses, selected, setSelected, liveMessages, messageLog, clearMessages, activeOnly, requestFocus } = useFederationStore();
   const [query, setQuery] = useState("");
-  const listAgents = activeOnly ? agents.filter(a => statuses[a.id]) : agents;
+  const anyActive = agents.some(a => statuses[a.id]);
+  const listAgents = activeOnly && anyActive ? agents.filter(a => statuses[a.id]) : agents;
   const [tab, setTab] = useState<Tab>("agents");
   const [heyText, setHeyText] = useState("");
   const [heySent, setHeySent] = useState(false);
