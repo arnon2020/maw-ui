@@ -1,20 +1,164 @@
-import { memo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { agentColor } from "../lib/constants";
-import { displayName } from "./chat/types";
+import { apiUrl } from "../lib/api";
+import type { AgentState } from "../lib/types";
+import { displayName, type MawLogEntry } from "./chat/types";
 import { ChatGroup, DateSeparator } from "./chat/ChatBubble";
 import { ThreadCard } from "./chat/ThreadCard";
 import { useChatLog, useOracleNames, useFilteredEntries, useTimelineGroups, useLiveGroups, useThreads } from "./chat/useChatLog";
 
 type Mode = "live" | "timeline" | "threads";
 
-export const ChatView = memo(function ChatView() {
+/** Name the human participant posts under — matches isHuman() in chat/types.ts */
+const HUMAN_NAME = "nat";
+
+interface ChatViewProps {
+  agents: AgentState[];
+  send: (msg: object) => void;
+  connected: boolean;
+}
+
+function ComposeBar({ agents, send, connected, appendLocal }: ChatViewProps & { appendLocal: (e: MawLogEntry) => void }) {
+  const [text, setText] = useState("");
+  const [recipient, setRecipient] = useState("");
+
+  // One entry per window name — agents are tmux windows and names repeat
+  // across sessions on rare occasions; first wins.
+  const targets = useMemo(() => {
+    const seen = new Map<string, AgentState>();
+    for (const a of agents) {
+      const key = a.name.toLowerCase();
+      if (!seen.has(key)) seen.set(key, a);
+    }
+    return [...seen.values()].sort((a, b) => a.name.localeCompare(b.name));
+  }, [agents]);
+
+  const effRecipient = recipient && targets.some((a) => a.name === recipient)
+    ? recipient
+    : targets[0]?.name ?? "";
+  const agent = targets.find((a) => a.name === effRecipient);
+  const canSend = connected && !!agent && !!text.trim();
+
+  const handleSend = () => {
+    if (!canSend || !agent) return;
+    const body = text.trim();
+    const now = new Date();
+    // Into the agent's tmux pane (same pattern as FleetGrid broadcast /
+    // inbox reply): text, then Enter a beat later so the TUI submits it.
+    send({ type: "send", target: agent.target, text: body });
+    setTimeout(() => send({ type: "send", target: agent.target, text: "\r" }), 60);
+    // Into the feed so the message persists in chat history and reaches
+    // other viewers. Timestamp is ours, so the WS echo dedupes against
+    // the optimistic entry below.
+    fetch(apiUrl("/api/feed"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        timestamp: now.toISOString(),
+        oracle: HUMAN_NAME,
+        host: "maw-ui",
+        event: "MessageSend",
+        message: `${agent.name.toLowerCase()}: ${body}`,
+        ts: now.getTime(),
+      }),
+    }).catch(() => {});
+    appendLocal({ ts: now.toISOString(), from: HUMAN_NAME, to: agent.name.toLowerCase(), msg: body });
+    setText("");
+  };
+
+  return (
+    <div
+      className="flex items-center gap-2 px-4 py-2.5 border-t flex-shrink-0"
+      style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.015)" }}
+    >
+      <select
+        value={effRecipient}
+        onChange={(e) => setRecipient(e.target.value)}
+        disabled={targets.length === 0}
+        className="text-[11px] font-mono rounded-lg px-2 py-2 outline-none cursor-pointer flex-shrink-0"
+        style={{
+          background: "rgba(255,255,255,0.05)",
+          color: effRecipient ? agentColor(effRecipient) : "rgba(255,255,255,0.25)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          maxWidth: "140px",
+        }}
+      >
+        {targets.length === 0 ? (
+          <option value="">no agents</option>
+        ) : (
+          targets.map((a) => (
+            <option key={a.target} value={a.name}>@{displayName(a.name)}</option>
+          ))
+        )}
+      </select>
+      <input
+        type="text"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onKeyDown={(e) => { if (e.key === "Enter") handleSend(); }}
+        placeholder={
+          !connected ? "connecting..."
+          : targets.length === 0 ? "no agents online — start one with `maw` first"
+          : `Message @${displayName(effRecipient)}... (Enter = send)`
+        }
+        disabled={!connected || targets.length === 0}
+        enterKeyHint="send"
+        autoComplete="off"
+        className="flex-1 min-w-0 px-4 py-2 rounded-xl text-sm text-white/90 outline-none placeholder:text-white/20"
+        style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
+      />
+      <button
+        onClick={handleSend}
+        disabled={!canSend}
+        className="px-4 py-2 rounded-xl text-xs font-semibold flex-shrink-0 transition-colors"
+        style={{
+          background: canSend ? "rgba(232,184,109,0.15)" : "rgba(255,255,255,0.03)",
+          color: canSend ? "#e8b86d" : "rgba(255,255,255,0.15)",
+          border: canSend ? "1px solid rgba(232,184,109,0.3)" : "1px solid rgba(255,255,255,0.06)",
+          cursor: canSend ? "pointer" : "default",
+        }}
+      >
+        Send
+      </button>
+    </div>
+  );
+}
+
+function EmptyState({ hasAgents }: { hasAgents: boolean }) {
+  return (
+    <div className="flex flex-col items-center justify-center h-full gap-3 px-6 text-center">
+      <span className="text-4xl">💬</span>
+      <p className="text-white/60 text-sm font-semibold">ยังไม่มีบทสนทนา</p>
+      <p className="text-white/35 text-xs leading-relaxed max-w-md">
+        หน้านี้แสดงข้อความที่ AI agents ส่งหากันผ่าน{" "}
+        <code className="px-1.5 py-0.5 rounded text-[11px]" style={{ background: "rgba(255,255,255,0.06)", color: "#64b5f6" }}>
+          maw hey &lt;ชื่อ&gt; "&lt;ข้อความ&gt;"
+        </code>
+        {" "}และข้อความที่คุณส่งจากช่องด้านล่าง
+      </p>
+      <p className="text-white/35 text-xs leading-relaxed max-w-md">
+        {hasAgents
+          ? <>เริ่มบทสนทนา: เลือก agent ที่ช่องด้านล่างแล้วพิมพ์ข้อความ หรือลองสั่งให้ agent ทักเพื่อนดู เช่น "ช่วย hey ไปถาม tars ว่างานถึงไหนแล้ว"</>
+          : <>ยังไม่มี agent ออนไลน์ — เปิด agent ด้วยคำสั่ง <code className="px-1.5 py-0.5 rounded text-[11px]" style={{ background: "rgba(255,255,255,0.06)", color: "#64b5f6" }}>maw</code> บนเครื่องก่อน แล้วข้อความจะขึ้นที่นี่</>}
+      </p>
+      <p className="text-white/20 text-[10px] font-mono mt-1">
+        ประวัติเก็บในหน่วยความจำของ maw-serve — จะเริ่มนับใหม่เมื่อ service restart
+      </p>
+    </div>
+  );
+}
+
+export const ChatView = memo(function ChatView({ agents, send, connected }: ChatViewProps) {
   const [filter, setFilter] = useState<string>("all");
-  const [viewAs, setViewAs] = useState<string>("neo-oracle");
+  const [viewAsSel, setViewAsSel] = useState<string>("");
   const [mode, setMode] = useState<Mode>("timeline");
   const [highlighted, setHighlighted] = useState<string | null>(null);
 
-  const { entries, total, loading, sourceError, scrollRef } = useChatLog(mode);
+  const { entries, loading, sourceError, scrollRef, appendLocal } = useChatLog(mode);
   const oracleNames = useOracleNames(entries);
+  // Default to the first oracle actually present on this fleet — the old
+  // hardcoded "neo-oracle" doesn't exist everywhere.
+  const viewAs = viewAsSel && oracleNames.includes(viewAsSel) ? viewAsSel : oracleNames[0] ?? "";
   const filtered = useFilteredEntries(entries, filter);
   const grouped = useTimelineGroups(filtered);
   const liveGrouped = useLiveGroups(filtered);
@@ -57,16 +201,18 @@ export const ChatView = memo(function ChatView() {
             ))}
           </div>
 
-          <select
-            value={viewAs}
-            onChange={(e) => setViewAs(e.target.value)}
-            className="text-[11px] font-mono rounded-lg px-2 py-1 outline-none cursor-pointer"
-            style={{ background: "rgba(255,255,255,0.05)", color: agentColor(viewAs), border: "1px solid rgba(255,255,255,0.08)" }}
-          >
-            {oracleNames.map((n) => (
-              <option key={n} value={n}>{displayName(n)}</option>
-            ))}
-          </select>
+          {oracleNames.length > 0 && (
+            <select
+              value={viewAs}
+              onChange={(e) => setViewAsSel(e.target.value)}
+              className="text-[11px] font-mono rounded-lg px-2 py-1 outline-none cursor-pointer"
+              style={{ background: "rgba(255,255,255,0.05)", color: agentColor(viewAs), border: "1px solid rgba(255,255,255,0.08)" }}
+            >
+              {oracleNames.map((n) => (
+                <option key={n} value={n}>{displayName(n)}</option>
+              ))}
+            </select>
+          )}
 
           <select
             value={filter}
@@ -99,9 +245,7 @@ export const ChatView = memo(function ChatView() {
             <span className="text-white/20 text-sm font-mono">Loading...</span>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="flex items-center justify-center h-full">
-            <p className="text-white/25 text-sm">No messages yet</p>
-          </div>
+          <EmptyState hasAgents={agents.length > 0} />
         ) : mode === "live" ? (
           <div className="max-w-2xl mx-auto flex flex-col gap-3">
             {liveGrouped.map(({ entries: g }, i) => (
@@ -126,10 +270,8 @@ export const ChatView = memo(function ChatView() {
         )}
       </div>
 
-      {/* Footer */}
-      <div className="flex items-center justify-center px-4 py-1.5 border-t flex-shrink-0" style={{ borderColor: "rgba(255,255,255,0.04)" }}>
-        <span className="text-[9px] font-mono text-white/10">AI คุยกันเอง | Build with Oracle</span>
-      </div>
+      {/* Compose */}
+      <ComposeBar agents={agents} send={send} connected={connected} appendLocal={appendLocal} />
     </div>
   );
 });

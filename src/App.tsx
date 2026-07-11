@@ -530,7 +530,7 @@ export function App() {
   if (route === "chat") {
     return (
       <Layout activeView="chat" {...layoutProps}>
-        <ChatView />
+        <ChatView agents={agents} send={send} connected={connected} />
       </Layout>
     );
   }

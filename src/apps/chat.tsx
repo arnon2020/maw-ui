@@ -4,6 +4,6 @@ import { ChatView } from "../components/ChatView";
 
 mount(() => (
   <AppShell view="chat">
-    {() => <ChatView />}
+    {(ctx) => <ChatView agents={ctx.agents} send={ctx.send} connected={ctx.connected} />}
   </AppShell>
 ));

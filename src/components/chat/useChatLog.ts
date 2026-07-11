@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { type MawLogEntry, formatDate, pairKey } from "./types";
 import { apiUrl, wsUrl } from "../../lib/api";
 
@@ -34,21 +34,54 @@ function feedEventToLogEntry(e: FeedEvent): MawLogEntry | null {
   return { ts: e.timestamp, from: e.oracle, to, msg };
 }
 
+// Identity for dedupe across the three delivery paths (initial fetch,
+// WS push, optimistic local append). The composer POSTs its own
+// timestamp, so the WS echo of a just-sent message carries the same key.
+function entryKey(e: MawLogEntry): string {
+  return `${e.ts}|${e.from}|${e.to}|${e.msg}`;
+}
+
 export function useChatLog(mode: string) {
   const [entries, setEntries] = useState<MawLogEntry[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [sourceError, setSourceError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const seenRef = useRef<Set<string>>(new Set());
+  const modeRef = useRef(mode);
+  modeRef.current = mode;
 
-  // Initial fetch — /api/feed?limit=200 (server caps at 200 per feed.ts:21).
+  // Append entries from any source, dedupe, keep chronological order.
+  const appendEntries = useCallback((incoming: MawLogEntry[]) => {
+    const fresh = incoming.filter((e) => !seenRef.current.has(entryKey(e)));
+    if (fresh.length === 0) return;
+    for (const e of fresh) seenRef.current.add(entryKey(e));
+    setEntries((prev) => [...prev, ...fresh].sort((a, b) => a.ts.localeCompare(b.ts)));
+    setTotal((prev) => prev + fresh.length);
+    if (modeRef.current === "live") {
+      requestAnimationFrame(() => {
+        scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+      });
+    }
+  }, []);
+
+  // Optimistic local append — used by the composer for messages the human
+  // just sent (the /api/feed POST echo dedupes against this via entryKey).
+  const appendLocal = useCallback((entry: MawLogEntry) => {
+    appendEntries([entry]);
+  }, [appendEntries]);
+
+  // Initial fetch — /api/feed?event=MessageSend&limit=200. The server-side
+  // event filter (maw-js feed.ts) keeps chat history from being flooded out
+  // of the 200-event window by tool events; older maw-js nodes ignore the
+  // extra param and degrade to the unfiltered window.
   // Lens-2 discrimination: 410 Gone from a deprecated-route caller surfaces
   // visibly via sourceError, not as silent empty entries. See
   // ~/david-oracle/ψ/memory/vela/patterns/2026-04-18_silent-errors-deprecated-endpoints.md
   useEffect(() => {
     setLoading(true);
     setSourceError(null);
-    fetch(apiUrl("/api/feed?limit=200"))
+    fetch(apiUrl("/api/feed?limit=200&event=MessageSend"))
       .then(async (r) => {
         if (r.status === 410) {
           const body = await r.json().catch(() => ({}));
@@ -65,23 +98,26 @@ export function useChatLog(mode: string) {
       })
       .then((data) => {
         if (!data) return;
+        // Server returns newest-first; views expect chronological.
         const mapped: MawLogEntry[] = (data.events ?? [])
           .map(feedEventToLogEntry)
-          .filter((e: MawLogEntry | null): e is MawLogEntry => e !== null);
-        setEntries(mapped);
-        setTotal(mapped.length);
+          .filter((e: MawLogEntry | null): e is MawLogEntry => e !== null)
+          .reverse();
+        appendEntries(mapped);
         setLoading(false);
       })
       .catch((err) => {
         setSourceError(`chat source fetch failed: ${err?.message ?? "network error"}`);
         setLoading(false);
       });
-  }, []);
+  }, [appendEntries]);
 
-  // Real-time: listen for WebSocket push. Handles both "maw-log" (legacy payload
-  // type, retained for back-compat — no matches in current maw-js src but cheap
-  // to keep per Principle 1 "Nothing is Deleted") and "feed" (the new type
-  // emitted alongside FORGE's 410 rotation, if/when server pushes per-event).
+  // Real-time: listen for WebSocket push. The engine broadcasts
+  // { type: "feed", event } (singular — engine-intervals.ts) per event and
+  // { type: "feed-history", events } on connect (engine handleOpen).
+  // "maw-log" (legacy payload type, retained for back-compat — no matches in
+  // current maw-js src but cheap to keep per Principle 1 "Nothing is Deleted")
+  // and the plural "feed" events shape are also handled.
   useEffect(() => {
     const url = wsUrl("/ws");
     let ws: WebSocket | null = null;
@@ -93,27 +129,22 @@ export function useChatLog(mode: string) {
           let incoming: MawLogEntry[] = [];
           if (msg.type === "maw-log" && msg.entries) {
             incoming = msg.entries;
-          } else if (msg.type === "feed" && Array.isArray(msg.events)) {
+          } else if ((msg.type === "feed" || msg.type === "feed-history") && Array.isArray(msg.events)) {
             incoming = msg.events
               .map(feedEventToLogEntry)
               .filter((e: MawLogEntry | null): e is MawLogEntry => e !== null);
+          } else if (msg.type === "feed" && msg.event) {
+            const one = feedEventToLogEntry(msg.event);
+            if (one) incoming = [one];
           }
-          if (incoming.length > 0) {
-            setEntries(prev => [...prev, ...incoming]);
-            setTotal(prev => prev + incoming.length);
-            if (mode === "live") {
-              requestAnimationFrame(() => {
-                scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-              });
-            }
-          }
+          if (incoming.length > 0) appendEntries(incoming);
         } catch {}
       };
     } catch {}
     return () => { ws?.close(); };
-  }, [mode]);
+  }, [appendEntries]);
 
-  return { entries, total, loading, sourceError, scrollRef };
+  return { entries, total, loading, sourceError, scrollRef, appendLocal };
 }
 
 export function useOracleNames(entries: MawLogEntry[]) {
