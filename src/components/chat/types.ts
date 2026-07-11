@@ -4,6 +4,8 @@ export interface MawLogEntry {
   to: string;
   msg: string;
   ch?: string;
+  /** message lifecycle id from maw-js — stable dedupe key when present */
+  id?: string;
 }
 
 export function formatTime(ts: string): string {

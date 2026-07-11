@@ -14,31 +14,67 @@ interface FeedEvent {
   sessionId: string;
   message: string;
   ts: number;
+  data?: unknown;
 }
 
-// Parse "recipient: body" prefix from feed message text.
+// Structured payload maw-js attaches to message lifecycle events
+// (src/lib/message-events.ts MessageLifecycleData). Preferred over parsing
+// the human-readable `message` string, which is a lossy 200-char summary
+// in "outbound/delivered local:a → local:b (target) text" form.
+interface MessagePayload {
+  id: string;
+  from: string;
+  to: string;
+  text: string;
+}
+
+function isMessagePayload(v: unknown): v is MessagePayload {
+  if (!v || typeof v !== "object") return false;
+  const d = v as Record<string, unknown>;
+  return typeof d.id === "string" && typeof d.from === "string"
+    && typeof d.to === "string" && typeof d.text === "string";
+}
+
+/** "local:tars" → "tars" (host prefix from message-events parseIdentity) */
+function stripIdentity(v: string): string {
+  const idx = v.indexOf(":");
+  return (idx > 0 && idx < v.length - 1 ? v.slice(idx + 1) : v).toLowerCase();
+}
+
+// Parse "recipient: body" prefix from feed message text — fallback for
+// events without structured data (e.g. the chat composer's own POSTs).
 // Returns [to, msg] on match, or [null, original] when no prefix.
-// Heuristic: take first colon if followed by space, recipient ≤ 40 chars,
-// no whitespace in recipient. Tolerant — failed parses drop the event
-// (same filter the old /api/maw-log consumer applied: require from && to).
 function parseRecipient(message: string): [string | null, string] {
   const m = message.match(/^([a-z0-9_-]{1,40}):\s+(.+)$/is);
   if (!m) return [null, message];
   return [m[1].toLowerCase(), m[2]];
 }
 
+// MessageSend = outbound (covers local hey → local agent, both queued and
+// delivered states share one lifecycle id); MessageDeliver = inbound from a
+// federation peer — without it, the remote half of a cross-host conversation
+// never appears in this host's feed.
 function feedEventToLogEntry(e: FeedEvent): MawLogEntry | null {
+  if (e.event !== "MessageSend" && e.event !== "MessageDeliver") return null;
+  if (isMessagePayload(e.data)) {
+    // Drop the "[local:tars] " sender tag hey prepends for the receiving
+    // agent's benefit — the bubble already names the sender.
+    const msg = e.data.text.replace(/^\[[^\]\n]{1,60}\]\s+/, "");
+    if (!msg) return null;
+    return { ts: e.timestamp, from: stripIdentity(e.data.from), to: stripIdentity(e.data.to), msg, id: e.data.id };
+  }
   if (e.event !== "MessageSend") return null;
   const [to, msg] = parseRecipient(e.message);
   if (!to) return null;
   return { ts: e.timestamp, from: e.oracle, to, msg };
 }
 
-// Identity for dedupe across the three delivery paths (initial fetch,
-// WS push, optimistic local append). The composer POSTs its own
-// timestamp, so the WS echo of a just-sent message carries the same key.
+// Identity for dedupe across the delivery paths (initial fetch, WS push,
+// optimistic local append) and across lifecycle re-emits (queued →
+// delivered share the lifecycle id). The composer POSTs its own timestamp,
+// so the WS echo of a just-sent message carries the same fallback key.
 function entryKey(e: MawLogEntry): string {
-  return `${e.ts}|${e.from}|${e.to}|${e.msg}`;
+  return e.id ?? `${e.ts}|${e.from}|${e.to}|${e.msg}`;
 }
 
 export function useChatLog(mode: string) {
@@ -71,17 +107,18 @@ export function useChatLog(mode: string) {
     appendEntries([entry]);
   }, [appendEntries]);
 
-  // Initial fetch — /api/feed?event=MessageSend&limit=200. The server-side
-  // event filter (maw-js feed.ts) keeps chat history from being flooded out
-  // of the 200-event window by tool events; older maw-js nodes ignore the
-  // extra param and degrade to the unfiltered window.
+  // Initial fetch — /api/feed?event=MessageSend,MessageDeliver&limit=200.
+  // The server-side event filter (maw-js feed.ts, comma-separated) keeps
+  // chat history from being flooded out of the 200-event window by tool
+  // events; older maw-js nodes ignore the extra param and degrade to the
+  // unfiltered window.
   // Lens-2 discrimination: 410 Gone from a deprecated-route caller surfaces
   // visibly via sourceError, not as silent empty entries. See
   // ~/david-oracle/ψ/memory/vela/patterns/2026-04-18_silent-errors-deprecated-endpoints.md
   useEffect(() => {
     setLoading(true);
     setSourceError(null);
-    fetch(apiUrl("/api/feed?limit=200&event=MessageSend"))
+    fetch(apiUrl("/api/feed?limit=200&event=MessageSend,MessageDeliver"))
       .then(async (r) => {
         if (r.status === 410) {
           const body = await r.json().catch(() => ({}));
