@@ -49,18 +49,18 @@ export function Sidebar({ send }: { send?: (data: object) => void } = {}) {
   )].sort((a, b) => b.ts - a.ts);
 
   return (
-    <div className="w-[240px] flex-shrink-0 border-l overflow-hidden flex flex-col"
+    <div className="w-[320px] flex-shrink-0 border-l overflow-hidden flex flex-col"
       style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(3,10,24,0.98)" }}>
 
       {/* Tab bar */}
       <div className="flex border-b" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
         <button onClick={() => setTab("agents")}
-          className={`flex-1 py-1.5 text-[9px] font-mono tracking-wider cursor-pointer transition-colors ${tab === "agents" ? "text-cyan-400/70" : "text-white/20 hover:text-white/40"}`}
+          className={`flex-1 py-2 text-[11px] font-mono tracking-wider cursor-pointer transition-colors ${tab === "agents" ? "text-cyan-400/70" : "text-white/25 hover:text-white/45"}`}
           style={tab === "agents" ? { borderBottom: "1px solid rgba(0,245,212,0.3)" } : {}}>
           AGENTS
         </button>
         <button onClick={() => setTab("messages")}
-          className={`flex-1 py-1.5 text-[9px] font-mono tracking-wider cursor-pointer transition-colors flex items-center justify-center gap-1.5 ${tab === "messages" ? "text-cyan-400/70" : "text-white/20 hover:text-white/40"}`}
+          className={`flex-1 py-2 text-[11px] font-mono tracking-wider cursor-pointer transition-colors flex items-center justify-center gap-1.5 ${tab === "messages" ? "text-cyan-400/70" : "text-white/25 hover:text-white/45"}`}
           style={tab === "messages" ? { borderBottom: "1px solid rgba(0,245,212,0.3)" } : {}}>
           {liveMessages.length > 0 && <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />}
           MSG
@@ -82,9 +82,9 @@ export function Sidebar({ send }: { send?: (data: object) => void } = {}) {
                     className={`flex items-center gap-1.5 py-[3px] hover:bg-white/[0.02] rounded transition-colors ${m.live || (Date.now() - m.ts < 300000) ? "" : "opacity-60"}`}
                     title={m.msg || undefined}>
                     <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: m.live ? fromColor : "rgba(255,255,255,0.1)" }} />
-                    <span className="text-[9px] font-mono truncate" style={{ color: `${fromColor}99` }}>{label(m.from, agentIds)}</span>
+                    <span className="text-[11px] font-mono truncate" style={{ color: `${fromColor}aa` }}>{label(m.from, agentIds)}</span>
                     <span className="text-[8px] text-white/15 flex-shrink-0">{"\u2192"}</span>
-                    <span className="text-[9px] font-mono truncate" style={{ color: `${toColor}99` }}>{label(m.to, agentIds)}</span>
+                    <span className="text-[11px] font-mono truncate" style={{ color: `${toColor}aa` }}>{label(m.to, agentIds)}</span>
                     <span className="text-[8px] font-mono text-white/15 ml-auto flex-shrink-0 tabular-nums">{timeAgo(m.ts)}</span>
                   </div>
                 );
@@ -102,7 +102,7 @@ export function Sidebar({ send }: { send?: (data: object) => void } = {}) {
                   style={{ background: machineColor(selAgent.node), boxShadow: `0 0 8px ${machineColor(selAgent.node)}50` }} />
                 <span className="text-sm font-bold text-white/80">{selAgent.id}</span>
               </div>
-              <div className="text-[10px] font-mono text-white/40 space-y-0.5 ml-5">
+              <div className="text-[12px] font-mono text-white/50 space-y-1 ml-5">
                 <div>Machine: <span style={{ color: machineColor(selAgent.node) }}>{selAgent.node}</span></div>
                 <div>Status: <span style={{ color: statusGlow(statuses[selAgent.id] || "idle") }}>{statuses[selAgent.id] || "idle"}</span></div>
                 {selAgent.buddedFrom && <div>Budded from: <span className="text-cyan-400/60">{selAgent.buddedFrom}</span></div>}
@@ -150,7 +150,7 @@ export function Sidebar({ send }: { send?: (data: object) => void } = {}) {
               <div>
                 <div className="text-[9px] font-mono tracking-wider uppercase mb-1.5 text-white/40">Sync Peers</div>
                 {selAgent.syncPeers.map(p => (
-                  <div key={p} className="flex items-center gap-2 px-2 py-1 text-[10px] font-mono cursor-pointer hover:bg-white/[0.03] rounded"
+                  <div key={p} className="flex items-center gap-2 px-2 py-1.5 text-[12px] font-mono cursor-pointer hover:bg-white/[0.03] rounded"
                     onClick={() => requestFocus(p)}>
                     <span className="w-1.5 h-1.5 rounded-full"
                       style={{ background: machineColor(agents.find(a => a.id === p)?.node || "") }} />
@@ -169,7 +169,7 @@ export function Sidebar({ send }: { send?: (data: object) => void } = {}) {
                 {selEdges.filter(e => e.type === "message").map(e => {
                   const peer = e.source === selAgent.id ? e.target : e.source;
                   return (
-                    <div key={peer} className="flex items-center gap-2 px-2 py-1 text-[10px] font-mono cursor-pointer hover:bg-white/[0.03] rounded"
+                    <div key={peer} className="flex items-center gap-2 px-2 py-1.5 text-[12px] font-mono cursor-pointer hover:bg-white/[0.03] rounded"
                       onClick={() => requestFocus(peer)}>
                       <span className="text-white/40">{e.source === selAgent.id ? "\u2192" : "\u2190"} {peer}</span>
                       <span className="text-white/15 ml-auto">{e.count}x</span>
@@ -186,13 +186,13 @@ export function Sidebar({ send }: { send?: (data: object) => void } = {}) {
               value={query}
               onChange={e => setQuery(e.target.value)}
               placeholder="search agents..."
-              className="w-full mb-2 px-2 py-1.5 rounded text-[10px] font-mono outline-none"
+              className="w-full mb-2 px-2.5 py-2 rounded text-[12px] font-mono outline-none"
               style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.7)" }}
             />
             {query.trim() ? (
               <div className="mb-3">
                 {agents.filter(a => a.id.toLowerCase().includes(query.trim().toLowerCase())).slice(0, 30).map(a => (
-                  <div key={a.id} className="flex items-center gap-2 px-2 py-1 text-[10px] font-mono cursor-pointer hover:bg-white/[0.05] rounded"
+                  <div key={a.id} className="flex items-center gap-2 px-2 py-1.5 text-[12px] font-mono cursor-pointer hover:bg-white/[0.05] rounded"
                     onClick={() => { requestFocus(a.id); setQuery(""); }}>
                     <span className="w-1.5 h-1.5 rounded-full"
                       style={{ background: statusGlow(statuses[a.id] || "idle"), boxShadow: `0 0 4px ${statusGlow(statuses[a.id] || "idle")}60` }} />
@@ -205,8 +205,21 @@ export function Sidebar({ send }: { send?: (data: object) => void } = {}) {
                 )}
               </div>
             ) : null}
-            <p className="text-[10px] text-white/40 mb-1">Click an agent node</p>
-            <p className="text-[9px] text-white/20 mb-3">Scroll to zoom &middot; Drag to pan</p>
+            {!query.trim() && agents.some(a => statuses[a.id] === "busy") && (
+              <div className="mb-3">
+                <div className="text-[10px] font-mono tracking-wider uppercase mb-1.5 text-emerald-400/60">Active now</div>
+                {agents.filter(a => statuses[a.id] === "busy").map(a => (
+                  <div key={a.id} className="flex items-center gap-2 px-2 py-1.5 text-[12px] font-mono cursor-pointer hover:bg-white/[0.05] rounded"
+                    onClick={() => requestFocus(a.id)}>
+                    <span className="w-2 h-2 rounded-full" style={{ background: "#4ade80", boxShadow: "0 0 6px #4ade80" }} />
+                    <span className="text-white/75">{a.id}</span>
+                    <span className="text-[10px] ml-auto" style={{ color: machineColor(a.node) }}>{a.node}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            <p className="text-[11px] text-white/40 mb-1">Click an agent node</p>
+            <p className="text-[10px] text-white/25 mb-3">Scroll to zoom &middot; Drag to pan</p>
             {!query.trim() && machines.map(m => {
               const mAgents = listAgents.filter(a => a.node === m);
               return (
@@ -218,7 +231,7 @@ export function Sidebar({ send }: { send?: (data: object) => void } = {}) {
                     <span className="text-[9px] font-mono text-white/30 ml-auto">{activeOnly ? `${mAgents.length}/${agents.filter(a => a.node === m).length}` : mAgents.length}</span>
                   </div>
                   {mAgents.map(a => (
-                    <div key={a.id} className="flex items-center gap-2 px-3 py-0.5 text-[10px] font-mono cursor-pointer hover:bg-white/[0.05] rounded"
+                    <div key={a.id} className="flex items-center gap-2 px-3 py-1 text-[12px] font-mono cursor-pointer hover:bg-white/[0.05] rounded"
                       onClick={() => requestFocus(a.id)}>
                       <span className="w-1.5 h-1.5 rounded-full"
                         style={{

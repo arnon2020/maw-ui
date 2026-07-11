@@ -12,7 +12,7 @@ const LAYOUTS = ["orbit", "force", "circle"] as const;
 
 function App() {
   const { connected, mqttConnected, send } = useFederationData();
-  const { machines, agents, edges, version, plugins, showLineage, toggleLineage, layout, setLayout, setGraph, particles, showHistoryEdges, node, statuses, activeOnly, toggleActiveOnly } = useFederationStore();
+  const { machines, agents, edges, version, plugins, showLineage, toggleLineage, layout, setLayout, setGraph, particles, showHistoryEdges, node, statuses, activeOnly, toggleActiveOnly, labelMode, cycleLabelMode } = useFederationStore();
 
   const reformat = () => {
     const nextIdx = (LAYOUTS.indexOf(layout as any) + 1) % LAYOUTS.length;
@@ -63,7 +63,7 @@ function App() {
         <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${mqttConnected ? "bg-purple-500/15 text-purple-400" : "bg-white/5 text-white/20"}`}>
           {mqttConnected ? "MQTT" : "MQTT OFF"}
         </span>
-        <div className="flex items-center gap-3 text-[10px] font-mono text-white/20">
+        <div className="flex items-center gap-3 text-[11px] font-mono text-white/45">
           <span>{machines.length} machine{machines.length === 1 ? "" : "s"}</span>
           <span>&middot;</span>
           <span>{totalAgents} agents</span>
@@ -111,6 +111,12 @@ function App() {
             title={activeOnly ? "Showing only agents active in the recent feed" : "Showing all known agents, including quiet ones"}
             style={{ background: "rgba(3,10,24,0.9)", borderColor: "rgba(255,255,255,0.08)", color: activeOnly ? "rgba(0,245,212,0.5)" : "rgba(255,255,255,0.2)" }}>
             {activeOnly ? "\uD83D\uDC41 active" : "\uD83D\uDC41 all"}
+          </button>
+          <button onClick={cycleLabelMode}
+            className="px-3 py-2 rounded-lg border text-[10px] font-mono cursor-pointer hover:bg-white/[0.05] transition-colors"
+            title="Label visibility: auto = semantic zoom, all = every readable name, off = none"
+            style={{ background: "rgba(3,10,24,0.9)", borderColor: "rgba(255,255,255,0.08)", color: labelMode === "off" ? "rgba(255,255,255,0.2)" : "rgba(0,245,212,0.5)" }}>
+            {"\uD83C\uDFF7"} names: {labelMode}
           </button>
         </div>
         <Sidebar send={send} />

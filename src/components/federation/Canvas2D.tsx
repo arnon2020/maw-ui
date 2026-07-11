@@ -34,7 +34,7 @@ export function Canvas2D() {
       time += 16;
       const W = canvas!.getBoundingClientRect().width;
       const H = canvas!.getBoundingClientRect().height;
-      const { agents, edges, statuses, selected: sel, hovered: hov, flashes: fl, particles, edgePulses, showLineage, showHistoryEdges, activeOnly } = storeRef.current;
+      const { agents, edges, statuses, selected: sel, hovered: hov, flashes: fl, particles, edgePulses, showLineage, showHistoryEdges, activeOnly, labelMode } = storeRef.current;
       // activeOnly: only agents seen in the recent feed (statuses has an entry)
       const anyActive = agents.some(a => statuses[a.id]);
       const visAgents = activeOnly && anyActive ? agents.filter(a => statuses[a.id]) : agents;
@@ -83,7 +83,11 @@ export function Canvas2D() {
       }
 
       drawEdges(ctx, visEdges, byId, sel, hov, particles, time, pulsesEff, showLineage, historyEff);
-      drawAgents(ctx, visAgents, visEdges, statuses, sel, hov, flashesEff, time, cam.zoom);
+      const viewWorld = {
+        x0: (0 - cam.x) / cam.zoom, y0: (0 - cam.y) / cam.zoom,
+        x1: (W - cam.x) / cam.zoom, y1: (H - cam.y) / cam.zoom,
+      };
+      drawAgents(ctx, visAgents, visEdges, statuses, sel, hov, flashesEff, time, cam.zoom, labelMode, viewWorld);
 
       ctx.restore();
       drawLegend(ctx, visAgents, H);

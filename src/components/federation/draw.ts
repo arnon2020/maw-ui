@@ -209,14 +209,18 @@ export function drawAgents(
   fl: Record<string, number>,
   time: number,
   zoom = 1,
+  labelMode: "auto" | "all" | "off" = "auto",
+  view?: { x0: number; y0: number; x1: number; y1: number },
 ) {
   // Semantic zoom: zoomed out → label only what matters (busy/flash/sel/hover);
-  // zoomed in → label everything. Thresholds picked against the 70-node graph.
-  const labelAll = zoom >= 1.1;
-  const labelActive = zoom >= 0.6;
+  // zoomed in (or labelMode "all") → consider everything, still collision-culled.
+  const labelAll = labelMode === "all" || (labelMode === "auto" && zoom >= 1.45);
+  const labelActive = labelMode !== "off" && (labelMode === "all" || zoom >= 0.6);
   const labelCandidates: {
     agent: AgentNode; dotR: number; dimmed: boolean | "" | null; isSel: boolean; isHov: boolean; priority: number;
   }[] = [];
+  // Node dots block label space so names never sit on top of circles
+  const blockedRects: { x1: number; y1: number; x2: number; y2: number }[] = [];
   for (const agent of agents) {
     const color = machineColor(agent.node);
     const [r, g, b] = hexRgb(color);
@@ -236,6 +240,7 @@ export function drawAgents(
     const baseR = isSel ? 12 : isHov ? 11 : 9;
     const pulse = status === "busy" ? Math.sin(time * 0.005) * 2 : 0;
     const dotR = baseR + pulse + flashI * 6;
+    blockedRects.push({ x1: agent.x - dotR, y1: agent.y - dotR, x2: agent.x + dotR, y2: agent.y + dotR });
 
     ctx.save();
     if (status === "busy" || isFlashing) {
@@ -275,29 +280,63 @@ export function drawAgents(
       ctx.stroke();
     }
 
-    const labelVisible = isSel || isHov || labelAll || (labelActive && (status === "busy" || isFlashing));
+    const labelVisible = labelMode !== "off" && (
+      isSel || isHov || labelAll || (labelActive && (status === "busy" || isFlashing || isConnected)));
     if (labelVisible) {
       labelCandidates.push({
         agent, dotR, dimmed, isSel, isHov,
-        priority: isSel ? 3 : isHov ? 2 : (status === "busy" || isFlashing) ? 1 : 0,
+        priority: isSel ? 4 : isHov ? 3 : (status === "busy" || isFlashing) ? 2 : isConnected ? 1 : 0,
       });
     }
   }
 
-  // Collision-culled label pass: higher-priority labels claim space first,
-  // anything that would overlap an already-placed label is skipped.
+  // Collision-culled label pass v2 (handoff feedback):
+  //  - priority order claims space first (selected > hovered > busy > connected > rest)
+  //  - each label tries 4 anchor positions (bottom, right, left, top)
+  //  - collision checked against labels AND node dots AND the viewport edge
+  //  - placed labels get a dark capsule so they stay readable over edges/glow
   labelCandidates.sort((a, b) => b.priority - a.priority || a.agent.y - b.agent.y);
-  const placedRects: { x1: number; y1: number; x2: number; y2: number }[] = [];
-  ctx.textAlign = "center";
+  const placedRects: { x1: number; y1: number; x2: number; y2: number }[] = [...blockedRects];
+  const collides = (r: { x1: number; y1: number; x2: number; y2: number }) =>
+    placedRects.some(p => r.x1 < p.x2 && r.x2 > p.x1 && r.y1 < p.y2 && r.y2 > p.y1);
+  const outside = (r: { x1: number; y1: number; x2: number; y2: number }) =>
+    view ? (r.x1 < view.x0 || r.x2 > view.x1 || r.y1 < view.y0 || r.y2 > view.y1) : false;
+
   for (const c of labelCandidates) {
     ctx.font = `${c.isSel ? "bold " : ""}8px monospace`;
-    const w = ctx.measureText(c.agent.id).width + 6;
-    const ly = c.agent.y + c.dotR + 12;
-    const rect = { x1: c.agent.x - w / 2, y1: ly - 8, x2: c.agent.x + w / 2, y2: ly + 2 };
-    if (placedRects.some(p => rect.x1 < p.x2 && rect.x2 > p.x1 && rect.y1 < p.y2 && rect.y2 > p.y1)) continue;
-    placedRects.push(rect);
-    ctx.fillStyle = `rgba(255,255,255,${c.dimmed ? 0.1 : c.isSel ? 0.9 : c.isHov ? 0.7 : 0.5})`;
-    ctx.fillText(c.agent.id, c.agent.x, ly);
+    const tw = ctx.measureText(c.agent.id).width;
+    const w = tw + 8;
+    const h = 12;
+    const { x, y } = c.agent;
+    const d = c.dotR;
+    // candidate anchors: [cx of capsule, cy of capsule]
+    const anchors: [number, number][] = [
+      [x, y + d + 10],       // bottom
+      [x + d + 6 + w / 2, y], // right
+      [x - d - 6 - w / 2, y], // left
+      [x, y - d - 10],       // top
+    ];
+    let placed: { x1: number; y1: number; x2: number; y2: number } | null = null;
+    let px = 0, py = 0;
+    for (const [ax, ay] of anchors) {
+      const r = { x1: ax - w / 2, y1: ay - h / 2, x2: ax + w / 2, y2: ay + h / 2 };
+      if (collides(r) || outside(r)) continue;
+      placed = r; px = ax; py = ay;
+      break;
+    }
+    if (!placed) continue; // every spot taken → skip, never overlap
+    placedRects.push(placed);
+
+    // capsule background keeps names readable over edges and glow
+    if (!c.dimmed) {
+      ctx.fillStyle = "rgba(2,10,24,0.72)";
+      ctx.beginPath();
+      ctx.roundRect(placed.x1, placed.y1, w, h, 4);
+      ctx.fill();
+    }
+    ctx.textAlign = "center";
+    ctx.fillStyle = `rgba(255,255,255,${c.dimmed ? 0.12 : c.isSel ? 0.95 : c.isHov ? 0.8 : 0.62})`;
+    ctx.fillText(c.agent.id, px, py + 3);
   }
 }
 

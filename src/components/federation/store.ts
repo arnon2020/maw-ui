@@ -38,6 +38,7 @@ interface FederationStore {
   showLineage: boolean;
   showHistoryEdges: boolean;
   activeOnly: boolean;
+  labelMode: "auto" | "all" | "off";
   focusTarget: string | null;
   replayTs: number | null; // null = live; otherwise replay messages around this moment
   layout: string;
@@ -52,6 +53,7 @@ interface FederationStore {
   clearMessages: () => void;
   toggleLineage: () => void;
   toggleActiveOnly: () => void;
+  cycleLabelMode: () => void;
   requestFocus: (id: string) => void;
   clearFocus: () => void;
   setReplayTs: (ts: number | null) => void;
@@ -79,6 +81,7 @@ export const useFederationStore = create<FederationStore>((set) => ({
   showLineage: false,
   showHistoryEdges: true,
   activeOnly: true,
+  labelMode: "auto",
   focusTarget: null,
   replayTs: null,
   layout: "orbit",
@@ -107,6 +110,9 @@ export const useFederationStore = create<FederationStore>((set) => ({
   clearMessages: () => set({ messageLog: [], liveMessages: [] }),
   toggleLineage: () => set((s) => ({ showLineage: !s.showLineage })),
   toggleActiveOnly: () => set((s) => ({ activeOnly: !s.activeOnly })),
+  cycleLabelMode: () => set((s) => ({
+    labelMode: s.labelMode === "auto" ? "all" : s.labelMode === "all" ? "off" : "auto",
+  })),
   // Focus = select + ask the canvas to fly the camera to the node.
   // A quiet target would be invisible under activeOnly — unhide in that case.
   requestFocus: (id) => set((s) => ({
