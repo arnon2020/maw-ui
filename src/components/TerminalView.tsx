@@ -9,10 +9,37 @@ interface TerminalViewProps {
   agents: AgentState[];
   connected: boolean;
   onSelectAgent: (agent: AgentState) => void;
+  /** Agent name from the #terminal/<name> deep link — auto-selects its window */
+  initialAgent?: string | null;
 }
 
-export const TerminalView = memo(function TerminalView({ sessions, agents, connected, onSelectAgent }: TerminalViewProps) {
+export const TerminalView = memo(function TerminalView({ sessions, agents, connected, onSelectAgent, initialAgent }: TerminalViewProps) {
   const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
+
+  // Deep-link resolution: match by window name, window name minus -oracle,
+  // or session base name ("108-sage" → "sage"). Resolves once per hash value
+  // so a manual window pick afterwards is not overridden.
+  const resolvedAgentRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!initialAgent || sessions.length === 0) return;
+    if (resolvedAgentRef.current === initialAgent) return;
+    const want = initialAgent.toLowerCase();
+    let found: string | null = null;
+    outer: for (const s of sessions) {
+      const sessionBase = s.name.replace(/^\d+-/, "").toLowerCase();
+      for (const w of s.windows) {
+        const wname = (w.name || "").toLowerCase();
+        if (wname === want || wname === `${want}-oracle` || wname.replace(/-oracle$/, "") === want || sessionBase === want) {
+          found = `${s.name}:${w.index}`;
+          break outer;
+        }
+      }
+    }
+    if (found) {
+      resolvedAgentRef.current = initialAgent;
+      setSelectedTarget(found);
+    }
+  }, [initialAgent, sessions]);
   const [captureHtml, setCaptureHtml] = useState("");
   const [inputBuf, setInputBuf] = useState("");
   const [sendQueue, setSendQueue] = useState<string[]>([]);

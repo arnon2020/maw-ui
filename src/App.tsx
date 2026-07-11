@@ -319,6 +319,9 @@ export function App() {
   const lastResolvedAgent = useRef<string | null>(null);
   useEffect(() => {
     if (!hashAgent || agents.length === 0) return;
+    // Terminal route consumes the hash agent itself (inline pane select) —
+    // opening the modal on top of it would double the terminal.
+    if (routeRef.current === "terminal") return;
     // Skip if already resolved this exact agent name
     if (lastResolvedAgent.current === hashAgent) return;
     const name = hashAgent.toLowerCase();
@@ -504,7 +507,7 @@ export function App() {
   if (route === "terminal") {
     return (
       <Layout activeView="terminal" {...layoutProps} fullHeight>
-        <TerminalView sessions={sessions} agents={agents} connected={connected} onSelectAgent={onSelectAgent} />
+        <TerminalView sessions={sessions} agents={agents} connected={connected} onSelectAgent={onSelectAgent} initialAgent={hashAgent} />
       </Layout>
     );
   }
