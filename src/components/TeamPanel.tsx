@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useState, useEffect } from "react";
 import { apiUrl } from "../lib/api";
 
 export interface TeamMember {
@@ -27,6 +27,20 @@ interface Task {
   subject: string;
   status: string;
   owner: string | null;
+}
+
+interface TeamCostInfo {
+  totalTokens: number;
+  outputTokens: number;
+  estCost: number;
+  sessions: number;
+  members: string[];
+}
+
+function fmtTokens(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${Math.round(n / 1_000)}k`;
+  return String(n);
 }
 
 export const COLOR_MAP: Record<string, string> = {
@@ -129,7 +143,7 @@ function TaskList({ tasks }: { tasks: Task[] }) {
   );
 }
 
-function TeamCard({ team, tasks: teamTasks, onOpenAgent }: { team: Team; tasks: Task[]; onOpenAgent?: (name: string) => void }) {
+function TeamCard({ team, tasks: teamTasks, onOpenAgent, cost }: { team: Team; tasks: Task[]; onOpenAgent?: (name: string) => void; cost?: TeamCostInfo }) {
   const done = teamTasks.filter(t => t.status === "completed").length;
   const total = teamTasks.length;
   const lead = team.members.find(m => m.name === "team-lead" || m.agentType === "team-lead");
@@ -165,6 +179,12 @@ function TeamCard({ team, tasks: teamTasks, onOpenAgent }: { team: Team; tasks: 
             {team.lastActivity ? (
               <span className="text-[10px] text-white/25 font-mono">active {timeAgo(team.lastActivity)}</span>
             ) : null}
+            {cost && (
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded" title={`${cost.sessions} session${cost.sessions > 1 ? "s" : ""}: ${cost.members.join(", ")}`}
+                style={{ background: "rgba(250,204,21,0.08)", color: "rgba(250,204,21,0.75)" }}>
+                ~${cost.estCost.toFixed(2)} · {fmtTokens(cost.totalTokens)} tok
+              </span>
+            )}
             {lead?.cwd && (
               <span className="text-[10px] text-white/15 font-mono truncate">{cwdShort(lead.cwd)}</span>
             )}
@@ -220,7 +240,7 @@ function TeamCard({ team, tasks: teamTasks, onOpenAgent }: { team: Team; tasks: 
   );
 }
 
-function StaleRow({ team, tasks, expanded, onToggle, deleteState, onAskDelete, onConfirmDelete, onCancelDelete }: {
+function StaleRow({ team, tasks, expanded, onToggle, deleteState, onAskDelete, onConfirmDelete, onCancelDelete, cost }: {
   team: Team;
   tasks: Task[];
   expanded: boolean;
@@ -229,6 +249,7 @@ function StaleRow({ team, tasks, expanded, onToggle, deleteState, onAskDelete, o
   onAskDelete: () => void;
   onConfirmDelete: () => void;
   onCancelDelete: () => void;
+  cost?: TeamCostInfo;
 }) {
   const lastSeen = team.lastActivity || team.createdAt;
   return (
@@ -250,6 +271,11 @@ function StaleRow({ team, tasks, expanded, onToggle, deleteState, onAskDelete, o
           <span className="text-[11px] text-white/40 ml-auto flex-shrink-0">
             {team.members.length > 0 ? `${team.members.length} agent${team.members.length > 1 ? "s" : ""}` : ""}
           </span>
+          {cost && (
+            <span className="text-[11px] font-mono flex-shrink-0" style={{ color: "rgba(250,204,21,0.55)" }}>
+              ~${cost.estCost.toFixed(2)}
+            </span>
+          )}
           {lastSeen && (
             <span className="text-[11px] text-white/35 flex-shrink-0 w-16 text-right" title={team.lastActivity ? "last activity" : "created"}>
               {timeAgo(lastSeen)}
@@ -297,10 +323,15 @@ function StaleRow({ team, tasks, expanded, onToggle, deleteState, onAskDelete, o
           {team.description && (
             <div className="px-6 pt-3 pb-1 text-[12px] text-white/45 font-mono leading-relaxed">{team.description}</div>
           )}
-          {(team.createdAt || team.lastActivity) && (
-            <div className="px-6 pb-2 flex items-center gap-3 font-mono">
+          {(team.createdAt || team.lastActivity || cost) && (
+            <div className="px-6 pb-2 flex items-center gap-3 font-mono flex-wrap">
               {team.createdAt && <span className="text-[10px] text-white/25">created {timeAgo(team.createdAt)}</span>}
               {team.lastActivity ? <span className="text-[10px] text-white/25">last activity {timeAgo(team.lastActivity)}</span> : null}
+              {cost && (
+                <span className="text-[10px]" style={{ color: "rgba(250,204,21,0.6)" }}>
+                  ~${cost.estCost.toFixed(2)} · {fmtTokens(cost.totalTokens)} tok · {cost.sessions} session{cost.sessions > 1 ? "s" : ""}
+                </span>
+              )}
             </div>
           )}
           {team.members.length > 0 ? (
@@ -326,6 +357,15 @@ export const TeamPanel = memo(function TeamPanel({ teams: teamsRaw, onOpenAgent 
   for (const team of teams) {
     tasks[team.name] = (team as any).tasks || [];
   }
+
+  // Per-team cost attribution (seat-cwd transcripts) — cheap endpoint, fetched once
+  const [costs, setCosts] = useState<Record<string, TeamCostInfo>>({});
+  useEffect(() => {
+    fetch(apiUrl("/api/teams/costs"))
+      .then(r => r.json())
+      .then(d => setCosts(d.costs || {}))
+      .catch(() => { /* cost badge is best-effort */ });
+  }, []);
 
   // Locally hidden after a successful delete — WS teams broadcast catches up shortly after
   const [removed, setRemoved] = useState<Set<string>>(new Set());
@@ -444,7 +484,7 @@ export const TeamPanel = memo(function TeamPanel({ teams: teamsRaw, onOpenAgent 
 
       {/* Active teams: full cards */}
       {active.map(team => (
-        <TeamCard key={team.name} team={team} tasks={tasks[team.name] || []} onOpenAgent={onOpenAgent} />
+        <TeamCard key={team.name} team={team} tasks={tasks[team.name] || []} onOpenAgent={onOpenAgent} cost={costs[team.name]} />
       ))}
 
       {/* Nothing running right now */}
@@ -536,6 +576,7 @@ export const TeamPanel = memo(function TeamPanel({ teams: teamsRaw, onOpenAgent 
               team={team}
               tasks={tasks[team.name] || []}
               expanded={expandedStale.has(team.name)}
+              cost={costs[team.name]}
               onToggle={() => toggleStaleTeam(team.name)}
               deleteState={busyDelete === team.name ? "busy" : confirmDelete === team.name ? "confirm" : "idle"}
               onAskDelete={() => setConfirmDelete(team.name)}
