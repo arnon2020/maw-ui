@@ -165,7 +165,12 @@ export function drawAgents(
   hov: string | null,
   fl: Record<string, number>,
   time: number,
+  zoom = 1,
 ) {
+  // Semantic zoom: zoomed out → label only what matters (busy/flash/sel/hover);
+  // zoomed in → label everything. Thresholds picked against the 70-node graph.
+  const labelAll = zoom >= 1.1;
+  const labelActive = zoom >= 0.6;
   for (const agent of agents) {
     const color = machineColor(agent.node);
     const [r, g, b] = hexRgb(color);
@@ -224,10 +229,13 @@ export function drawAgents(
       ctx.stroke();
     }
 
-    ctx.font = `${isSel ? "bold " : ""}8px monospace`;
-    ctx.fillStyle = `rgba(255,255,255,${dimmed ? 0.1 : isSel ? 0.9 : isHov ? 0.7 : 0.5})`;
-    ctx.textAlign = "center";
-    ctx.fillText(agent.id, agent.x, agent.y + dotR + 12);
+    const labelVisible = isSel || isHov || labelAll || (labelActive && (status === "busy" || isFlashing));
+    if (labelVisible) {
+      ctx.font = `${isSel ? "bold " : ""}8px monospace`;
+      ctx.fillStyle = `rgba(255,255,255,${dimmed ? 0.1 : isSel ? 0.9 : isHov ? 0.7 : 0.5})`;
+      ctx.textAlign = "center";
+      ctx.fillText(agent.id, agent.x, agent.y + dotR + 12);
+    }
   }
 }
 

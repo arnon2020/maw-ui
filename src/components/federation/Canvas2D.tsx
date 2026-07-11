@@ -57,7 +57,7 @@ export function Canvas2D() {
 
       const byId = new Map(visAgents.map(a => [a.id, a]));
       drawEdges(ctx, visEdges, byId, sel, hov, particles, time, edgePulses, showLineage, showHistoryEdges);
-      drawAgents(ctx, visAgents, visEdges, statuses, sel, hov, fl, time);
+      drawAgents(ctx, visAgents, visEdges, statuses, sel, hov, fl, time, cam.zoom);
 
       ctx.restore();
       drawLegend(ctx, visAgents, H);
