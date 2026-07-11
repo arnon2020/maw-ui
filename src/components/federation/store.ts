@@ -39,6 +39,7 @@ interface FederationStore {
   showHistoryEdges: boolean;
   activeOnly: boolean;
   focusTarget: string | null;
+  replayTs: number | null; // null = live; otherwise replay messages around this moment
   layout: string;
 
   setGraph: (agents: AgentNode[], edges: AgentEdge[], particles: Map<string, Particle[]>) => void;
@@ -53,6 +54,7 @@ interface FederationStore {
   toggleActiveOnly: () => void;
   requestFocus: (id: string) => void;
   clearFocus: () => void;
+  setReplayTs: (ts: number | null) => void;
   setLayout: (layout: string) => void;
   handleFeedEvent: (e: FeedEvent) => void;
   handleFeedHistory: (events: FeedEvent[]) => void;
@@ -78,6 +80,7 @@ export const useFederationStore = create<FederationStore>((set) => ({
   showHistoryEdges: true,
   activeOnly: false,
   focusTarget: null,
+  replayTs: null,
   layout: "force",
 
   setGraph: (agents, edges, particles) => set({
@@ -112,6 +115,7 @@ export const useFederationStore = create<FederationStore>((set) => ({
     activeOnly: s.activeOnly && !s.statuses[id] ? false : s.activeOnly,
   })),
   clearFocus: () => set({ focusTarget: null }),
+  setReplayTs: (ts) => set({ replayTs: ts }),
   setLayout: (layout) => set({ layout }),
 
   handleFeedEvent: (e) => set((s) => {

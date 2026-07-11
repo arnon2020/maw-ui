@@ -56,8 +56,32 @@ export function Canvas2D() {
       drawClusterLabels(ctx, visAgents);
 
       const byId = new Map(visAgents.map(a => [a.id, a]));
-      drawEdges(ctx, visEdges, byId, sel, hov, particles, time, edgePulses, showLineage, showHistoryEdges);
-      drawAgents(ctx, visAgents, visEdges, statuses, sel, hov, fl, time, cam.zoom);
+
+      // Replay mode: rebuild pulses/flashes from message history around replayTs.
+      // showHistoryEdges=false makes drawEdges show only pulsing message edges,
+      // which is exactly the replay look.
+      const { replayTs, messageLog } = storeRef.current;
+      let pulsesEff = edgePulses;
+      let flashesEff = fl;
+      let historyEff = showHistoryEdges;
+      if (replayTs !== null) {
+        const WIN = 5 * 60 * 1000;
+        pulsesEff = {};
+        flashesEff = {};
+        historyEff = false;
+        for (const m of messageLog) {
+          const d = Math.abs(m.ts - replayTs);
+          if (d > WIN) continue;
+          const fake = Date.now() - (d / WIN) * 2900; // closer to cursor → stronger pulse
+          const k = [m.from, m.to].sort().join("-");
+          if (!pulsesEff[k] || pulsesEff[k] < fake) pulsesEff[k] = fake;
+          if (!flashesEff[m.from] || flashesEff[m.from] < fake) flashesEff[m.from] = fake;
+          if (!flashesEff[m.to] || flashesEff[m.to] < fake) flashesEff[m.to] = fake;
+        }
+      }
+
+      drawEdges(ctx, visEdges, byId, sel, hov, particles, time, pulsesEff, showLineage, historyEff);
+      drawAgents(ctx, visAgents, visEdges, statuses, sel, hov, flashesEff, time, cam.zoom);
 
       ctx.restore();
       drawLegend(ctx, visAgents, H);

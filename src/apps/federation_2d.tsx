@@ -4,6 +4,7 @@ import { useFederationData } from "../hooks/useFederationData";
 import { useFederationStore } from "../components/federation/store";
 import { Canvas2D } from "../components/federation/Canvas2D";
 import { Sidebar } from "../components/federation/Sidebar";
+import { Timeline } from "../components/federation/Timeline";
 import { simulate, layoutCircle } from "../components/federation/simulation";
 import { machineColor } from "../components/federation/colors";
 
@@ -92,6 +93,7 @@ function App() {
 
       <div className="flex flex-1 overflow-hidden relative">
         <Canvas2D />
+        <Timeline />
         <div className="absolute bottom-4 left-4 flex gap-2">
           <button onClick={reformat}
             className="px-3 py-2 rounded-lg border text-[10px] font-mono cursor-pointer hover:bg-white/[0.05] transition-colors"
