@@ -10,7 +10,7 @@ import { machineColor } from "../components/federation/colors";
 const LAYOUTS = ["force", "circle"] as const;
 
 function App() {
-  const { connected, mqttConnected } = useFederationData();
+  const { connected, mqttConnected, send } = useFederationData();
   const { machines, agents, edges, version, plugins, showLineage, toggleLineage, layout, setLayout, setGraph, particles, showHistoryEdges, node, statuses, activeOnly, toggleActiveOnly } = useFederationStore();
 
   const reformat = () => {
@@ -110,7 +110,7 @@ function App() {
             {activeOnly ? "\uD83D\uDC41 active" : "\uD83D\uDC41 all"}
           </button>
         </div>
-        <Sidebar />
+        <Sidebar send={send} />
       </div>
     </div>
   );

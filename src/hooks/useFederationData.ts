@@ -44,7 +44,7 @@ export function useFederationData() {
     }
   }, [handleFeedEvent, handleFeedHistory, handleLiveMessage]);
 
-  const { connected } = useWebSocket(handleMessage);
+  const { connected, send } = useWebSocket(handleMessage);
 
   // MQTT subscription for cross-federation maw hey messages
   const handleMqttMessage = useCallback((msg: { from: string; to: string }) => {
@@ -103,7 +103,7 @@ export function useFederationData() {
       // Fleet data -> sync_peers, lineage. /api/fleet-config returns {configs: [...]}.
       // budded_from is per-entry; children are computed by inverting client-side
       // (the new endpoint does not carry a children field — confirmed with mawjs-oracle).
-      const fleetMap: Record<string, { syncPeers: string[]; buddedFrom?: string; children: string[] }> = {};
+      const fleetMap: Record<string, { syncPeers: string[]; buddedFrom?: string; children: string[]; target?: string }> = {};
       if (fleetConfig?.configs) {
         for (const f of fleetConfig.configs) {
           const name = f.windows?.[0]?.name?.replace(/-oracle$/, "") || f.name.replace(/^\d+-/, "");
@@ -111,6 +111,7 @@ export function useFederationData() {
             syncPeers: (f.sync_peers || []).filter((p: string) => p !== "--help"),
             buddedFrom: f.budded_from || undefined,
             children: [],
+            target: f.windows?.length ? `${f.name}:${f.windows[0].index ?? 0}` : undefined,
           };
         }
         // Invert budded_from -> children
@@ -137,6 +138,7 @@ export function useFederationData() {
           syncPeers: fm?.syncPeers || [],
           buddedFrom: fm?.buddedFrom,
           children: fm?.children || [],
+          target: fm?.target,
         });
       }
 
@@ -211,5 +213,5 @@ export function useFederationData() {
     return () => clearInterval(iv);
   }, [setGraph, setNode]);
 
-  return { connected, mqttConnected };
+  return { connected, mqttConnected, send };
 }

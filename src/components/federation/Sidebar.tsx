@@ -16,11 +16,13 @@ function timeAgo(ts: number): string {
 
 type Tab = "agents" | "messages";
 
-export function Sidebar() {
+export function Sidebar({ send }: { send?: (data: object) => void } = {}) {
   const { agents, edges, machines, statuses, selected, setSelected, liveMessages, messageLog, clearMessages, activeOnly, requestFocus } = useFederationStore();
   const [query, setQuery] = useState("");
   const listAgents = activeOnly ? agents.filter(a => statuses[a.id]) : agents;
   const [tab, setTab] = useState<Tab>("agents");
+  const [heyText, setHeyText] = useState("");
+  const [heySent, setHeySent] = useState(false);
   const prevLiveCount = useRef(liveMessages.length);
 
   // Auto-switch to messages tab when new live message arrives
@@ -105,6 +107,42 @@ export function Sidebar() {
                 {selAgent.buddedFrom && <div>Budded from: <span className="text-cyan-400/60">{selAgent.buddedFrom}</span></div>}
                 {selAgent.children.length > 0 && <div>Children: <span className="text-cyan-400/60">{selAgent.children.join(", ")}</span></div>}
               </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-col gap-1.5">
+              <a href={`/#terminal/${selAgent.id}`} target="_blank" rel="noreferrer"
+                className="block text-center px-2 py-1.5 rounded text-[10px] font-mono transition-colors hover:bg-cyan-500/15"
+                style={{ background: "rgba(0,245,212,0.08)", border: "1px solid rgba(0,245,212,0.2)", color: "rgba(0,245,212,0.7)" }}>
+                {"\u2328"} open terminal
+              </a>
+              {selAgent.target && send && (
+                <form
+                  className="flex gap-1"
+                  onSubmit={e => {
+                    e.preventDefault();
+                    const text = heyText.trim();
+                    if (!text) return;
+                    send({ type: "send", target: selAgent.target, text });
+                    setTimeout(() => send({ type: "send", target: selAgent.target, text: "\r" }), 60);
+                    setHeyText("");
+                    setHeySent(true);
+                    setTimeout(() => setHeySent(false), 2000);
+                  }}>
+                  <input
+                    value={heyText}
+                    onChange={e => setHeyText(e.target.value)}
+                    placeholder={`hey ${selAgent.id}...`}
+                    className="flex-1 min-w-0 px-2 py-1.5 rounded text-[10px] font-mono outline-none"
+                    style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.7)" }}
+                  />
+                  <button type="submit"
+                    className="px-2 py-1.5 rounded text-[10px] font-mono cursor-pointer hover:bg-white/[0.08]"
+                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", color: heySent ? "#4ade80" : "rgba(255,255,255,0.5)" }}>
+                    {heySent ? "\u2713" : "\u21B5"}
+                  </button>
+                </form>
+              )}
             </div>
 
             {selAgent.syncPeers.length > 0 && (

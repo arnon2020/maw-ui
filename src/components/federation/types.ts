@@ -10,6 +10,7 @@ export interface AgentNode {
   syncPeers: string[];
   buddedFrom?: string;
   children: string[];
+  target?: string; // tmux target (session:window) for send actions
 }
 
 export interface AgentEdge {
