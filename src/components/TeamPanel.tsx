@@ -1,4 +1,5 @@
 import { memo, useState } from "react";
+import { apiUrl } from "../lib/api";
 
 export interface TeamMember {
   name: string;
@@ -18,6 +19,7 @@ export interface Team {
   members: TeamMember[];
   createdAt?: number;
   alive?: boolean;
+  lastActivity?: number;
 }
 
 interface Task {
@@ -37,6 +39,8 @@ export const COLOR_MAP: Record<string, string> = {
   orange: "#fb923c",
   pink: "#f472b6",
 };
+
+const PURGE_DAYS = 30;
 
 function shortModel(raw?: string): string {
   if (!raw) return "?";
@@ -65,14 +69,25 @@ function cwdShort(cwd?: string): string {
   return parts.slice(-2).join("/");
 }
 
-function MemberRow({ m, isLast }: { m: TeamMember; isLast: boolean }) {
+function MemberRow({ m, isLast, onOpen }: { m: TeamMember; isLast: boolean; onOpen?: (name: string) => void }) {
   const color = COLOR_MAP[m.color || ""] || "#888";
   const model = shortModel(m.model);
   return (
     <div className="px-6 py-3 flex items-center gap-3"
       style={{ borderTop: "1px solid rgba(255,255,255,0.04)", borderBottom: isLast ? "none" : undefined }}>
       <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: color, boxShadow: `0 0 6px ${color}` }} />
-      <span className="text-[13px] font-mono text-white/70">{m.name}</span>
+      {onOpen ? (
+        <button
+          onClick={() => onOpen(m.name)}
+          className="text-[13px] font-mono text-white/70 hover:text-cyan-300 hover:underline cursor-pointer"
+          style={{ background: "none", border: "none", padding: 0 }}
+          title={`Open ${m.name} in terminal`}
+        >
+          {m.name}
+        </button>
+      ) : (
+        <span className="text-[13px] font-mono text-white/70">{m.name}</span>
+      )}
       <span className="text-[10px] font-mono px-1.5 py-0.5 rounded" style={{ background: `${color}18`, color }}>
         {model}
       </span>
@@ -114,7 +129,7 @@ function TaskList({ tasks }: { tasks: Task[] }) {
   );
 }
 
-function TeamCard({ team, tasks: teamTasks }: { team: Team; tasks: Task[] }) {
+function TeamCard({ team, tasks: teamTasks, onOpenAgent }: { team: Team; tasks: Task[]; onOpenAgent?: (name: string) => void }) {
   const done = teamTasks.filter(t => t.status === "completed").length;
   const total = teamTasks.length;
   const lead = team.members.find(m => m.name === "team-lead" || m.agentType === "team-lead");
@@ -147,6 +162,9 @@ function TeamCard({ team, tasks: teamTasks }: { team: Team; tasks: Task[] }) {
             {team.createdAt && (
               <span className="text-[10px] text-white/20 font-mono">created {timeAgo(team.createdAt)}</span>
             )}
+            {team.lastActivity ? (
+              <span className="text-[10px] text-white/25 font-mono">active {timeAgo(team.lastActivity)}</span>
+            ) : null}
             {lead?.cwd && (
               <span className="text-[10px] text-white/15 font-mono truncate">{cwdShort(lead.cwd)}</span>
             )}
@@ -191,7 +209,7 @@ function TeamCard({ team, tasks: teamTasks }: { team: Team; tasks: Task[] }) {
       {teammates.length > 0 && (
         <div className="flex flex-col">
           {teammates.map((m, i) => (
-            <MemberRow key={m.name} m={m} isLast={i === teammates.length - 1} />
+            <MemberRow key={m.name} m={m} isLast={i === teammates.length - 1} onOpen={onOpenAgent} />
           ))}
         </div>
       )}
@@ -202,35 +220,88 @@ function TeamCard({ team, tasks: teamTasks }: { team: Team; tasks: Task[] }) {
   );
 }
 
-function StaleRow({ team, tasks, expanded, onToggle }: { team: Team; tasks: Task[]; expanded: boolean; onToggle: () => void }) {
+function StaleRow({ team, tasks, expanded, onToggle, deleteState, onAskDelete, onConfirmDelete, onCancelDelete }: {
+  team: Team;
+  tasks: Task[];
+  expanded: boolean;
+  onToggle: () => void;
+  deleteState: "idle" | "confirm" | "busy";
+  onAskDelete: () => void;
+  onConfirmDelete: () => void;
+  onCancelDelete: () => void;
+}) {
+  const lastSeen = team.lastActivity || team.createdAt;
   return (
     <div style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
-      <button
-        onClick={onToggle}
-        className="w-full px-5 py-2.5 flex items-center gap-3 font-mono min-w-0 cursor-pointer text-left"
-        style={{ background: expanded ? "rgba(255,255,255,0.03)" : "none", border: "none" }}
-        title={expanded ? "Collapse" : "Expand team structure"}
-      >
-        <span className="text-[9px] text-white/30 flex-shrink-0 w-3 transition-transform duration-150" style={{ transform: expanded ? "rotate(90deg)" : "none" }}>
-          ▶
-        </span>
-        <span className="text-[13px] text-white/60 uppercase tracking-[1px] flex-shrink-0" title={team.name}>{team.name}</span>
-        {team.description && (
-          <span className="text-[11px] text-white/40 truncate min-w-0" title={team.description}>{team.description}</span>
-        )}
-        <span className="text-[11px] text-white/40 ml-auto flex-shrink-0">
-          {team.members.length > 0 ? `${team.members.length} agent${team.members.length > 1 ? "s" : ""}` : ""}
-        </span>
-        {team.createdAt && (
-          <span className="text-[11px] text-white/35 flex-shrink-0 w-16 text-right">{timeAgo(team.createdAt)}</span>
-        )}
-      </button>
+      <div className="flex items-center min-w-0" style={{ background: expanded ? "rgba(255,255,255,0.03)" : "none" }}>
+        <button
+          onClick={onToggle}
+          className="flex-1 px-5 py-2.5 flex items-center gap-3 font-mono min-w-0 cursor-pointer text-left"
+          style={{ background: "none", border: "none" }}
+          title={expanded ? "Collapse" : "Expand team structure"}
+        >
+          <span className="text-[9px] text-white/30 flex-shrink-0 w-3 transition-transform duration-150" style={{ transform: expanded ? "rotate(90deg)" : "none" }}>
+            ▶
+          </span>
+          <span className="text-[13px] text-white/60 uppercase tracking-[1px] flex-shrink-0" title={team.name}>{team.name}</span>
+          {team.description && (
+            <span className="text-[11px] text-white/40 truncate min-w-0" title={team.description}>{team.description}</span>
+          )}
+          <span className="text-[11px] text-white/40 ml-auto flex-shrink-0">
+            {team.members.length > 0 ? `${team.members.length} agent${team.members.length > 1 ? "s" : ""}` : ""}
+          </span>
+          {lastSeen && (
+            <span className="text-[11px] text-white/35 flex-shrink-0 w-16 text-right" title={team.lastActivity ? "last activity" : "created"}>
+              {timeAgo(lastSeen)}
+            </span>
+          )}
+        </button>
+        <div className="pr-4 flex-shrink-0 flex items-center gap-2 font-mono">
+          {deleteState === "confirm" ? (
+            <>
+              <button
+                onClick={onConfirmDelete}
+                className="text-[10px] px-2 py-1 rounded-md cursor-pointer"
+                style={{ background: "rgba(248,113,113,0.15)", color: "#f87171", border: "1px solid rgba(248,113,113,0.3)" }}
+              >
+                move to trash
+              </button>
+              <button
+                onClick={onCancelDelete}
+                className="text-[10px] px-2 py-1 rounded-md cursor-pointer text-white/40"
+                style={{ background: "rgba(255,255,255,0.05)", border: "none" }}
+              >
+                cancel
+              </button>
+            </>
+          ) : deleteState === "busy" ? (
+            <span className="text-[10px] text-white/30">deleting…</span>
+          ) : (
+            <button
+              onClick={onAskDelete}
+              className="text-[11px] px-1.5 py-0.5 rounded cursor-pointer"
+              style={{ background: "none", border: "none", color: "rgba(255,255,255,0.25)" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "#f87171")}
+              onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.25)")}
+              title="Delete team (moves to trash)"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+      </div>
 
       {/* Expanded: team structure */}
       {expanded && (
         <div className="flex flex-col" style={{ background: "rgba(255,255,255,0.015)" }}>
           {team.description && (
             <div className="px-6 pt-3 pb-1 text-[12px] text-white/45 font-mono leading-relaxed">{team.description}</div>
+          )}
+          {(team.createdAt || team.lastActivity) && (
+            <div className="px-6 pb-2 flex items-center gap-3 font-mono">
+              {team.createdAt && <span className="text-[10px] text-white/25">created {timeAgo(team.createdAt)}</span>}
+              {team.lastActivity ? <span className="text-[10px] text-white/25">last activity {timeAgo(team.lastActivity)}</span> : null}
+            </div>
           )}
           {team.members.length > 0 ? (
             team.members.map((m, i) => (
@@ -248,7 +319,7 @@ function StaleRow({ team, tasks, expanded, onToggle }: { team: Team; tasks: Task
   );
 }
 
-export const TeamPanel = memo(function TeamPanel({ teams: teamsRaw }: { teams?: Team[] }) {
+export const TeamPanel = memo(function TeamPanel({ teams: teamsRaw, onOpenAgent }: { teams?: Team[]; onOpenAgent?: (name: string) => void }) {
   // Derive tasks from team data (tasks come embedded in team config)
   const teams = teamsRaw || [];
   const tasks: Record<string, Task[]> = {};
@@ -256,8 +327,20 @@ export const TeamPanel = memo(function TeamPanel({ teams: teamsRaw }: { teams?: 
     tasks[team.name] = (team as any).tasks || [];
   }
 
-  const active = teams.filter(t => t.alive !== false);
-  const stale = [...teams.filter(t => t.alive === false)].sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  // Locally hidden after a successful delete — WS teams broadcast catches up shortly after
+  const [removed, setRemoved] = useState<Set<string>>(new Set());
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [busyDelete, setBusyDelete] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  // Purge flow: idle → candidates listed (dry run) → busy
+  const [purgeCandidates, setPurgeCandidates] = useState<string[] | null>(null);
+  const [purgeBusy, setPurgeBusy] = useState(false);
+
+  const visible = teams.filter(t => !removed.has(t.name));
+  const active = visible.filter(t => t.alive !== false);
+  const stale = [...visible.filter(t => t.alive === false)].sort(
+    (a, b) => (b.lastActivity || b.createdAt || 0) - (a.lastActivity || a.createdAt || 0)
+  );
   // Stale list defaults open when there is nothing active to look at
   const [staleToggle, setStaleToggle] = useState<boolean | null>(null);
   const staleOpen = staleToggle ?? active.length === 0;
@@ -270,6 +353,54 @@ export const TeamPanel = memo(function TeamPanel({ teams: teamsRaw }: { teams?: 
       else next.add(name);
       return next;
     });
+  };
+
+  const deleteTeam = async (name: string) => {
+    setConfirmDelete(null);
+    setBusyDelete(name);
+    setError(null);
+    try {
+      const res = await fetch(apiUrl(`/api/teams/${encodeURIComponent(name)}`), { method: "DELETE" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `delete failed (${res.status})`);
+      setRemoved(prev => new Set(prev).add(name));
+    } catch (e) {
+      setError(`${name}: ${e instanceof Error ? e.message : "delete failed"}`);
+    } finally {
+      setBusyDelete(null);
+    }
+  };
+
+  const askPurge = async () => {
+    setError(null);
+    try {
+      const res = await fetch(apiUrl(`/api/teams/purge?olderThanDays=${PURGE_DAYS}&dryRun=1`), { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || `purge check failed (${res.status})`);
+      setPurgeCandidates(data.candidates || []);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "purge check failed");
+    }
+  };
+
+  const confirmPurge = async () => {
+    setPurgeBusy(true);
+    setError(null);
+    try {
+      const res = await fetch(apiUrl(`/api/teams/purge?olderThanDays=${PURGE_DAYS}`), { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || `purge failed (${res.status})`);
+      setRemoved(prev => {
+        const next = new Set(prev);
+        for (const n of data.purged || []) next.add(n);
+        return next;
+      });
+      setPurgeCandidates(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "purge failed");
+    } finally {
+      setPurgeBusy(false);
+    }
   };
 
   if (teams.length === 0) {
@@ -300,12 +431,20 @@ export const TeamPanel = memo(function TeamPanel({ teams: teamsRaw }: { teams?: 
           </>
         )}
         <span className="text-xs font-mono text-white/20">·</span>
-        <span className="text-xs font-mono text-white/30">{teams.reduce((n, t) => n + t.members.length, 0)} agents</span>
+        <span className="text-xs font-mono text-white/30">{visible.reduce((n, t) => n + t.members.length, 0)} agents</span>
       </div>
+
+      {error && (
+        <div className="rounded-xl px-4 py-3 text-[12px] font-mono flex items-center gap-3"
+          style={{ background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.25)", color: "#f87171" }}>
+          <span className="flex-1">{error}</span>
+          <button onClick={() => setError(null)} className="cursor-pointer text-white/40" style={{ background: "none", border: "none" }}>✕</button>
+        </div>
+      )}
 
       {/* Active teams: full cards */}
       {active.map(team => (
-        <TeamCard key={team.name} team={team} tasks={tasks[team.name] || []} />
+        <TeamCard key={team.name} team={team} tasks={tasks[team.name] || []} onOpenAgent={onOpenAgent} />
       ))}
 
       {/* Nothing running right now */}
@@ -324,19 +463,73 @@ export const TeamPanel = memo(function TeamPanel({ teams: teamsRaw }: { teams?: 
       {/* Stale teams: compact history, expandable per team */}
       {stale.length > 0 && (
         <div className="rounded-2xl overflow-hidden" style={{ background: "#12121c", border: "1px solid rgba(255,255,255,0.06)" }}>
-          <button
-            onClick={() => setStaleToggle(!staleOpen)}
-            className="w-full px-5 py-3.5 flex items-center gap-3 font-mono cursor-pointer text-left"
-            style={{ background: "rgba(255,255,255,0.02)", border: "none" }}
-          >
-            <span className="text-[11px] text-white/50 uppercase tracking-[2px]">Stale teams</span>
-            <span className="text-[11px] px-2 py-0.5 rounded-md text-white/40" style={{ background: "rgba(255,255,255,0.05)" }}>
-              {stale.length}
-            </span>
-            <span className="text-[10px] text-white/25 ml-auto transition-transform duration-200" style={{ transform: staleOpen ? "rotate(180deg)" : "none" }}>
-              ▼
-            </span>
-          </button>
+          <div className="flex items-center" style={{ background: "rgba(255,255,255,0.02)" }}>
+            <button
+              onClick={() => setStaleToggle(!staleOpen)}
+              className="flex-1 px-5 py-3.5 flex items-center gap-3 font-mono cursor-pointer text-left"
+              style={{ background: "none", border: "none" }}
+            >
+              <span className="text-[11px] text-white/50 uppercase tracking-[2px]">Stale teams</span>
+              <span className="text-[11px] px-2 py-0.5 rounded-md text-white/40" style={{ background: "rgba(255,255,255,0.05)" }}>
+                {stale.length}
+              </span>
+              <span className="text-[10px] text-white/25 ml-auto transition-transform duration-200" style={{ transform: staleOpen ? "rotate(180deg)" : "none" }}>
+                ▼
+              </span>
+            </button>
+            {purgeCandidates === null && (
+              <button
+                onClick={askPurge}
+                className="mr-4 flex-shrink-0 text-[10px] font-mono px-2.5 py-1 rounded-md cursor-pointer text-white/40"
+                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
+                title={`Move stale teams older than ${PURGE_DAYS} days to trash`}
+              >
+                purge &gt;{PURGE_DAYS}d
+              </button>
+            )}
+          </div>
+
+          {/* Purge confirm strip */}
+          {purgeCandidates !== null && (
+            <div className="px-5 py-3 flex items-center gap-3 font-mono flex-wrap"
+              style={{ background: "rgba(248,113,113,0.05)", borderTop: "1px solid rgba(248,113,113,0.15)" }}>
+              {purgeCandidates.length === 0 ? (
+                <>
+                  <span className="text-[11px] text-white/40">nothing older than {PURGE_DAYS}d to purge</span>
+                  <button onClick={() => setPurgeCandidates(null)} className="text-[10px] px-2 py-1 rounded-md cursor-pointer text-white/40 ml-auto"
+                    style={{ background: "rgba(255,255,255,0.05)", border: "none" }}>ok</button>
+                </>
+              ) : (
+                <>
+                  <span className="text-[11px]" style={{ color: "#f87171" }}>
+                    move {purgeCandidates.length} team{purgeCandidates.length > 1 ? "s" : ""} to trash:
+                  </span>
+                  <span className="text-[10px] text-white/40 truncate" style={{ maxWidth: "50%" }} title={purgeCandidates.join(", ")}>
+                    {purgeCandidates.join(", ")}
+                  </span>
+                  <span className="ml-auto flex items-center gap-2">
+                    <button
+                      onClick={confirmPurge}
+                      disabled={purgeBusy}
+                      className="text-[10px] px-2.5 py-1 rounded-md cursor-pointer"
+                      style={{ background: "rgba(248,113,113,0.15)", color: "#f87171", border: "1px solid rgba(248,113,113,0.3)", opacity: purgeBusy ? 0.5 : 1 }}
+                    >
+                      {purgeBusy ? "purging…" : `purge ${purgeCandidates.length}`}
+                    </button>
+                    <button
+                      onClick={() => setPurgeCandidates(null)}
+                      disabled={purgeBusy}
+                      className="text-[10px] px-2 py-1 rounded-md cursor-pointer text-white/40"
+                      style={{ background: "rgba(255,255,255,0.05)", border: "none" }}
+                    >
+                      cancel
+                    </button>
+                  </span>
+                </>
+              )}
+            </div>
+          )}
+
           {staleOpen && stale.map(team => (
             <StaleRow
               key={team.name}
@@ -344,6 +537,10 @@ export const TeamPanel = memo(function TeamPanel({ teams: teamsRaw }: { teams?: 
               tasks={tasks[team.name] || []}
               expanded={expandedStale.has(team.name)}
               onToggle={() => toggleStaleTeam(team.name)}
+              deleteState={busyDelete === team.name ? "busy" : confirmDelete === team.name ? "confirm" : "idle"}
+              onAskDelete={() => setConfirmDelete(team.name)}
+              onConfirmDelete={() => deleteTeam(team.name)}
+              onCancelDelete={() => setConfirmDelete(null)}
             />
           ))}
         </div>

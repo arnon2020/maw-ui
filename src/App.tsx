@@ -485,7 +485,10 @@ export function App() {
   if (route === "teams") {
     return (
       <Layout activeView="teams" {...layoutProps}>
-        <TeamPanel teams={teams} />
+        <TeamPanel teams={teams} onOpenAgent={(name) => {
+          const a = agents.find(x => x.name.toLowerCase() === name.toLowerCase());
+          if (a) onSelectAgent(a);
+        }} />
       </Layout>
     );
   }
