@@ -65,6 +65,55 @@ function cwdShort(cwd?: string): string {
   return parts.slice(-2).join("/");
 }
 
+function MemberRow({ m, isLast }: { m: TeamMember; isLast: boolean }) {
+  const color = COLOR_MAP[m.color || ""] || "#888";
+  const model = shortModel(m.model);
+  return (
+    <div className="px-6 py-3 flex items-center gap-3"
+      style={{ borderTop: "1px solid rgba(255,255,255,0.04)", borderBottom: isLast ? "none" : undefined }}>
+      <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: color, boxShadow: `0 0 6px ${color}` }} />
+      <span className="text-[13px] font-mono text-white/70">{m.name}</span>
+      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded" style={{ background: `${color}18`, color }}>
+        {model}
+      </span>
+      {m.agentType && m.agentType !== "general-purpose" && m.agentType !== "team-lead" && (
+        <span className="text-[10px] font-mono text-white/20">{m.agentType}</span>
+      )}
+      {m.backendType && (
+        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded ml-auto" style={{
+          background: m.backendType === "tmux" ? "rgba(34,211,238,0.08)" : "rgba(255,255,255,0.04)",
+          color: m.backendType === "tmux" ? "#22d3ee" : "#555"
+        }}>
+          {m.backendType === "in-process" ? "in-proc" : m.backendType}
+        </span>
+      )}
+    </div>
+  );
+}
+
+function TaskList({ tasks }: { tasks: Task[] }) {
+  return (
+    <div className="px-6 py-4 flex flex-col gap-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.01)" }}>
+      <div className="text-[10px] font-mono text-white/25 uppercase tracking-[2px] mb-1">Tasks</div>
+      {tasks.map(t => (
+        <div key={t.id} className="flex items-center gap-3 text-[12px] font-mono">
+          <span className="w-4 text-center flex-shrink-0">
+            {t.status === "completed" ? "✅" : t.status === "in_progress" ? "🔄" : "⬜"}
+          </span>
+          <span className={`flex-1 truncate ${t.status === "completed" ? "text-white/25 line-through" : "text-white/60"}`}>
+            {t.subject}
+          </span>
+          {t.owner && (
+            <span className="text-[10px] px-1.5 py-0.5 rounded flex-shrink-0" style={{ background: "rgba(255,255,255,0.04)", color: "#666" }}>
+              @{t.owner}
+            </span>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function TeamCard({ team, tasks: teamTasks }: { team: Team; tasks: Task[] }) {
   const done = teamTasks.filter(t => t.status === "completed").length;
   const total = teamTasks.length;
@@ -141,73 +190,59 @@ function TeamCard({ team, tasks: teamTasks }: { team: Team; tasks: Task[] }) {
       {/* Teammates */}
       {teammates.length > 0 && (
         <div className="flex flex-col">
-          {teammates.map((m, i) => {
-            const color = COLOR_MAP[m.color || ""] || "#888";
-            const model = shortModel(m.model);
-            const isLast = i === teammates.length - 1;
-            return (
-              <div key={m.name} className="px-6 py-3 flex items-center gap-3"
-                style={{ borderTop: "1px solid rgba(255,255,255,0.04)", borderBottom: isLast ? "none" : undefined }}>
-                <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: color, boxShadow: `0 0 6px ${color}` }} />
-                <span className="text-[13px] font-mono text-white/70">{m.name}</span>
-                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded" style={{ background: `${color}18`, color }}>
-                  {model}
-                </span>
-                {m.agentType && m.agentType !== "general-purpose" && m.agentType !== "team-lead" && (
-                  <span className="text-[10px] font-mono text-white/20">{m.agentType}</span>
-                )}
-                {m.backendType && (
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded ml-auto" style={{
-                    background: m.backendType === "tmux" ? "rgba(34,211,238,0.08)" : "rgba(255,255,255,0.04)",
-                    color: m.backendType === "tmux" ? "#22d3ee" : "#555"
-                  }}>
-                    {m.backendType === "in-process" ? "in-proc" : m.backendType}
-                  </span>
-                )}
-              </div>
-            );
-          })}
+          {teammates.map((m, i) => (
+            <MemberRow key={m.name} m={m} isLast={i === teammates.length - 1} />
+          ))}
         </div>
       )}
 
       {/* Tasks */}
-      {teamTasks.length > 0 && (
-        <div className="px-6 py-4 flex flex-col gap-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.01)" }}>
-          <div className="text-[10px] font-mono text-white/25 uppercase tracking-[2px] mb-1">Tasks</div>
-          {teamTasks.map(t => (
-            <div key={t.id} className="flex items-center gap-3 text-[12px] font-mono">
-              <span className="w-4 text-center flex-shrink-0">
-                {t.status === "completed" ? "✅" : t.status === "in_progress" ? "🔄" : "⬜"}
-              </span>
-              <span className={`flex-1 truncate ${t.status === "completed" ? "text-white/25 line-through" : "text-white/60"}`}>
-                {t.subject}
-              </span>
-              {t.owner && (
-                <span className="text-[10px] px-1.5 py-0.5 rounded flex-shrink-0" style={{ background: "rgba(255,255,255,0.04)", color: "#666" }}>
-                  @{t.owner}
-                </span>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+      {teamTasks.length > 0 && <TaskList tasks={teamTasks} />}
     </div>
   );
 }
 
-function StaleRow({ team }: { team: Team }) {
+function StaleRow({ team, tasks, expanded, onToggle }: { team: Team; tasks: Task[]; expanded: boolean; onToggle: () => void }) {
   return (
-    <div className="px-5 py-2.5 flex items-center gap-3 font-mono min-w-0" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
-      <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "rgba(255,255,255,0.18)" }} />
-      <span className="text-[13px] text-white/60 uppercase tracking-[1px] flex-shrink-0" title={team.name}>{team.name}</span>
-      {team.description && (
-        <span className="text-[11px] text-white/40 truncate min-w-0" title={team.description}>{team.description}</span>
-      )}
-      <span className="text-[11px] text-white/40 ml-auto flex-shrink-0">
-        {team.members.length > 0 ? `${team.members.length} agent${team.members.length > 1 ? "s" : ""}` : ""}
-      </span>
-      {team.createdAt && (
-        <span className="text-[11px] text-white/35 flex-shrink-0 w-16 text-right">{timeAgo(team.createdAt)}</span>
+    <div style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+      <button
+        onClick={onToggle}
+        className="w-full px-5 py-2.5 flex items-center gap-3 font-mono min-w-0 cursor-pointer text-left"
+        style={{ background: expanded ? "rgba(255,255,255,0.03)" : "none", border: "none" }}
+        title={expanded ? "Collapse" : "Expand team structure"}
+      >
+        <span className="text-[9px] text-white/30 flex-shrink-0 w-3 transition-transform duration-150" style={{ transform: expanded ? "rotate(90deg)" : "none" }}>
+          ▶
+        </span>
+        <span className="text-[13px] text-white/60 uppercase tracking-[1px] flex-shrink-0" title={team.name}>{team.name}</span>
+        {team.description && (
+          <span className="text-[11px] text-white/40 truncate min-w-0" title={team.description}>{team.description}</span>
+        )}
+        <span className="text-[11px] text-white/40 ml-auto flex-shrink-0">
+          {team.members.length > 0 ? `${team.members.length} agent${team.members.length > 1 ? "s" : ""}` : ""}
+        </span>
+        {team.createdAt && (
+          <span className="text-[11px] text-white/35 flex-shrink-0 w-16 text-right">{timeAgo(team.createdAt)}</span>
+        )}
+      </button>
+
+      {/* Expanded: team structure */}
+      {expanded && (
+        <div className="flex flex-col" style={{ background: "rgba(255,255,255,0.015)" }}>
+          {team.description && (
+            <div className="px-6 pt-3 pb-1 text-[12px] text-white/45 font-mono leading-relaxed">{team.description}</div>
+          )}
+          {team.members.length > 0 ? (
+            team.members.map((m, i) => (
+              <MemberRow key={m.name} m={m} isLast={i === team.members.length - 1 && tasks.length === 0} />
+            ))
+          ) : (
+            <div className="px-6 py-3 text-[11px] text-white/30 font-mono" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+              no member data recorded for this team
+            </div>
+          )}
+          {tasks.length > 0 && <TaskList tasks={tasks} />}
+        </div>
       )}
     </div>
   );
@@ -226,6 +261,16 @@ export const TeamPanel = memo(function TeamPanel({ teams: teamsRaw }: { teams?: 
   // Stale list defaults open when there is nothing active to look at
   const [staleToggle, setStaleToggle] = useState<boolean | null>(null);
   const staleOpen = staleToggle ?? active.length === 0;
+  const [expandedStale, setExpandedStale] = useState<Set<string>>(new Set());
+
+  const toggleStaleTeam = (name: string) => {
+    setExpandedStale(prev => {
+      const next = new Set(prev);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
+  };
 
   if (teams.length === 0) {
     return (
@@ -276,7 +321,7 @@ export const TeamPanel = memo(function TeamPanel({ teams: teamsRaw }: { teams?: 
         </div>
       )}
 
-      {/* Stale teams: compact history */}
+      {/* Stale teams: compact history, expandable per team */}
       {stale.length > 0 && (
         <div className="rounded-2xl overflow-hidden" style={{ background: "#12121c", border: "1px solid rgba(255,255,255,0.06)" }}>
           <button
@@ -293,7 +338,13 @@ export const TeamPanel = memo(function TeamPanel({ teams: teamsRaw }: { teams?: 
             </span>
           </button>
           {staleOpen && stale.map(team => (
-            <StaleRow key={team.name} team={team} />
+            <StaleRow
+              key={team.name}
+              team={team}
+              tasks={tasks[team.name] || []}
+              expanded={expandedStale.has(team.name)}
+              onToggle={() => toggleStaleTeam(team.name)}
+            />
           ))}
         </div>
       )}
