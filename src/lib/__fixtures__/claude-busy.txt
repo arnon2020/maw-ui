@@ -1,0 +1,40 @@
+     [2m[38;5;231m  6 [0m[38;5;231m  on sage T4253 next-mainline recommendation.[39m
+     [2m[38;5;231m  7 [0m[38;5;231m- Date: 2026-07-12[39m
+     [2m[38;5;231m  8 [0m[38;5;231m- Lab dir: `ψ/lab/t4254-job8-crm-account-merge-hard-nondev/`[39m
+     [2m[38;5;231m  9 [0m
+     [2m[38;5;231m 10 [0m[38;5;231m## Final labels[39m
+     [38;5;246m… +217 lines [39m
+
+[38;5;231m●[39m Now the sage review brief:
+
+[38;5;114m●[39m [1mWrite[0m(]8;id=4j1sw8;file:///home/user/ghq/github.com/arnon2020/tars-oracle/%CF%88/lab/t4254-job8-crm-account-merge-hard-nondev/SAGE-REVIEW-BRIEF.md\ψ/lab/t4254-job8-crm-account-merge-hard-nondev/SAGE-REVIEW-BRIEF.md]8;;\)
+[38;5;246m  ⎿  [39mWrote [1m48[0m lines to [1mψ/lab/t4254-job8-crm-account-merge-hard-nondev/SAGE-REVIEW-BRIEF.md[0m
+     [2m[38;5;231m  1 [0m[38;5;231m# T4254 — Sage Review Brief (JOB8 CRM duplicate / account-merge hard nondev)[39m
+     [2m[38;5;231m  2 [0m
+     [2m[38;5;231m  3 [0m[38;5;231m- board-task: T4254[39m
+     [2m[38;5;231m  4 [0m[38;5;231m- from: tars (Opus 4.8), coordinator[39m
+     [2m[38;5;231m  5 [0m[38;5;231m- review target: `ψ/lab/t4254-job8-crm-account-merge-hard-nondev/` (apparatus) + the terminal report[39m
+     [2m[38;5;231m  6 [0m[38;5;231m  `ψ/outbox/2026-07-12_T4254_job8-crm-account-merge-hard-nondev_tars.md`.[39m
+     [2m[38;5;231m  7 [0m
+     [2m[38;5;231m  8 [0m[38;5;231m## What this run claims (and does not)[39m
+     [2m[38;5;231m  9 [0m
+     [2m[38;5;231m 10 [0m[38;5;231mClaims: (1) the worker/judge loop **transfers** to a new nondev shape — CRM entity resolution[39m
+     [38;5;246m… +38 lines [39m
+
+[38;5;231m●[39m Closeout and sage brief are drafted (durable on disk) with the cross-family section marked pending. Waiting for the codex cross-family judge ([38;5;153mbvzf6jxdf[39m) to complete — then I'll verify its verdict + hermeticity from the JSON log
+  and patch the cross-family sections. Yielding until it notifies.
+
+● Ran [1m2[0m stop hooks
+  [38;5;246m⎿  [39mStop hook error: [/home/user/ghq/github.com/arnon2020/tars-oracle/ψ/scripts/atlas-codex-stop-supervisor.sh]: SUPERVISOR-REQUEST SENT: atlas-codex has been asked to inspect this stop via `maw tmux peek 02-tars`.
+  Do not choose the next direction yourself. Wait for REVIEW PASS / REVIEW ADJUST / REVIEW STOP.
+  If atlas-codex does not answer, stop again; the one-shot bypass will allow the turn to end.
+
+
+[38;5;231m●[39m Continuing authorized T4254 work — codex cross-family judge running in background, will re-invoke me on completion. Yielding.
+
+[38;5;246m✻[39m [38;5;246mCogitated for 27m 13s · 1 shell still running[39m
+
+[38;5;244m───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+[39m❯ 
+[38;5;244m───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+[39m  [38;5;211m⏵⏵ bypass permissions on[38;5;246m · [38;5;44m1 shell[38;5;246m · ← for agents · ↓ to manage[39m

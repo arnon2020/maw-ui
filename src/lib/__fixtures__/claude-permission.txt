@@ -1,0 +1,30 @@
+[38;5;174m│[39m                       [38;5;174m▝▜[48;5;16m█████[49m▛▘[39m                      [38;5;174m│
+│[39m                       [38;5;174m  ▘▘ ▝▝  [39m                      [38;5;174m│
+│[39m                                                      [38;5;174m│
+│[39m            [38;5;246mSonnet 4.6 with medium effort[39m             [38;5;174m│
+│[39m                      [38;5;246mClaude Max[39m                      [38;5;174m│
+│[39m                    [38;5;246m/tmp/samp-plan[39m                    [38;5;174m│
+│[39m                                                      [38;5;174m│
+╰──────────────────────────────────────────────────────╯
+
+[39m   [1m[38;5;174mOpus 4.8 is now available![0m[38;5;246m · /model to switch[39m
+
+[38;5;239m[48;5;237m❯ [38;5;231mRun exactly this bash command: touch [39m
+  [38;5;231m/tmp/samp-plan/x.txt[39m
+
+[38;5;246m[49m●[39m Running [1m1[0m shell command…
+[38;5;246m  ⎿  $ touch /tmp/samp-plan/x.txt[39m
+
+[38;5;153m────────────────────────────────────────────────────────
+[39m [1m[38;5;153mBash command[0m
+
+   touch /tmp/samp-plan/x.txt
+   [38;5;246mCreate x.txt file[39m
+
+ Do you want to proceed?
+ [38;5;153m❯[39m [38;5;246m1. [38;5;153mYes[39m
+  [38;5;246m2.[39mYes, and always allow access to [1msamp-plan[0m/ from this
+    project
+   [38;5;246m3. [39mNo
+
+ [38;5;246mEsc to cancel · Tab to amend · ctrl+e to explain[39m

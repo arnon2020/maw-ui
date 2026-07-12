@@ -37,7 +37,10 @@ function hashKey(s: string): string {
 }
 
 const BORDER_RE = /^[\s─━═╌┄│┃╭╮╰╯┌┐└┘]+$/;
-const FOOTER_RE = /·|^(enter|esc|tab|ctrl\+|press )/i;
+// Footer / hint lines under a dialog — never part of an option label.
+// "shift+tab to approve…" sits under Claude's plan-mode option 4, so `shift`
+// must be here or it gets absorbed into that option's text.
+const FOOTER_RE = /·|^(enter|esc|tab|shift|ctrl[-+]|press |↓|→|←)/i;
 const BUSY_RE = /esc to interrupt/i;
 const OPTION_RE = /^\s*(❯|›)?\s*(\d{1,2})[.)]\s*(\S.*)$/;
 const MAX_SCAN_LINES = 20;
@@ -103,13 +106,17 @@ export function detectAskFromPane(rawCapture: string): DetectedAsk | null {
       ctxLines.unshift(t);
     }
     const labels = options.map((o) => o.label).join(" | ");
+    const ctx = ctxLines.join(" ").toLowerCase();
     const blob = `${question} ${labels}`.toLowerCase();
     let type: AskType = "input";
     if (
       /always allow|don't ask again|allow access|trust this folder|yes, and/i.test(labels) ||
       /do you want to (proceed|run|make|create|allow)|permission/.test(blob)
     ) type = "permission";
-    if (/plan|auto-accept/.test(blob)) type = "plan";
+    // Plan-mode approval — key off Claude's SPECIFIC plan-mode wording, never a
+    // bare "plan" token: a command like `rm /tmp/plan.txt` in a permission
+    // dialog's context must stay a permission, not become a plan approval.
+    if (/would you like to proceed|ready to execute|written up a plan|keep planning|auto-accept|auto mode|refine with ultraplan/.test(`${blob} ${ctx}`)) type = "plan";
     return {
       type,
       question: question || "Choose an option",

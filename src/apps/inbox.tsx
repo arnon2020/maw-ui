@@ -28,8 +28,10 @@ const TYPE_STYLE: Record<string, { bg: string; text: string; label: string }> = 
 
 /** Color an option button by what it does, not where it sits */
 function optionStyle(label: string): { background: string; color: string } {
-  if (/^no\b|reject|cancel|keep planning|exit/i.test(label)) return { background: "rgba(239,68,68,0.12)", color: "#ef4444" };
-  if (/always|don't ask|auto-accept/i.test(label)) return { background: "rgba(251,191,36,0.12)", color: "#fbbf24" };
+  if (/^no\b|reject|cancel|keep planning|refine|tell claude|exit/i.test(label)) return { background: "rgba(239,68,68,0.12)", color: "#ef4444" };
+  // Amber = "yes, but broadens future access" — always-allow, auto-accept edits,
+  // plan auto mode. Distinct from the plain green "yes, this once".
+  if (/always|don't ask|auto-accept|auto mode|manually approve/i.test(label)) return { background: "rgba(251,191,36,0.12)", color: "#fbbf24" };
   return { background: "rgba(34,197,94,0.15)", color: "#22c55e" };
 }
 
