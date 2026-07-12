@@ -4,7 +4,7 @@ import type { Team } from "../components/TeamPanel";
 import { apiUrl } from "../lib/api";
 import { stripAnsi } from "../lib/ansi";
 import { agentSortKey } from "../lib/constants";
-import { playWakeSound } from "../lib/sounds";
+import { playWakeSound, playNotificationSound } from "../lib/sounds";
 import { useFleetStore } from "../lib/store";
 import { useFeedStatusStore } from "../lib/feedStatusStore";
 import { usePreviewStore, usePaneRawStore } from "../lib/previewStore";
@@ -181,7 +181,9 @@ export function useSessions() {
           }
         }
         const displayMessage = stopMsg && stopMsg.length > event.message.length ? stopMsg : event.message;
+        const hadPending = useFleetStore.getState().asks.some((a) => a.oracle === oracleName && !a.dismissed);
         addAsk({ oracle: oracleName, target: agent?.target || "", type: askType, message: displayMessage, source: "notification" });
+        if (!hadPending) playNotificationSound();
         lastAskAdded.current[oracleName] = Date.now();
         delete lastStopMessage.current[oracleName];
       }
@@ -194,6 +196,7 @@ export function useSessions() {
   // from the pane content that already streams to subscribed clients.
   const promptMiss = useRef<Record<string, number>>({});   // debounce prompt-gone
   const paneSeen = useRef<Set<string>>(new Set());          // first capture = authoritative
+  const lastAskSound = useRef<Record<string, number>>({});  // per-target sound cooldown
 
   const scanPaneForAsk = useCallback((target: string, raw: string) => {
     const { addAsk, resolveAskByTarget, asks } = useFleetStore.getState();
@@ -205,6 +208,13 @@ export function useSessions() {
     if (det) {
       promptMiss.current[target] = 0;
       const agent = agentsRef.current.find((a) => a.target === target);
+      // Chime once per new prompt (30s per-target cooldown absorbs redraw
+      // flicker; skip the initial backlog when the page just subscribed)
+      const alreadyPending = asks.some((a) => a.target === target && !a.dismissed && a.promptKey === det.promptKey);
+      if (!alreadyPending && !firstLook && Date.now() - (lastAskSound.current[target] || 0) > 30_000) {
+        lastAskSound.current[target] = Date.now();
+        playNotificationSound();
+      }
       addAsk({
         oracle: agent?.name || target,
         target,

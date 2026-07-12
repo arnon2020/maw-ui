@@ -47,6 +47,12 @@ export function AppShell({ view, fullHeight, children }: AppShellProps) {
   const { connected, reconnecting, send } = useWebSocket(handleMessage);
   const askCount = useFleetStore((s) => s.asks.filter((a) => !a.dismissed).length);
 
+  // Pending-ask badge in the tab title — visible from any other tab
+  useEffect(() => {
+    const base = document.title.replace(/^\(\d+\) /, "");
+    document.title = askCount > 0 ? `(${askCount}) ${base}` : base;
+  }, [askCount]);
+
   const onSelectAgent = useCallback((agent: AgentState) => {
     send({ type: "select", target: agent.target });
     // Open terminal in new tab for standalone apps
