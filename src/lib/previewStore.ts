@@ -30,3 +30,18 @@ export const usePreviewStore = create<PreviewStore>()((set) => ({
 export function useAgentPreview(target: string): string {
   return usePreviewStore((s) => s.previews[target] || "");
 }
+
+interface PaneRawStore {
+  /** target → latest raw (ANSI) pane capture from the previews stream.
+   *  Read at answer time by the Inbox to verify a prompt hasn't changed
+   *  between render and click (TOCTOU guard). */
+  raw: Record<string, string>;
+  setRaw: (target: string, text: string) => void;
+}
+
+export const usePaneRawStore = create<PaneRawStore>()((set) => ({
+  raw: {},
+  setRaw: (target, text) => set((s) => (
+    s.raw[target] === text ? s : { raw: { ...s.raw, [target]: text } }
+  )),
+}));

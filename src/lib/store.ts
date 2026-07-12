@@ -57,6 +57,10 @@ interface FleetStore {
   asks: AskItem[];
   addAsk: (ask: Omit<AskItem, "id" | "ts">) => void;
   dismissAsk: (id: string) => void;
+  undismissAsk: (id: string) => void;
+  answerAsk: (id: string, reply: string) => void;
+  /** Prompt no longer on screen for this pane → close its pending pane-asks */
+  resolveAskByTarget: (target: string) => void;
   dismissByOracle: (oracle: string) => void;
 
   // Board state (non-persisted)
@@ -175,6 +179,9 @@ function persistAsks(asks: AskItem[]) {
   }, 1000);
 }
 
+/** How long after answering before "same prompt still on screen" is suspicious */
+const ANSWER_STALE_MS = 4000;
+
 export const useFleetStore = create<FleetStore>()(
   persist(
     (set, get) => ({
@@ -241,15 +248,39 @@ export const useFleetStore = create<FleetStore>()(
       // Inbox asks
       asks: [],
       addAsk: (ask) => set((s) => {
-        const existing = s.asks.find((a) => a.oracle === ask.oracle && !a.dismissed);
+        const existing = s.asks.find((a) =>
+          (ask.target ? a.target === ask.target : a.oracle === ask.oracle) && !a.dismissed
+        );
         if (existing) {
-          // Update message if new one is longer (Stop event has the real question)
-          if (ask.message.length > existing.message.length) {
-            const next = s.asks.map((a) => a.id === existing.id ? { ...a, message: ask.message, type: ask.type } : a);
-            persistAsks(next);
-            return { asks: next };
+          const sameKey = !!ask.promptKey && existing.promptKey === ask.promptKey;
+          if (sameKey) {
+            // Same prompt still on screen. If it was answered a while ago and
+            // still shows, the reply likely didn't land — surface that.
+            if (existing.answeredWith && !existing.answerStale
+                && Date.now() - (existing.answeredAt || 0) > ANSWER_STALE_MS) {
+              const next = s.asks.map((a) => a.id === existing.id ? { ...a, answerStale: true } : a);
+              persistAsks(next);
+              return { asks: next };
+            }
+            return s;
           }
-          return s;
+          // Notification-source updates never overwrite richer pane detection
+          if (ask.source !== "pane" && existing.source === "pane") return s;
+          // Legacy notification behavior: upgrade message only when longer
+          if (ask.source !== "pane" && existing.source !== "pane") {
+            if (ask.message.length > existing.message.length) {
+              const next = s.asks.map((a) => a.id === existing.id ? { ...a, message: ask.message, type: ask.type } : a);
+              persistAsks(next);
+              return { asks: next };
+            }
+            return s;
+          }
+          // Pane prompt changed → replace content in place, reset answer state
+          const next = s.asks.map((a) => a.id === existing.id
+            ? { ...a, ...ask, id: a.id, ts: Date.now(), answeredWith: undefined, answeredAt: undefined, answerStale: undefined }
+            : a);
+          persistAsks(next);
+          return { asks: next };
         }
         const item: AskItem = { ...ask, id: `${ask.oracle}-${Date.now()}`, ts: Date.now() };
         const next = [item, ...s.asks].slice(0, 50);
@@ -257,14 +288,35 @@ export const useFleetStore = create<FleetStore>()(
         return { asks: next };
       }),
       dismissAsk: (id) => set((s) => {
-        const next = s.asks.map((a) => (a.id === id ? { ...a, dismissed: true } : a));
+        const next = s.asks.map((a) => (a.id === id ? { ...a, dismissed: true, resolution: a.resolution || "dismissed" as const } : a));
+        persistAsks(next);
+        return { asks: next };
+      }),
+      undismissAsk: (id) => set((s) => {
+        const next = s.asks.map((a) => (a.id === id ? { ...a, dismissed: false, resolution: undefined } : a));
+        persistAsks(next);
+        return { asks: next };
+      }),
+      answerAsk: (id, reply) => set((s) => {
+        const next = s.asks.map((a) => (a.id === id ? { ...a, answeredWith: reply, answeredAt: Date.now(), answerStale: false } : a));
+        persistAsks(next);
+        return { asks: next };
+      }),
+      resolveAskByTarget: (target) => set((s) => {
+        const hasPending = s.asks.some((a) => a.target === target && a.source === "pane" && !a.dismissed);
+        if (!hasPending) return s;
+        const next = s.asks.map((a) => (a.target === target && a.source === "pane" && !a.dismissed
+          ? { ...a, dismissed: true, resolution: (a.answeredWith ? "answered" : "resolved") as AskItem["resolution"] }
+          : a));
         persistAsks(next);
         return { asks: next };
       }),
       dismissByOracle: (oracle) => set((s) => {
         const hasPending = s.asks.some((a) => a.oracle === oracle && !a.dismissed);
         if (!hasPending) return s;
-        const next = s.asks.map((a) => (a.oracle === oracle && !a.dismissed ? { ...a, dismissed: true } : a));
+        const next = s.asks.map((a) => (a.oracle === oracle && !a.dismissed
+          ? { ...a, dismissed: true, resolution: (a.answeredWith ? "answered" : "resolved") as AskItem["resolution"] }
+          : a));
         persistAsks(next);
         return { asks: next };
       }),

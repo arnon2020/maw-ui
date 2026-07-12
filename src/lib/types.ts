@@ -33,7 +33,21 @@ export interface AgentEvent {
   detail: string;
 }
 
-export type AskType = "input" | "attention" | "plan" | "report" | "meeting" | "handoff";
+export type AskType = "input" | "attention" | "plan" | "permission" | "report" | "meeting" | "handoff";
+
+/** Where an ask was detected from */
+export type AskSource = "pane" | "notification";
+
+/** How a pending ask left the inbox */
+export type AskResolution = "answered" | "resolved" | "dismissed";
+
+/** One selectable row of a detected TUI dialog */
+export interface AskOption {
+  index: number;     // 1-based option number as rendered in the dialog
+  label: string;
+  selected: boolean; // carries the ❯ highlight marker
+  key?: string;      // literal key for respondMode "text" (e.g. "y"/"n")
+}
 
 export interface AskItem {
   id: string;
@@ -43,6 +57,19 @@ export interface AskItem {
   message: string;
   ts: number;
   dismissed?: boolean;
+  /** Dialog header/body above the question (e.g. the command to approve) */
+  context?: string;
+  options?: AskOption[];
+  /** Stable prompt hash — dedupe + staleness check before answering */
+  promptKey?: string;
+  respondMode?: "keys" | "text";
+  source?: AskSource;
+  /** Reply/option label sent from the Inbox */
+  answeredWith?: string;
+  answeredAt?: number;
+  /** Same prompt still on screen well after answering — reply may not have landed */
+  answerStale?: boolean;
+  resolution?: AskResolution;
 }
 
 // Board types

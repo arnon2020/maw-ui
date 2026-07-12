@@ -7,7 +7,8 @@ import { agentSortKey } from "../lib/constants";
 import { playWakeSound } from "../lib/sounds";
 import { useFleetStore } from "../lib/store";
 import { useFeedStatusStore } from "../lib/feedStatusStore";
-import { usePreviewStore } from "../lib/previewStore";
+import { usePreviewStore, usePaneRawStore } from "../lib/previewStore";
+import { detectAskFromPane } from "../lib/askDetect";
 import { activeOracles, type FeedEvent, type FeedEventType } from "../lib/feed";
 import type { AskType } from "../lib/types";
 
@@ -164,7 +165,8 @@ export function useSessions() {
     if (event.event === "Notification") {
       const msg = event.message.toLowerCase();
       let askType: AskType | null = null;
-      if (msg.includes("waiting for your input") || msg.includes("waiting for input")) askType = "input";
+      if (msg.includes("permission")) askType = "permission";
+      else if (msg.includes("waiting for your input") || msg.includes("waiting for input")) askType = "input";
       else if (msg.includes("needs your attention") || msg.includes("attention")) askType = "attention";
       else if (msg.includes("needs your approval") || msg.includes("approval")) askType = "plan";
       if (askType) {
@@ -179,12 +181,59 @@ export function useSessions() {
           }
         }
         const displayMessage = stopMsg && stopMsg.length > event.message.length ? stopMsg : event.message;
-        addAsk({ oracle: oracleName, target: agent?.target || "", type: askType, message: displayMessage });
+        addAsk({ oracle: oracleName, target: agent?.target || "", type: askType, message: displayMessage, source: "notification" });
         lastAskAdded.current[oracleName] = Date.now();
         delete lastStopMessage.current[oracleName];
       }
     }
   }, [resolveAgentFromFeed]);
+
+  // --- Ask detection from raw pane captures (previews stream) ---
+  // This deployment has no Claude Code hooks wired, so blocked prompts
+  // (permission dialogs, plan approvals, questions) are detected straight
+  // from the pane content that already streams to subscribed clients.
+  const promptMiss = useRef<Record<string, number>>({});   // debounce prompt-gone
+  const paneSeen = useRef<Set<string>>(new Set());          // first capture = authoritative
+
+  const scanPaneForAsk = useCallback((target: string, raw: string) => {
+    const { addAsk, resolveAskByTarget, asks } = useFleetStore.getState();
+    usePaneRawStore.getState().setRaw(target, raw); // freshest capture, read at answer time
+    const det = detectAskFromPane(raw);
+    const firstLook = !paneSeen.current.has(target);
+    paneSeen.current.add(target);
+
+    if (det) {
+      promptMiss.current[target] = 0;
+      const agent = agentsRef.current.find((a) => a.target === target);
+      addAsk({
+        oracle: agent?.name || target,
+        target,
+        type: det.type,
+        message: det.question,
+        context: det.context,
+        options: det.options,
+        promptKey: det.promptKey,
+        respondMode: det.respondMode,
+        source: "pane",
+      });
+      return;
+    }
+
+    const pending = asks.some((a) => a.target === target && a.source === "pane" && !a.dismissed);
+    if (!pending) {
+      promptMiss.current[target] = 0;
+      return;
+    }
+    // Captures arrive only on content change, so a single prompt-free frame
+    // can be a transient redraw. Two consecutive misses (or the first-ever
+    // capture after subscribing — stale persisted ask) confirm it's gone.
+    const miss = (promptMiss.current[target] || 0) + 1;
+    promptMiss.current[target] = miss;
+    if (firstLook || miss >= 2) {
+      resolveAskByTarget(target);
+      promptMiss.current[target] = 0;
+    }
+  }, []);
 
   const handleMessage = useCallback((data: any) => {
     if (data.type === "sessions") {
@@ -233,6 +282,7 @@ export function useSessions() {
       const rawPreviews: Record<string, string> = data.data;
       const cleaned: Record<string, string> = {};
       for (const [target, raw] of Object.entries(rawPreviews)) {
+        scanPaneForAsk(target, raw);
         const text = stripAnsi(raw);
         const lines = text.split("\n").filter((l: string) => l.trim());
         const compactingLine = lines.find((l: string) => l.toLowerCase().includes("compacting"));
