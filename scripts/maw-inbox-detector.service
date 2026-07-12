@@ -1,0 +1,15 @@
+[Unit]
+Description=maw inbox ask detector (headless pane->asks)
+After=maw-serve.service
+Wants=maw-serve.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/bun /home/user/ghq/github.com/Soul-Brews-Studio/maw-ui/scripts/inbox-detector.ts
+Restart=always
+RestartSec=5
+StandardOutput=append:/tmp/maw-inbox-detector.log
+StandardError=append:/tmp/maw-inbox-detector.log
+
+[Install]
+WantedBy=default.target

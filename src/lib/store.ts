@@ -248,6 +248,18 @@ export const useFleetStore = create<FleetStore>()(
       // Inbox asks
       asks: [],
       addAsk: (ask) => set((s) => {
+        // Pane asks get a DETERMINISTIC id (target + promptKey) so the headless
+        // sidecar detector and this client agree on identity — same prompt =
+        // same id = no duplicate card. Notification asks keep a timestamp id.
+        const stableId = ask.source === "pane" && ask.promptKey
+          ? `pane:${ask.target}:${ask.promptKey}`
+          : null;
+        if (stableId) {
+          const prior = s.asks.find((a) => a.id === stableId);
+          // Same prompt the user already dismissed — don't rebound it while the
+          // dialog is still on screen.
+          if (prior?.dismissed) return s;
+        }
         const existing = s.asks.find((a) =>
           (ask.target ? a.target === ask.target : a.oracle === ask.oracle) && !a.dismissed
         );
@@ -282,7 +294,7 @@ export const useFleetStore = create<FleetStore>()(
           persistAsks(next);
           return { asks: next };
         }
-        const item: AskItem = { ...ask, id: `${ask.oracle}-${Date.now()}`, ts: Date.now() };
+        const item: AskItem = { ...ask, id: stableId || `${ask.oracle}-${Date.now()}`, ts: Date.now() };
         const next = [item, ...s.asks].slice(0, 50);
         persistAsks(next);
         return { asks: next };
