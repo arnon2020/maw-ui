@@ -42,6 +42,19 @@ describe("detectAskFromPane — real captures", () => {
     expect(d!.options[3].label).toBe("Tell Claude what to change");
   });
 
+  test("codex exec approval (› marker, shortcut-key labels) → permission, keys", () => {
+    const d = detectAskFromPane(fixture("codex-approval.txt"));
+    expect(d).not.toBeNull();
+    // "Would you like to run…" must NOT be misread as plan-mode ("…proceed?")
+    expect(d!.type).toBe("permission");
+    expect(d!.question).toBe("Would you like to run the following command?");
+    expect(d!.respondMode).toBe("keys");
+    expect(d!.options).toHaveLength(3);
+    expect(d!.options[0].selected).toBe(true); // › highlights option 1
+    expect(d!.options[0].label).toMatch(/^Yes, proceed/);
+    expect(d!.options[2].label).toMatch(/^No/);
+  });
+
   test("codex idle pane (ghost prompt, no dialog) → null", () => {
     expect(detectAskFromPane(fixture("codex-idle.txt"))).toBeNull();
   });

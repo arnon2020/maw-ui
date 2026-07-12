@@ -19,7 +19,8 @@ import type { AskItem } from "../src/lib/types";
 
 const API = process.env.MAW_API || "http://localhost:3456";
 const POLL_MS = 2000;
-const RESOLVE_MISSES = 2; // consecutive prompt-free polls before auto-resolving
+const RESOLVE_MISSES = 3; // consecutive prompt-free polls before auto-resolving
+                          // (3×2s rides out codex reconnect / output-burst flicker)
 const MAX_ASKS = 50;
 
 const sh = (cmd: string, args: string[]) =>
@@ -84,7 +85,15 @@ async function cycle(): Promise<void> {
       miss[target] = 0;
       const id = `pane:${target}:${det.promptKey}`;
       const prior = byId.get(id);
-      if (prior) continue; // same prompt already tracked (pending or dismissed)
+      if (prior) {
+        if (!prior.dismissed) continue; // already pending
+        // User's decision stays; a premature auto-resolve gets revived.
+        if (prior.resolution === "dismissed" || prior.answeredWith) continue;
+        prior.dismissed = false;
+        prior.resolution = undefined;
+        changed = true;
+        continue;
+      }
       // A different pending prompt for this pane → the old one is gone.
       resolvePaneAsks(asks, target);
       asks.unshift({

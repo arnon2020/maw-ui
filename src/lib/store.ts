@@ -256,9 +256,16 @@ export const useFleetStore = create<FleetStore>()(
           : null;
         if (stableId) {
           const prior = s.asks.find((a) => a.id === stableId);
-          // Same prompt the user already dismissed — don't rebound it while the
-          // dialog is still on screen.
-          if (prior?.dismissed) return s;
+          if (prior?.dismissed) {
+            // The user's own decision (dismiss / answer) stays put — don't rebound.
+            if (prior.resolution === "dismissed" || prior.answeredWith) return s;
+            // Otherwise it was auto-resolved (prompt briefly left the capture
+            // window — a codex reconnect, an output burst) but it's back on
+            // screen: revive it rather than leaving a live dialog un-queued.
+            const next = s.asks.map((a) => a.id === stableId ? { ...a, dismissed: false, resolution: undefined } : a);
+            persistAsks(next);
+            return { asks: next };
+          }
         }
         const existing = s.asks.find((a) =>
           (ask.target ? a.target === ask.target : a.oracle === ask.oracle) && !a.dismissed
