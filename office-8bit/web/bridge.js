@@ -5,6 +5,8 @@ const API_BASE = window.location.origin;
 let ws = null;
 let sessions = [];
 let captures = {};
+let sessionsTimer = null;
+let capturesTimer = null;
 
 // --- Agent data pushed to WASM via window global ---
 // WASM calls window.__oracle_agents() as a function — must return string or null
@@ -19,7 +21,7 @@ function pushAgentsToWasm() {
       const capture = captures[target] || {};
       const status = detectStatus(capture.content || '');
       const preview = lastLine(capture.content || '');
-      const name = win.name || `agent-${idx}`;
+      const name = win.name || `agent-${win.index}`;
 
       agents.push(`${target}|${name}|${session.name}|${status}|${preview}`);
     }
@@ -63,6 +65,30 @@ function lastLine(content) {
   return (lines[lines.length - 1] || '').slice(0, 80);
 }
 
+function isLowPowerDevice() {
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  const noHover = window.matchMedia('(hover: none)').matches;
+  const narrowScreen = window.matchMedia('(max-width: 1024px)').matches;
+  const saveData = Boolean(navigator.connection?.saveData);
+
+  return reducedMotion || saveData || (coarsePointer && noHover && narrowScreen);
+}
+
+function isWsOpen() {
+  return ws && ws.readyState === WebSocket.OPEN;
+}
+
+function sessionPollDelay() {
+  if (document.hidden) return 60000;
+  return isLowPowerDevice() ? 30000 : 5000;
+}
+
+function capturePollDelay() {
+  if (document.hidden) return 60000;
+  return isLowPowerDevice() ? 30000 : 5000;
+}
+
 // --- WebSocket connection ---
 
 function connectWs() {
@@ -85,8 +111,9 @@ function connectWs() {
   };
 
   ws.onclose = () => {
-    console.log('WS closed, reconnecting in 3s...');
-    setTimeout(connectWs, 3000);
+    const delay = document.hidden || isLowPowerDevice() ? 15000 : 3000;
+    console.log(`WS closed, reconnecting in ${delay / 1000}s...`);
+    setTimeout(connectWs, delay);
   };
 
   ws.onerror = (err) => {
@@ -97,6 +124,7 @@ function connectWs() {
 // --- REST polling fallback ---
 
 async function pollSessions() {
+  if (isWsOpen()) return;
   try {
     const res = await fetch(`${API_BASE}/api/sessions`);
     if (res.ok) {
@@ -109,6 +137,8 @@ async function pollSessions() {
 }
 
 async function pollCaptures() {
+  if (document.hidden || isWsOpen()) return;
+
   const targets = [];
   for (const session of sessions) {
     for (const win of (session.windows || [])) {
@@ -131,6 +161,27 @@ async function pollCaptures() {
   }
   pushAgentsToWasm();
 }
+
+function scheduleSessionPoll(immediate = false) {
+  if (sessionsTimer) clearTimeout(sessionsTimer);
+  sessionsTimer = setTimeout(async () => {
+    await pollSessions();
+    scheduleSessionPoll();
+  }, immediate ? 0 : sessionPollDelay());
+}
+
+function scheduleCapturePoll(immediate = false) {
+  if (capturesTimer) clearTimeout(capturesTimer);
+  capturesTimer = setTimeout(async () => {
+    await pollCaptures();
+    scheduleCapturePoll();
+  }, immediate ? 0 : capturePollDelay());
+}
+
+document.addEventListener('visibilitychange', () => {
+  scheduleSessionPoll(!document.hidden);
+  scheduleCapturePoll(!document.hidden);
+});
 
 // --- Popup: show terminal capture on hover/click ---
 
@@ -261,7 +312,7 @@ window.__oracle_set_bg = function(imageUrl) {
 // --- Init ---
 
 connectWs();
-setInterval(pollSessions, 5000);
-setInterval(pollCaptures, 5000);
+scheduleSessionPoll(true);
+scheduleCapturePoll(true);
 
 console.log('[Oracle Bridge] 8-bit office bridge initialized');

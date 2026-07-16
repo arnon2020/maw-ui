@@ -9,6 +9,8 @@ import { useDevice } from "../hooks/useDevice";
 import { FULL_COMMANDS } from "../quickCommands";
 import type { AgentState, PaneStatus } from "../lib/types";
 
+const TERMINAL_CAPTURE_LINES = 200;
+
 // --- Status colors ---
 const STATUS: Record<PaneStatus, { color: string; bg: string; label: string }> = {
   busy:    { color: "#fdd835", bg: "rgba(253,216,53,0.12)", label: "BUSY" },
@@ -104,6 +106,7 @@ function TerminalPanel({ agent, send }: { agent: AgentState; send: (msg: object)
   const inputRef = useRef<HTMLInputElement>(null);
   const termRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef("");
+  const followTailRef = useRef(true);
   const color = agentColor(agent.name);
   const name = agent.name.replace(/-oracle$/i, "");
   const { uploading, attachments, inputRef: fileRef, pickFile, onFileChange, removeAttachment, clearAttachments, buildMessage, drag, onPaste } = useFileAttach();
@@ -114,7 +117,8 @@ function TerminalPanel({ agent, send }: { agent: AgentState; send: (msg: object)
     let timer: ReturnType<typeof setTimeout>;
     async function poll() {
       try {
-        const res = await fetch(`/api/capture?target=${encodeURIComponent(agent.target)}`);
+        const params = new URLSearchParams({ target: agent.target, lines: String(TERMINAL_CAPTURE_LINES) });
+        const res = await fetch(`/api/capture?${params.toString()}`);
         const data = await res.json();
         if (active && data.content !== contentRef.current) {
           contentRef.current = data.content || "";
@@ -122,7 +126,9 @@ function TerminalPanel({ agent, send }: { agent: AgentState; send: (msg: object)
           if (el) {
             // Simple ANSI strip for display
             el.textContent = contentRef.current.replace(/\x1b\[[0-9;]*m/g, "");
-            requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; });
+            if (followTailRef.current) {
+              requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; });
+            }
           }
         }
       } catch {}
@@ -130,6 +136,17 @@ function TerminalPanel({ agent, send }: { agent: AgentState; send: (msg: object)
     }
     poll();
     return () => { active = false; clearTimeout(timer); };
+  }, [agent.target]);
+
+  useEffect(() => {
+    const el = termRef.current;
+    if (!el) return;
+    followTailRef.current = true;
+    const onScroll = () => {
+      followTailRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
   }, [agent.target]);
 
   const handleSend = useCallback(() => {
@@ -163,7 +180,7 @@ function TerminalPanel({ agent, send }: { agent: AgentState; send: (msg: object)
 
       {/* Terminal output */}
       <div ref={termRef} className="flex-1 overflow-y-auto px-4 py-2 font-mono text-[11px] leading-relaxed text-[#cdd6f4] whitespace-pre-wrap"
-        style={{ background: "#08080c", overscrollBehavior: "contain", touchAction: "pan-y", wordBreak: "break-word" }}
+        style={{ background: "#08080c", overscrollBehavior: "contain", touchAction: "pan-y", WebkitOverflowScrolling: "touch", scrollbarGutter: "stable", wordBreak: "break-word" }}
       />
 
       {/* Quick commands — touch-friendly 48px buttons */}

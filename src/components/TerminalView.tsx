@@ -1,8 +1,12 @@
-import { memo, useState, useEffect, useRef, useCallback } from "react";
+import { memo, useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
 import { ansiToHtml } from "../lib/ansi";
 import { roomStyle } from "../lib/constants";
 import { wsUrl } from "../lib/api";
 import type { Session, AgentState } from "../lib/types";
+
+const TERMINAL_CAPTURE_LINES = 200;
+const TERMINAL_WS_BASE_DELAY = 1000;
+const TERMINAL_WS_MAX_DELAY = 15000;
 
 interface TerminalViewProps {
   sessions: Session[];
@@ -47,35 +51,81 @@ export const TerminalView = memo(function TerminalView({ sessions, agents, conne
   const outputRef = useRef<HTMLDivElement>(null);
   const termRef = useRef<HTMLDivElement>(null);
   const sendingRef = useRef(false);
+  const followTailRef = useRef(true);
+  const selectedTargetRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    selectedTargetRef.current = selectedTarget;
+  }, [selectedTarget]);
 
   // Own WebSocket for capture stream (separate from main fleet WS)
   useEffect(() => {
-    const ws = new WebSocket(wsUrl("/ws"));
-    wsRef.current = ws;
+    let alive = true;
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+    let attempt = 0;
 
-    ws.onmessage = (e) => {
-      try {
-        const data = JSON.parse(e.data);
-        if (data.type === "capture") {
-          const out = outputRef.current;
-          const atBottom = out ? out.scrollHeight - out.scrollTop - out.clientHeight < 60 : true;
-          setCaptureHtml(ansiToHtml(data.content || "(empty)"));
-          if (atBottom) requestAnimationFrame(() => out?.scrollTo(0, out.scrollHeight));
-        }
-      } catch {}
+    const subscribeCurrent = (ws: WebSocket) => {
+      const target = selectedTargetRef.current;
+      if (!target || ws.readyState !== WebSocket.OPEN) return;
+      ws.send(JSON.stringify({ type: "subscribe", target, lines: TERMINAL_CAPTURE_LINES }));
+      ws.send(JSON.stringify({ type: "select", target }));
     };
 
-    ws.onclose = () => { wsRef.current = null; };
-    ws.onerror = () => ws.close();
+    const connect = () => {
+      if (!alive) return;
+      const ws = new WebSocket(wsUrl("/ws"));
+      wsRef.current = ws;
 
-    return () => { ws.close(); wsRef.current = null; };
+      ws.onopen = () => {
+        attempt = 0;
+        subscribeCurrent(ws);
+      };
+
+      ws.onmessage = (e) => {
+        try {
+          const data = JSON.parse(e.data);
+          if (data.type === "capture") {
+            setCaptureHtml(ansiToHtml(data.content || "(empty)"));
+          }
+        } catch {}
+      };
+
+      ws.onclose = () => {
+        if (wsRef.current === ws) wsRef.current = null;
+        if (!alive) return;
+        const delay = Math.min(TERMINAL_WS_BASE_DELAY * 2 ** attempt, TERMINAL_WS_MAX_DELAY);
+        attempt++;
+        reconnectTimer = setTimeout(connect, delay);
+      };
+
+      ws.onerror = () => ws.close();
+    };
+
+    connect();
+
+    const onOnline = () => {
+      if (!alive || wsRef.current?.readyState === WebSocket.OPEN) return;
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      reconnectTimer = setTimeout(connect, 100);
+    };
+    window.addEventListener("online", onOnline);
+    document.addEventListener("visibilitychange", onOnline);
+
+    return () => {
+      alive = false;
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      window.removeEventListener("online", onOnline);
+      document.removeEventListener("visibilitychange", onOnline);
+      wsRef.current?.close();
+      wsRef.current = null;
+    };
   }, []);
 
   // Subscribe when target changes
   useEffect(() => {
     const ws = wsRef.current;
     if (ws?.readyState === WebSocket.OPEN && selectedTarget) {
-      ws.send(JSON.stringify({ type: "subscribe", target: selectedTarget }));
+      ws.send(JSON.stringify({ type: "subscribe", target: selectedTarget, lines: TERMINAL_CAPTURE_LINES }));
       ws.send(JSON.stringify({ type: "select", target: selectedTarget }));
     }
   }, [selectedTarget]);
@@ -85,7 +135,7 @@ export const TerminalView = memo(function TerminalView({ sessions, agents, conne
     const ws = wsRef.current;
     if (!ws) return;
     const handler = () => {
-      if (selectedTarget) ws.send(JSON.stringify({ type: "subscribe", target: selectedTarget }));
+      if (selectedTarget) ws.send(JSON.stringify({ type: "subscribe", target: selectedTarget, lines: TERMINAL_CAPTURE_LINES }));
     };
     ws.addEventListener("open", handler);
     return () => ws.removeEventListener("open", handler);
@@ -96,8 +146,25 @@ export const TerminalView = memo(function TerminalView({ sessions, agents, conne
     setCaptureHtml("");
     setInputBuf("");
     setSendQueue([]);
+    followTailRef.current = true;
     termRef.current?.focus();
   }, []);
+
+  useLayoutEffect(() => {
+    const out = outputRef.current;
+    if (!out || !followTailRef.current) return;
+    out.scrollTop = out.scrollHeight;
+  }, [captureHtml]);
+
+  useEffect(() => {
+    const out = outputRef.current;
+    if (!out) return;
+    const onScroll = () => {
+      followTailRef.current = out.scrollHeight - out.scrollTop - out.clientHeight < 80;
+    };
+    out.addEventListener("scroll", onScroll, { passive: true });
+    return () => out.removeEventListener("scroll", onScroll);
+  }, [selectedTarget]);
 
   // Flush send queue
   useEffect(() => {
@@ -248,7 +315,17 @@ export const TerminalView = memo(function TerminalView({ sessions, agents, conne
         <div
           ref={outputRef}
           className="flex-1 overflow-y-auto px-3 py-2 font-mono text-[13px] leading-[1.35]"
-          style={{ background: "#0a0a0f", whiteSpace: "pre", wordBreak: "normal", overflowX: "auto", color: "#aaa" }}
+          style={{
+            background: "#0a0a0f",
+            whiteSpace: "pre",
+            wordBreak: "normal",
+            overflowX: "auto",
+            color: "#aaa",
+            overscrollBehavior: "contain",
+            touchAction: "pan-y",
+            WebkitOverflowScrolling: "touch",
+            scrollbarGutter: "stable",
+          }}
         >
           {captureHtml ? (
             <div dangerouslySetInnerHTML={{ __html: captureHtml }} />

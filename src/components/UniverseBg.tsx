@@ -1,6 +1,17 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
+function shouldUseLowPowerBackground() {
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+  const noHover = window.matchMedia("(hover: none)").matches;
+  const narrowScreen = window.matchMedia("(max-width: 1024px)").matches;
+  const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
+  const saveData = Boolean(nav.connection?.saveData);
+
+  return reducedMotion || saveData || (coarsePointer && noHover && narrowScreen);
+}
+
 export function UniverseBg() {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -8,6 +19,7 @@ export function UniverseBg() {
     const el = containerRef.current;
     if (!el) return;
 
+    const lowPower = shouldUseLowPowerBackground();
     const w = el.clientWidth;
     const h = el.clientHeight;
 
@@ -74,9 +86,9 @@ export function UniverseBg() {
     let frame = 0;
     let lastRender = 0;
     const interval = 1000 / 24; // 24fps cap
+    let paused = document.hidden;
 
-    function animate(now: number) {
-      frame = requestAnimationFrame(animate);
+    function renderFrame(now: number) {
       if (now - lastRender < interval) return;
       lastRender = now;
 
@@ -88,7 +100,25 @@ export function UniverseBg() {
       camera.lookAt(0, 0, 0);
       renderer.render(scene, camera);
     }
-    frame = requestAnimationFrame(animate);
+
+    function animate(now: number) {
+      frame = requestAnimationFrame(animate);
+      if (paused) return;
+      renderFrame(now);
+    }
+
+    if (lowPower) {
+      renderer.render(scene, camera);
+    } else {
+      frame = requestAnimationFrame(animate);
+    }
+
+    function onVisibilityChange() {
+      paused = document.hidden;
+      if (!paused && !lowPower) {
+        lastRender = 0;
+      }
+    }
 
     function onResize() {
       const nw = el!.clientWidth;
@@ -96,12 +126,28 @@ export function UniverseBg() {
       camera.aspect = nw / nh;
       camera.updateProjectionMatrix();
       renderer.setSize(nw, nh);
+      renderer.render(scene, camera);
     }
     window.addEventListener("resize", onResize);
+    document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
-      cancelAnimationFrame(frame);
+      if (frame) cancelAnimationFrame(frame);
       window.removeEventListener("resize", onResize);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      globeGeo.dispose();
+      globeWire.dispose();
+      globeMat.dispose();
+      scene.traverse((obj) => {
+        if (obj instanceof THREE.Points) {
+          obj.geometry.dispose();
+          if (Array.isArray(obj.material)) {
+            obj.material.forEach((mat) => mat.dispose());
+          } else {
+            obj.material.dispose();
+          }
+        }
+      });
       renderer.dispose();
       if (el.contains(renderer.domElement)) el.removeChild(renderer.domElement);
     };
