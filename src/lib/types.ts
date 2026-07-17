@@ -2,6 +2,7 @@ export interface Window {
   index: number;
   name: string;
   active: boolean;
+  status?: PaneStatus;
   cwd?: string;
 }
 

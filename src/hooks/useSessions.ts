@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from "react";
-import type { Session, AgentState, AgentEvent } from "../lib/types";
+import type { Session, AgentState, AgentEvent, PaneStatus } from "../lib/types";
 import type { Team } from "../components/TeamPanel";
 import { apiUrl } from "../lib/api";
 import { stripAnsi } from "../lib/ansi";
@@ -14,6 +14,12 @@ import type { AskType } from "../lib/types";
 
 const BUSY_TIMEOUT = 15_000; // 15s without feed → ready
 const IDLE_TIMEOUT = 60_000; // 60s without feed → idle
+
+function normalizePaneStatus(status: unknown): PaneStatus | undefined {
+  return status === "busy" || status === "ready" || status === "idle" || status === "crashed"
+    ? status
+    : undefined;
+}
 
 export function useSessions() {
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -247,7 +253,15 @@ export function useSessions() {
 
   const handleMessage = useCallback((data: any) => {
     if (data.type === "sessions") {
-      setSessions((data.sessions as Session[]).filter(s => !s.name.startsWith("maw-pty-")));
+      const nextSessions = (data.sessions as Session[]).filter(s => !s.name.startsWith("maw-pty-"));
+      const store = useFeedStatusStore.getState();
+      for (const s of nextSessions) {
+        for (const w of s.windows) {
+          const status = normalizePaneStatus(w.status);
+          if (status) store.setStatus(`${s.name}:${w.index}`, status);
+        }
+      }
+      setSessions(nextSessions);
     } else if (data.type === "recent") {
       const agents: { target: string; name: string; session: string }[] = data.agents || [];
       if (agents.length > 0) {
@@ -326,7 +340,7 @@ export function useSessions() {
           windowIndex: w.index,
           active: w.active,
           preview: "", // read from usePreviewStore at component level
-          status: statuses[key] || "idle",
+          status: normalizePaneStatus(w.status) || statuses[key] || "idle",
           project,
           cwd: w.cwd,
           source: s.source && s.source !== "local" ? s.source : undefined,
