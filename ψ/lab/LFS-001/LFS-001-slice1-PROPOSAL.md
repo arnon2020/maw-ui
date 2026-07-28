@@ -1,51 +1,61 @@
-# LFS-001 Slice 1 — Summon Button Assessment Proposal
+# LFS-001 S1b — Focused Summon Proposal
 
-Assessment basis: the dirty-main `OverviewGrid.tsx` Summon implementation and the already-running UI at `http://localhost:5173/#overview`. The live panel exposed 25 summonable agents, while the quick-choice area exposed only the first 12.
+This update narrows the prior assessment to Nat's three targets: easier end-to-end use, faster agent selection, and automatic registry synchronization. It is based on the dirty-main source, the existing UI at `http://localhost:5173/#overview`, and the installed `maw-js` backend serving port 3456.
 
-## Item 1: Replace the native dropdown with a searchable agent picker
-- Current: Selecting one of 25 dormant agents requires scanning a long native dropdown by name; there is no filter or fuzzy search.
-- Proposed: Use a typeahead combobox that filters as the user types, supports partial/fuzzy name matching, and keeps arrow-key/Enter selection.
+## Backend investigation
+
+### What `/api/config` reads
+
+- Vite proxies `/api/config` from port 5173 to `maw serve` on port 3456.
+- The backend handler returns `configForDisplay()`, which calls `loadConfig()`.
+- `loadConfig()` reads layered JSON configuration: weighted `~/.config/maw/maw.config.<weight>[.local].json` files, legacy `~/.config/maw/maw.config.json` when no weighted global file exists, and applicable project `.maw/maw.config.*.json` layers.
+- During a fresh config load, fleet windows from the state-first `~/.maw/fleet/*.json` directory and legacy `~/.config/maw/fleet/*.json` directory are merged into `config.agents`.
+- `loadConfig()` is cached in the long-running backend process. A normal GET returns that cache. `saveConfig()` clears it, and `POST /api/config/reload` explicitly clears it; `maw bud` calls that reload endpoint after writing a fleet file.
+- `/api/config` does **not** read the oracle-registry cache `~/.maw/oracles.json`. The backend's unified `OracleManifest` is the broader inventory: it merges fleet windows, `config.sessions`, `config.agents`, `oracles.json`, and worktree discovery.
+
+### Verified inventory gap
+
+The current `/api/config` response contained:
+
+- 29 canonical names derived by the current frontend algorithm (`sessions` plus `commands` ending in `-oracle`).
+- 85 raw `config.agents` keys, which normalize to 54 canonical names.
+- 25 canonical `config.agents` names omitted by the current frontend algorithm.
+
+The unified `maw oracle ls --json --stale` manifest reported 56 canonical oracles. Therefore, merely refetching the existing frontend logic cannot fully synchronize the picker: it must consume at least `config.agents`, and exact parity with the oracle registry requires a typed unified-manifest list.
+
+### WS/SSE availability
+
+- Existing WebSocket routes are `/ws`, `/ws/pty`, and `/ws/tmux`.
+- `/ws` currently emits session, recent-agent, feed, preview/capture, and team updates. No `config-changed`, `registry-changed`, or config-version event is emitted.
+- No config-related SSE endpoint exists. The only SSE use found in maw-ui is unrelated BoB state.
+- Consequently, there is no existing config-change stream the Summon panel can subscribe to today.
+
+## Target 1: Make the end-to-end Summon flow easier
+
+- Current (verified): Clicking a quick-choice agent selects it and focuses the task textarea. Empty-task Wake transitions through “Waking agent...” to “Wake sent”; filled-task Start transitions through “Starting task...” to “Task queued” and clears the textarea. Validation and backend errors appear in the panel. However, the action labels do not include the selected agent, numbered chips imply nonexistent shortcuts, and global result text can remain after the awakened agent disappears and selection advances to another target.
+- Proposed: Present a clear three-part flow—Choose agent → optionally enter task → “Wake <agent>” or “Start task on <agent>”. Make numbered shortcuts real only while the picker has focus, announce progress/results, and bind each result to the acted-on agent so automatic selection cannot misattribute it.
 - Effort: M
-- Category: UX / A11y
+- Risk: Medium — global shortcuts can trigger an unintended selection/action if their focus scope is wrong. Restrict shortcuts to the open/focused picker, never bind the action itself to a bare number, and keep Wake/Start as explicit activation.
+- Category: UX / Correctness / A11y
 
-## Item 2: Prioritize recent and pinned agents
-- Current: Quick choices are the first 12 alphabetical dormant agents, so frequently summoned agents can fall outside the fast path and require the dropdown.
-- Proposed: Rank quick choices by pinned agents first and recently/frequently summoned agents next, with alphabetical order as the fallback. Persist the small preference list locally.
+## Target 2: Select any agent quickly, beyond the 12-chip limit
+
+- Current (verified): The live panel showed 25 summonable agents. `SUMMON_VISIBLE_LIMIT = 12` and `dormantAgents.slice(0, 12)` expose only the first 12 alphabetical agents as quick choices; the rest require scanning an unsearchable native select. At 390 px wide, the 12 wrapping chips also make the panel roughly 530 px tall.
+- Proposed: Replace the native select with an accessible typeahead combobox over the full normalized registry list. Support fuzzy filtering, arrow-key navigation, and Enter selection. Show a compact recent/pinned row above results, keep an explicit “All agents” path, and remove the hard alphabetical quick-choice cutoff (or use virtualization if the registry grows substantially).
 - Effort: M
-- Category: UX
+- Risk: Medium — ranking can make uncommon agents feel hidden, and fuzzy matching can select similarly named agents. Always display the exact canonical target, preserve an alphabetical “All” mode, highlight the matched substring, and require explicit Enter/click selection before Wake/Start.
+- Category: UX / A11y / Visual
 
-## Item 3: Make numbered quick choices real keyboard shortcuts
-- Current: Quick-choice chips display numbers 1–12, but the numbers are decorative; pressing them does not select an agent. This suggests a shortcut that does not exist.
-- Proposed: Bind visible shortcut keys to their agents while the user is in the Summon panel, show a keyboard hint, and avoid intercepting keys while typing. If shortcuts are not implemented, remove the numbers.
-- Effort: S
-- Category: UX / A11y
+## Target 3: Automatically synchronize with the oracle registry
 
-## Item 4: Keep result feedback attached to the agent acted on
-- Current: Success/error state is global to the panel. When a successfully awakened agent leaves the dormant list, selection automatically moves to another agent but the prior agent's “Wake sent” or task result remains visible.
-- Proposed: Store the result with the acted-on target and show the agent name in feedback (for example, “Wake sent to atlas”). Clear or archive that feedback when automatic selection moves to a different agent.
-- Effort: S
+- Current (verified): `OverviewGrid` fetches `/api/config` only on mount (`useEffect(..., [])`), silently keeps an empty/old list on failure, and ignores `config.agents`. The backend GET is also cached until reset/reload. There is no WS/SSE config-change event, so frontend polling or panel-open refetch alone can still receive stale backend data.
+- Proposed (recommended mechanism: WebSocket event): Add a typed canonical oracle list (preferably from the unified `OracleManifest`) and a monotonically changing registry/config version to the backend API. Whenever config/fleet/registry writers invalidate their caches, emit `registry-changed` on the existing `/ws`. The frontend should fetch once, refetch on that event, normalize aliases, subtract live agents, and preserve the last good list while a refresh is pending. For older servers or a missed event, use a low-frequency visibility-aware retry with exponential backoff; show “List may be stale” plus Retry after failures.
+- Effort: L
+- Risk: High — this spans maw-js and maw-ui, and missed invalidation points could create false freshness. Centralize cache invalidation plus broadcast in one backend function, include a version in both event and GET response, ignore out-of-order responses, retain last-known-good data, and add compatibility fallback from unified names → `config.agents` → legacy `sessions`/`commands`.
 - Category: Correctness / UX
 
-## Item 5: Expose the zero-summonable and config-failure states
-- Current: When no dormant agents are available, the Summon panel disappears entirely and the summary omits the summonable count. A failed `/api/config` request is silently swallowed and produces the same result, so “everyone is live” and “agent discovery failed” are indistinguishable.
-- Proposed: Show a compact “All configured agents are live” state for a valid empty result, and a distinct retryable “Could not load summonable agents” state when configuration loading fails.
-- Effort: S
-- Category: Correctness / UX
+## Recommendation order
 
-## Item 6: Add semantic labels and live status announcements
-- Current: The agent `<select>` has no associated label, quick choices expose selection only through color, and waking/success/error feedback is not an ARIA live region.
-- Proposed: Add visible or screen-reader labels, expose quick-chip selection with `aria-pressed` or an equivalent combobox pattern, and announce action progress/results with an appropriately polite live region.
-- Effort: S
-- Category: A11y
-
-## Item 7: Preserve actionable error details
-- Current: Feedback is truncated to 55% of the header width, so longer backend errors can lose the useful part. The only recovery is to infer that Wake or Start should be pressed again.
-- Proposed: Allow error text to wrap or provide an expandable detail, retain the failed task text, and show a clear Retry action for the same agent/action.
-- Effort: S
-- Category: UX / Correctness
-
-## Item 8: Reduce mobile selection height
-- Current: At a 390 px viewport, the responsive panel is usable without horizontal overflow, but the select, textarea, action row, and 12 wrapping quick chips make the panel about 530 px tall before any agent tiles appear.
-- Proposed: On narrow screens, use the searchable picker as the primary selector and collapse quick choices into a one-line horizontally scrollable recent/pinned row or an expandable section.
-- Effort: S
-- Category: Visual / UX
+1. Target 3 first: establish a complete, fresh canonical list.
+2. Target 2 next: build fast selection on that trustworthy list.
+3. Target 1 last: polish actions, shortcuts, and target-specific feedback on the finalized picker.
