@@ -70,6 +70,49 @@ The automated matrix covered 360×800, 768×1024, 820×1180, and 844×390. It te
 
 Evidence: `ψ/lab/LFS-010/viewport-verification.json`.
 
+## FIX ROUND 1 — viewport-locked composers
+
+Independent QA and the verifier confirmed the same bug at `9afcae1`: Chat grew the
+document because both `#chat` and `chat.html` omitted the existing `fullHeight` shell
+contract. The QA cold-load measurements put the composer below all four initial
+viewports (894/800, 1094/1024, 1250/1180, and 460/390); focusing it first made the
+browser scroll and masked the failure.
+
+The fix applies `fullHeight` to both Chat entries and to standalone Inbox, changes
+ChatView from a guessed `calc(100dvh - 48px)` height to a shrinking
+`flex-1 min-h-0` child, and makes the Inbox list its own `overflow-y-auto` region.
+The main document is now viewport-locked while the long thread or ask list scrolls
+internally. `bottom-input-entry-audit.txt` also checks the equivalent full-height
+Workspace and Talk composers plus the already-locked Terminal and Config entries.
+
+Cold reload verification used the real 200-message feed (Chat thread scroll height
+up to 81,901 px), measured before focus, focused the input, then reduced the viewport
+to simulate the keyboard. Values below are composer bottom / viewport height; every
+row also retained `documentHeight === viewportHeight` and `scrollY === 0`.
+
+| Profile | Entry | Before focus | After keyboard |
+|---|---|---:|---:|
+| 360×800 | main `#chat` | 790/800 | 490/500 |
+| 360×800 | `chat.html` | 790/800 | 490/500 |
+| 360×800 | `workspace.html` | 788/800 | 488/500 |
+| 360×800 | `talk.html` | 782.5/800 | 482.5/500 |
+| 768×1024 | main `#chat` | 1014/1024 | 714/724 |
+| 768×1024 | `chat.html` | 1014/1024 | 714/724 |
+| 768×1024 | `workspace.html` | 1012/1024 | 712/724 |
+| 768×1024 | `talk.html` | 1006.5/1024 | 706.5/724 |
+| 820×1180 | main `#chat` | 1170/1180 | 870/880 |
+| 820×1180 | `chat.html` | 1170/1180 | 870/880 |
+| 820×1180 | `workspace.html` | 1168/1180 | 868/880 |
+| 820×1180 | `talk.html` | 1162.5/1180 | 862.5/880 |
+| 844×390 | main `#chat` | 380/390 | 290/300 |
+| 844×390 | `chat.html` | 380/390 | 290/300 |
+| 844×390 | `workspace.html` | 378/390 | 288/300 |
+| 844×390 | `talk.html` | 372.5/390 | 282.5/300 |
+
+Evidence: `ψ/lab/LFS-010/composer-fix-verification.json`, 32 before/keyboard
+screenshots under `ψ/lab/LFS-010/composer-fix-screenshots/`, and
+`ψ/lab/LFS-010/bottom-input-entry-audit.txt`.
+
 ## Verification
 
 - `npm run build`: pass.
@@ -77,13 +120,15 @@ Evidence: `ψ/lab/LFS-010/viewport-verification.json`.
 - Static performance trace: pass; zero continuous idle rAF and zero running CSS animation on all four measured pages.
 - Static flag/persistence/thumbnail contract: pass.
 - Viewport matrix: pass; 44 screenshots, 0 horizontal page overflow, keyboard composer visible.
+- FIX ROUND 1 composer harness: pass; 32/32 before-focus and post-keyboard
+  measurements visible across four profiles and four bottom-input entries.
 - `git diff --check`: pass.
 - No backend source or state was changed. No preview/deploy was started; deployment remains assigned to lead after review.
 
 branch: lfs-010-static-mode
-commit: 31280ebb3543803fae4d08c9757712b8068f329f
-commands+exit-codes: npm run build=0, npm test=0, node ψ/lab/LFS-010/verify-static-mode.mjs=0, node ψ/lab/LFS-010/verify-static-contracts.mjs=0, node ψ/lab/LFS-010/verify-viewport.mjs=0, git diff --check=0
-files changed: all 17 root HTML entrypoints; public/static-mode.js; src/lib/staticMode.ts; src/index.css; src/apps/{federation,workspace}.tsx; src/components/{AgentRow,ChatView,ConfigView,FpsCounter,HoverPreviewCard,Joystick,MiniMonitor,MissionControl,OverviewGrid,TerminalView,UniverseBg,VSAgentPanel,VSView,iPadDashboard,useMissionControl}.tsx; src/components/federation/{Canvas2D,Sidebar}.tsx; ψ/lab/LFS-010 audit, verification, JSON, and screenshot artifacts
-verification: Chrome traces and request counters, 6× CPU interaction comparison, 17-entry/4-profile viewport matrix with 44 screenshots, production build, and upstream 146-test suite
-Retro: A global CSS freeze is necessary but insufficient—canvas/WebGL loops and live terminal thumbnails must be independently made one-frame and interaction-driven, while correctness polling must remain live.
+commit: 4d1a221
+commands+exit-codes: npm run build=0, npm test=0, node ψ/lab/LFS-010/verify-composer-fix.mjs=0, git diff --check=0
+files changed: src/App.tsx; src/core/AppShell.tsx; src/apps/{chat,inbox}.tsx; src/components/ChatView.tsx; ψ/lab/LFS-010/{LFS-010-STATIC-MODE-REPORT.md,bottom-input-entry-audit.txt,composer-fix-verification.json,verify-composer-fix.mjs,composer-fix-screenshots/*}
+verification: cold reload on a live 200-message thread, before-focus and post-keyboard bounds on four profiles × four bottom-input entries, 32 screenshots, production build, and 146-test suite
+Retro: Composer tests must measure before focus and must assert document height/scroll position; otherwise browser focus scrolling can turn an off-screen control into a false pass.
 FINAL-REPORT END
