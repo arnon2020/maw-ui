@@ -16,7 +16,7 @@ import type { AgentState } from "../lib/types";
 interface AppShellProps {
   /** Current view name for StatusBar highlight */
   view: string;
-  /** Full-height layout (terminal, config) */
+  /** Viewport-locked layout for views with internal scrolling or bottom-edge input */
   fullHeight?: boolean;
   /** Render function — receives session data + send function */
   children: (ctx: AppContext) => ReactNode;

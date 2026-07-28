@@ -1,0 +1,487 @@
+{
+  "passed": true,
+  "failures": [],
+  "liveThreadMinimumMessageCount": 200,
+  "results": [
+    {
+      "profile": "mobile-360x800",
+      "page": "main-chat-route",
+      "coldReload": true,
+      "liveThread": true,
+      "beforeFocus": {
+        "found": true,
+        "top": 749.16,
+        "bottom": 790,
+        "viewportHeight": 800,
+        "documentHeight": 800,
+        "documentScrollY": 0,
+        "messageCount": 200,
+        "threadClientHeight": 503,
+        "threadScrollHeight": 81901,
+        "visible": true
+      },
+      "afterKeyboard": {
+        "found": true,
+        "top": 449.16,
+        "bottom": 490,
+        "viewportHeight": 500,
+        "documentHeight": 500,
+        "documentScrollY": 0,
+        "messageCount": 200,
+        "threadClientHeight": 203,
+        "threadScrollHeight": 81901,
+        "visible": true
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "standalone-chat",
+      "coldReload": true,
+      "liveThread": true,
+      "beforeFocus": {
+        "found": true,
+        "top": 749.16,
+        "bottom": 790,
+        "viewportHeight": 800,
+        "documentHeight": 800,
+        "documentScrollY": 0,
+        "messageCount": 200,
+        "threadClientHeight": 503,
+        "threadScrollHeight": 81901,
+        "visible": true
+      },
+      "afterKeyboard": {
+        "found": true,
+        "top": 449.16,
+        "bottom": 490,
+        "viewportHeight": 500,
+        "documentHeight": 500,
+        "documentScrollY": 0,
+        "messageCount": 200,
+        "threadClientHeight": 203,
+        "threadScrollHeight": 81901,
+        "visible": true
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "workspace",
+      "coldReload": true,
+      "liveThread": false,
+      "beforeFocus": {
+        "found": true,
+        "top": 750,
+        "bottom": 788,
+        "viewportHeight": 800,
+        "documentHeight": 800,
+        "documentScrollY": 0,
+        "messageCount": 51,
+        "threadClientHeight": 626,
+        "threadScrollHeight": 626,
+        "visible": true
+      },
+      "afterKeyboard": {
+        "found": true,
+        "top": 450,
+        "bottom": 488,
+        "viewportHeight": 500,
+        "documentHeight": 500,
+        "documentScrollY": 0,
+        "messageCount": 51,
+        "threadClientHeight": 326,
+        "threadScrollHeight": 326,
+        "visible": true
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "talk",
+      "coldReload": true,
+      "liveThread": false,
+      "beforeFocus": {
+        "found": true,
+        "top": 738.5,
+        "bottom": 782.5,
+        "viewportHeight": 800,
+        "documentHeight": 800,
+        "documentScrollY": 0,
+        "messageCount": null,
+        "threadClientHeight": null,
+        "threadScrollHeight": null,
+        "visible": true
+      },
+      "afterKeyboard": {
+        "found": true,
+        "top": 438.5,
+        "bottom": 482.5,
+        "viewportHeight": 500,
+        "documentHeight": 500,
+        "documentScrollY": 0,
+        "messageCount": null,
+        "threadClientHeight": null,
+        "threadScrollHeight": null,
+        "visible": true
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "main-chat-route",
+      "coldReload": true,
+      "liveThread": true,
+      "beforeFocus": {
+        "found": true,
+        "top": 976,
+        "bottom": 1014,
+        "viewportHeight": 1024,
+        "documentHeight": 1024,
+        "documentScrollY": 0,
+        "messageCount": 200,
+        "threadClientHeight": 758,
+        "threadScrollHeight": 39421,
+        "visible": true
+      },
+      "afterKeyboard": {
+        "found": true,
+        "top": 676,
+        "bottom": 714,
+        "viewportHeight": 724,
+        "documentHeight": 724,
+        "documentScrollY": 0,
+        "messageCount": 200,
+        "threadClientHeight": 458,
+        "threadScrollHeight": 39421,
+        "visible": true
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "standalone-chat",
+      "coldReload": true,
+      "liveThread": true,
+      "beforeFocus": {
+        "found": true,
+        "top": 976,
+        "bottom": 1014,
+        "viewportHeight": 1024,
+        "documentHeight": 1024,
+        "documentScrollY": 0,
+        "messageCount": 200,
+        "threadClientHeight": 758,
+        "threadScrollHeight": 39421,
+        "visible": true
+      },
+      "afterKeyboard": {
+        "found": true,
+        "top": 676,
+        "bottom": 714,
+        "viewportHeight": 724,
+        "documentHeight": 724,
+        "documentScrollY": 0,
+        "messageCount": 200,
+        "threadClientHeight": 458,
+        "threadScrollHeight": 39421,
+        "visible": true
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "workspace",
+      "coldReload": true,
+      "liveThread": false,
+      "beforeFocus": {
+        "found": true,
+        "top": 981.5,
+        "bottom": 1012,
+        "viewportHeight": 1024,
+        "documentHeight": 1024,
+        "documentScrollY": 0,
+        "messageCount": 52,
+        "threadClientHeight": 873,
+        "threadScrollHeight": 873,
+        "visible": true
+      },
+      "afterKeyboard": {
+        "found": true,
+        "top": 681.5,
+        "bottom": 712,
+        "viewportHeight": 724,
+        "documentHeight": 724,
+        "documentScrollY": 0,
+        "messageCount": 52,
+        "threadClientHeight": 573,
+        "threadScrollHeight": 573,
+        "visible": true
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "talk",
+      "coldReload": true,
+      "liveThread": false,
+      "beforeFocus": {
+        "found": true,
+        "top": 962.5,
+        "bottom": 1006.5,
+        "viewportHeight": 1024,
+        "documentHeight": 1024,
+        "documentScrollY": 0,
+        "messageCount": null,
+        "threadClientHeight": null,
+        "threadScrollHeight": null,
+        "visible": true
+      },
+      "afterKeyboard": {
+        "found": true,
+        "top": 662.5,
+        "bottom": 706.5,
+        "viewportHeight": 724,
+        "documentHeight": 724,
+        "documentScrollY": 0,
+        "messageCount": null,
+        "threadClientHeight": null,
+        "threadScrollHeight": null,
+        "visible": true
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "main-chat-route",
+      "coldReload": true,
+      "liveThread": true,
+      "beforeFocus": {
+        "found": true,
+        "top": 1132,
+        "bottom": 1170,
+        "viewportHeight": 1180,
+        "documentHeight": 1180,
+        "documentScrollY": 0,
+        "messageCount": 200,
+        "threadClientHeight": 914,
+        "threadScrollHeight": 39421,
+        "visible": true
+      },
+      "afterKeyboard": {
+        "found": true,
+        "top": 832,
+        "bottom": 870,
+        "viewportHeight": 880,
+        "documentHeight": 880,
+        "documentScrollY": 0,
+        "messageCount": 200,
+        "threadClientHeight": 614,
+        "threadScrollHeight": 39421,
+        "visible": true
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "standalone-chat",
+      "coldReload": true,
+      "liveThread": true,
+      "beforeFocus": {
+        "found": true,
+        "top": 1132,
+        "bottom": 1170,
+        "viewportHeight": 1180,
+        "documentHeight": 1180,
+        "documentScrollY": 0,
+        "messageCount": 200,
+        "threadClientHeight": 914,
+        "threadScrollHeight": 39421,
+        "visible": true
+      },
+      "afterKeyboard": {
+        "found": true,
+        "top": 832,
+        "bottom": 870,
+        "viewportHeight": 880,
+        "documentHeight": 880,
+        "documentScrollY": 0,
+        "messageCount": 200,
+        "threadClientHeight": 614,
+        "threadScrollHeight": 39421,
+        "visible": true
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "workspace",
+      "coldReload": true,
+      "liveThread": false,
+      "beforeFocus": {
+        "found": true,
+        "top": 1137.5,
+        "bottom": 1168,
+        "viewportHeight": 1180,
+        "documentHeight": 1180,
+        "documentScrollY": 0,
+        "messageCount": 51,
+        "threadClientHeight": 1029,
+        "threadScrollHeight": 1029,
+        "visible": true
+      },
+      "afterKeyboard": {
+        "found": true,
+        "top": 837.5,
+        "bottom": 868,
+        "viewportHeight": 880,
+        "documentHeight": 880,
+        "documentScrollY": 0,
+        "messageCount": 51,
+        "threadClientHeight": 729,
+        "threadScrollHeight": 729,
+        "visible": true
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "talk",
+      "coldReload": true,
+      "liveThread": false,
+      "beforeFocus": {
+        "found": true,
+        "top": 1118.5,
+        "bottom": 1162.5,
+        "viewportHeight": 1180,
+        "documentHeight": 1180,
+        "documentScrollY": 0,
+        "messageCount": null,
+        "threadClientHeight": null,
+        "threadScrollHeight": null,
+        "visible": true
+      },
+      "afterKeyboard": {
+        "found": true,
+        "top": 818.5,
+        "bottom": 862.5,
+        "viewportHeight": 880,
+        "documentHeight": 880,
+        "documentScrollY": 0,
+        "messageCount": null,
+        "threadClientHeight": null,
+        "threadScrollHeight": null,
+        "visible": true
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "main-chat-route",
+      "coldReload": true,
+      "liveThread": true,
+      "beforeFocus": {
+        "found": true,
+        "top": 342,
+        "bottom": 380,
+        "viewportHeight": 390,
+        "documentHeight": 390,
+        "documentScrollY": 0,
+        "messageCount": 200,
+        "threadClientHeight": 124,
+        "threadScrollHeight": 39421,
+        "visible": true
+      },
+      "afterKeyboard": {
+        "found": true,
+        "top": 252,
+        "bottom": 290,
+        "viewportHeight": 300,
+        "documentHeight": 300,
+        "documentScrollY": 0,
+        "messageCount": 200,
+        "threadClientHeight": 34,
+        "threadScrollHeight": 39421,
+        "visible": true
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "standalone-chat",
+      "coldReload": true,
+      "liveThread": true,
+      "beforeFocus": {
+        "found": true,
+        "top": 342,
+        "bottom": 380,
+        "viewportHeight": 390,
+        "documentHeight": 390,
+        "documentScrollY": 0,
+        "messageCount": 200,
+        "threadClientHeight": 124,
+        "threadScrollHeight": 39421,
+        "visible": true
+      },
+      "afterKeyboard": {
+        "found": true,
+        "top": 252,
+        "bottom": 290,
+        "viewportHeight": 300,
+        "documentHeight": 300,
+        "documentScrollY": 0,
+        "messageCount": 200,
+        "threadClientHeight": 34,
+        "threadScrollHeight": 39421,
+        "visible": true
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "workspace",
+      "coldReload": true,
+      "liveThread": false,
+      "beforeFocus": {
+        "found": true,
+        "top": 347.5,
+        "bottom": 378,
+        "viewportHeight": 390,
+        "documentHeight": 390,
+        "documentScrollY": 0,
+        "messageCount": 51,
+        "threadClientHeight": 239,
+        "threadScrollHeight": 239,
+        "visible": true
+      },
+      "afterKeyboard": {
+        "found": true,
+        "top": 257.5,
+        "bottom": 288,
+        "viewportHeight": 300,
+        "documentHeight": 300,
+        "documentScrollY": 0,
+        "messageCount": 55,
+        "threadClientHeight": 149,
+        "threadScrollHeight": 149,
+        "visible": true
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "talk",
+      "coldReload": true,
+      "liveThread": false,
+      "beforeFocus": {
+        "found": true,
+        "top": 328.5,
+        "bottom": 372.5,
+        "viewportHeight": 390,
+        "documentHeight": 390,
+        "documentScrollY": 0,
+        "messageCount": null,
+        "threadClientHeight": null,
+        "threadScrollHeight": null,
+        "visible": true
+      },
+      "afterKeyboard": {
+        "found": true,
+        "top": 238.5,
+        "bottom": 282.5,
+        "viewportHeight": 300,
+        "documentHeight": 300,
+        "documentScrollY": 0,
+        "messageCount": null,
+        "threadClientHeight": null,
+        "threadScrollHeight": null,
+        "visible": true
+      }
+    }
+  ]
+}

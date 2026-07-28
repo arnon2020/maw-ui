@@ -1,0 +1,20 @@
+LFS-010-FIX-COMPOSER bottom-edge input audit
+
+Viewport-locked through AppShell/Layout fullHeight:
+- /?static=1#chat — ChatView composer; fixed in this round.
+- /chat.html?static=1 — ChatView composer; fixed in this round.
+- /inbox.html?static=1 — reply inputs live inside an internal scrolling list; shell and list
+  are viewport-locked in this round so a long ask list cannot grow the document.
+- /?static=1#config and /config.html — already fullHeight.
+- /?static=1#terminal and /terminal.html — already fullHeight; terminal keyboard capture
+  and internal scroll stay inside the viewport.
+
+Equivalent self-contained viewport layouts (no AppShell):
+- /workspace.html?static=1 — h-screen flex shell, internal feed scroll, bottom send bar.
+- /talk.html?static=1 — html/body height 100%, overflow hidden, flex terminal, bottom input bar.
+- Tablet terminal composer in iPadDashboard — contained by its flex-column tablet panel,
+  with terminal output as the internal overflow-y-auto region.
+
+Inputs not attached to the page bottom:
+- Inbox card replies, config fields, filters/searches, modal/overlay forms, and editor fields
+  scroll with their containing card, panel, or overlay and are not page composers.
