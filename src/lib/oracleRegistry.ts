@@ -6,6 +6,13 @@ export type OracleRegistryResult = {
   source: "oracles" | "config";
 };
 
+export type OracleRegistryOpenSource = {
+  addEventListener: (type: "open", listener: () => void) => void;
+  removeEventListener: (type: "open", listener: () => void) => void;
+};
+
+type OracleRegistryFetcher = () => Promise<OracleRegistryResult>;
+
 function isRecord(value: unknown): value is UnknownRecord {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
@@ -115,6 +122,36 @@ export async function fetchOracleRegistry(signal?: AbortSignal): Promise<OracleR
   const names = namesFromConfig(payload);
   if (names.length === 0) throw new Error("Config returned no agents");
   return { names, version: responseVersion(payload), source: "config" };
+}
+
+/**
+ * Third registry-refresh trigger: refetch whenever the existing application
+ * WebSocket opens or reconnects. Mount and registry-changed remain separate
+ * triggers owned by the caller.
+ */
+export function refetchOracleRegistryOnOpen(
+  socket: OracleRegistryOpenSource,
+  onSuccess: (result: OracleRegistryResult) => void,
+  onError: (error: unknown) => void,
+  fetchRegistry: OracleRegistryFetcher = () => fetchOracleRegistry(),
+): () => void {
+  let active = true;
+  const handleOpen = () => {
+    void fetchRegistry().then(
+      (result) => {
+        if (active) onSuccess(result);
+      },
+      (error) => {
+        if (active) onError(error);
+      },
+    );
+  };
+
+  socket.addEventListener("open", handleOpen);
+  return () => {
+    active = false;
+    socket.removeEventListener("open", handleOpen);
+  };
 }
 
 export function filterOracleNames(names: string[], query: string): string[] {

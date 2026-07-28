@@ -4,6 +4,8 @@ import {
   filterOracleNames,
   namesFromConfig,
   namesFromOracleResponse,
+  refetchOracleRegistryOnOpen,
+  type OracleRegistryOpenSource,
 } from "./oracleRegistry";
 
 describe("oracle registry normalization", () => {
@@ -41,5 +43,49 @@ describe("oracle registry normalization", () => {
     const names = ["cipher-codex", "neo", "ui-designer"];
     expect(filterOracleNames(names, "UI des")).toEqual(["ui-designer"]);
     expect(filterOracleNames(names, "codex")).toEqual(["cipher-codex"]);
+  });
+});
+
+describe("oracle registry refresh triggers", () => {
+  test("refetches on every WebSocket open/reconnect and detaches cleanly", async () => {
+    const openListeners = new Set<() => void>();
+    const socket: OracleRegistryOpenSource = {
+      addEventListener: (type, listener) => {
+        if (type === "open") openListeners.add(listener);
+      },
+      removeEventListener: (type, listener) => {
+        if (type === "open") openListeners.delete(listener);
+      },
+    };
+    const results: string[][] = [];
+    const errors: unknown[] = [];
+    let fetchCount = 0;
+    const fetchRegistry = async () => {
+      fetchCount++;
+      return {
+        names: [`agent-${fetchCount}`],
+        version: String(fetchCount),
+        source: "oracles" as const,
+      };
+    };
+
+    const detach = refetchOracleRegistryOnOpen(
+      socket,
+      (result) => results.push(result.names),
+      (error) => errors.push(error),
+      fetchRegistry,
+    );
+
+    for (const listener of openListeners) listener();
+    await Promise.resolve();
+    for (const listener of openListeners) listener();
+    await Promise.resolve();
+
+    expect(fetchCount).toBe(2);
+    expect(results).toEqual([["agent-1"], ["agent-2"]]);
+    expect(errors).toEqual([]);
+
+    detach();
+    expect(openListeners.size).toBe(0);
   });
 });
