@@ -38,7 +38,7 @@ export function launchUiResult(task: string, result: SummonResult): {
   if (!result.ok) {
     return {
       state: "error",
-      message: result.error ?? "Launch failed",
+      message: result.message ?? result.error ?? "Launch failed",
       task,
     };
   }
@@ -77,6 +77,7 @@ function Spinner() {
 
 type SummonPanelProps = {
   agents: string[];
+  liveAgents: Map<string, string>;
   connected: boolean;
   loadingRegistry: boolean;
   registryError: string | null;
@@ -85,6 +86,7 @@ type SummonPanelProps = {
 
 export function SummonPanel({
   agents,
+  liveAgents,
   connected,
   loadingRegistry,
   registryError,
@@ -164,7 +166,8 @@ export function SummonPanel({
     if (!selected || launchState === "loading") return;
     setLaunchState("loading");
     setLaunchMessage(`Launching ${displayName(selected)}...`);
-    const result = await launchAgent(selected, task);
+    const sessionId = liveAgents.get(selected.toLowerCase());
+    const result = await launchAgent(selected, task, sessionId !== undefined, sessionId);
     const nextUi = launchUiResult(task, result);
     setTask(nextUi.task);
     setLaunchState(nextUi.state);
@@ -305,6 +308,7 @@ export function SummonPanel({
                     >
                       {displayName(name)}
                     </button>
+                    <AgentStatusBadge name={name} liveAgents={liveAgents} />
                     <button
                       type="button"
                       onClick={() => togglePinned(name)}
@@ -337,7 +341,10 @@ export function SummonPanel({
           >
             <div className="rounded-lg border border-emerald-400/20 bg-emerald-400/[0.06] p-4">
               <div className="text-xs font-mono uppercase tracking-[2px] text-white/40">Selected agent</div>
-              <div className="mt-1 text-lg font-bold capitalize text-emerald-200">{displayName(selected)}</div>
+              <div className="mt-1 flex flex-wrap items-center gap-3">
+                <span className="text-lg font-bold capitalize text-emerald-200">{displayName(selected)}</span>
+                <AgentStatusBadge name={selected} liveAgents={liveAgents} />
+              </div>
             </div>
             <label className="mt-4 block text-xs font-mono uppercase tracking-[2px] text-white/45" htmlFor="summon-task">
               Task (optional)
@@ -406,6 +413,34 @@ export function SummonPanel({
         )}
       </div>
     </section>
+  );
+}
+
+export function AgentStatusBadge({
+  name,
+  liveAgents,
+}: {
+  name: string;
+  liveAgents: Map<string, string>;
+}) {
+  const sessionId = liveAgents.get(name.toLowerCase());
+  if (sessionId) {
+    return (
+      <span
+        className="whitespace-nowrap rounded bg-emerald-400/[0.12] px-2 py-1 text-[10px] font-bold font-mono text-emerald-300"
+        aria-label={`${displayName(name)} status: live at ${sessionId}`}
+      >
+        LIVE · {sessionId}
+      </span>
+    );
+  }
+  return (
+    <span
+      className="whitespace-nowrap rounded bg-white/[0.04] px-2 py-1 text-[10px] font-bold font-mono text-white/35"
+      aria-label={`${displayName(name)} status: dormant`}
+    >
+      DORMANT
+    </span>
   );
 }
 

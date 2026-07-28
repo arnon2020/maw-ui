@@ -185,14 +185,19 @@ export const OverviewGrid = memo(function OverviewGrid({
     void refreshRegistry();
   }, [connected, refreshRegistry, registryRevision]);
 
-  const dormantAgentNames = useMemo(() => {
-    const liveNames = new Set<string>();
+  const liveAgentMap = useMemo(() => {
+    const map = new Map<string, string>();
     for (const agent of agents) {
       const canonical = canonicalOracleName(agent.name);
-      if (canonical) liveNames.add(canonical.toLowerCase());
+      if (canonical) map.set(canonical.toLowerCase(), agent.session);
     }
-    return knownAgents.filter((name) => !liveNames.has(name.toLowerCase()));
-  }, [agents, knownAgents]);
+    return map;
+  }, [agents]);
+
+  const dormantAgentCount = useMemo(
+    () => knownAgents.filter((name) => !liveAgentMap.has(name.toLowerCase())).length,
+    [knownAgents, liveAgentMap],
+  );
 
   const busyCount = agents.filter(a => a.status === "busy").length;
   const readyCount = agents.filter(a => a.status === "ready").length;
@@ -230,10 +235,10 @@ export const OverviewGrid = memo(function OverviewGrid({
           <span className="text-white/60">{sessions.length} rooms</span>
           <span className="text-white/20">/</span>
           <span className="text-white/60">{agents.length} agents</span>
-          {dormantAgentNames.length > 0 && (
+          {dormantAgentCount > 0 && (
             <>
               <span className="text-white/20">/</span>
-              <span className="text-white/60">{dormantAgentNames.length} summonable</span>
+              <span className="text-white/60">{dormantAgentCount} dormant</span>
             </>
           )}
           <span className="text-white/20">/</span>
@@ -261,7 +266,8 @@ export const OverviewGrid = memo(function OverviewGrid({
       </div>
 
       <SummonPanel
-        agents={dormantAgentNames}
+        agents={knownAgents}
+        liveAgents={liveAgentMap}
         connected={connected}
         loadingRegistry={registryLoading}
         registryError={registryError}
