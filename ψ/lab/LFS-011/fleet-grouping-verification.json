@@ -1,0 +1,143 @@
+{
+  "passed": true,
+  "failures": [],
+  "results": [
+    {
+      "profile": "mobile-360x800",
+      "sessionGroups": [
+        "113-lucifer session group with 12 agents",
+        "evidence-cell-2 session group with 8 agents",
+        "113-tars session group with 1 agents",
+        "112-atlas session group with 1 agents",
+        "114-consultant-room session group with 1 agents",
+        "117-codex-fanout session group with 1 agents",
+        "118-ajfon session group with 1 agents",
+        "119-colophon session group with 1 agents"
+      ],
+      "teamGroups": [
+        "evidence-cell-2 team group with 8 agents",
+        "lucifer-fullstack-v1 team group with 10 agents",
+        "Standalone standalone group with 8 agents"
+      ],
+      "roleBadgeCount": 16,
+      "roomBadgeCount": 18,
+      "horizontalOverflow": 0,
+      "staticMode": true,
+      "runningAnimations": 0,
+      "idleRafCallbacks": 0
+    },
+    {
+      "profile": "tablet-768x1024",
+      "sessionGroups": [
+        "113-lucifer session group with 12 agents",
+        "evidence-cell-2 session group with 8 agents",
+        "113-tars session group with 1 agents",
+        "evidence-cell-tars-fix-20260729 session group with 2 agents",
+        "112-atlas session group with 1 agents",
+        "114-consultant-room session group with 1 agents",
+        "117-codex-fanout session group with 1 agents",
+        "118-ajfon session group with 1 agents",
+        "119-colophon session group with 1 agents"
+      ],
+      "teamGroups": [
+        "evidence-cell-2 team group with 8 agents",
+        "evidence-cell-tars-fix-20260729 team group with 1 agents",
+        "lucifer-fullstack-v1 team group with 10 agents",
+        "Standalone standalone group with 9 agents"
+      ],
+      "roleBadgeCount": 17,
+      "roomBadgeCount": 20,
+      "horizontalOverflow": 0,
+      "staticMode": true,
+      "runningAnimations": 0,
+      "idleRafCallbacks": 0
+    },
+    {
+      "profile": "tablet-820x1180",
+      "sessionGroups": [
+        "113-lucifer session group with 12 agents",
+        "evidence-cell-2 session group with 8 agents",
+        "evidence-cell-tars-fix-20260729 session group with 2 agents",
+        "113-tars session group with 1 agents",
+        "112-atlas session group with 1 agents",
+        "114-consultant-room session group with 1 agents",
+        "117-codex-fanout session group with 1 agents",
+        "118-ajfon session group with 1 agents",
+        "119-colophon session group with 1 agents"
+      ],
+      "teamGroups": [
+        "evidence-cell-2 team group with 8 agents",
+        "evidence-cell-tars-fix-20260729 team group with 1 agents",
+        "lucifer-fullstack-v1 team group with 10 agents",
+        "Standalone standalone group with 9 agents"
+      ],
+      "roleBadgeCount": 17,
+      "roomBadgeCount": 20,
+      "horizontalOverflow": 0,
+      "staticMode": true,
+      "runningAnimations": 0,
+      "idleRafCallbacks": 0
+    },
+    {
+      "profile": "landscape-844x390",
+      "sessionGroups": [
+        "113-lucifer session group with 12 agents",
+        "evidence-cell-2 session group with 8 agents",
+        "evidence-cell-tars-fix-20260729 session group with 3 agents",
+        "113-tars session group with 1 agents",
+        "112-atlas session group with 1 agents",
+        "114-consultant-room session group with 1 agents",
+        "117-codex-fanout session group with 1 agents",
+        "118-ajfon session group with 1 agents",
+        "119-colophon session group with 1 agents"
+      ],
+      "teamGroups": [
+        "evidence-cell-2 team group with 8 agents",
+        "evidence-cell-tars-fix-20260729 team group with 2 agents",
+        "lucifer-fullstack-v1 team group with 10 agents",
+        "Standalone standalone group with 9 agents"
+      ],
+      "roleBadgeCount": 18,
+      "roomBadgeCount": 21,
+      "horizontalOverflow": 0,
+      "staticMode": true,
+      "runningAnimations": 0,
+      "idleRafCallbacks": 0
+    }
+  ],
+  "preferences": {
+    "defaultMode": "session",
+    "teamModePersisted": true,
+    "persistedGroupLabel": "evidence-cell-2 team group with 8 agents",
+    "rowsBeforeCollapse": 8,
+    "rowsAfterCollapse": 0,
+    "rowsAfterReload": 0
+  },
+  "liveData": {
+    "sessionCount": 10,
+    "teamCount": 5,
+    "teams": [
+      {
+        "name": "evidence-cell-tars-fix-20260729",
+        "members": 3
+      },
+      {
+        "name": "lucifer-fullstack-v1",
+        "members": 10
+      },
+      {
+        "name": "teaching-media-cell-v3t",
+        "members": 9
+      },
+      {
+        "name": "evidence-cell",
+        "members": 8
+      },
+      {
+        "name": "evidence-cell-2",
+        "members": 8
+      }
+    ]
+  },
+  "screenshots": 8
+}

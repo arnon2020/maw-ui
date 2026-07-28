@@ -8,6 +8,7 @@ import { COLOR_MAP } from "./TeamPanel";
 import { guessCommand } from "../lib/constants";
 import { useAgentPreview } from "../lib/previewStore";
 import { useStaticMode } from "../lib/staticMode";
+import { resolveAgentTeam } from "../lib/fleetGrouping";
 
 const isTouch = typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0);
 
@@ -84,24 +85,19 @@ function AgentControls({ agent, displayName, accent, inputOpen, send, onMic }: {
   );
 }
 
-function AgentInfo({ agent, isBusy, displayName, accent, agoLabel, feedLog, teams }: {
+function AgentInfo({ agent, isBusy, displayName, accent, agoLabel, feedLog, teams, fleetAgents, showSessionBadge }: {
   agent: AgentState; isBusy: boolean; displayName: string; accent: string;
-  agoLabel?: string; feedLog?: FeedLogEntry[] | null; teams?: Team[];
+  agoLabel?: string; feedLog?: FeedLogEntry[] | null; teams?: Team[]; fleetAgents?: AgentState[]; showSessionBadge?: boolean;
 }) {
   const preview = useAgentPreview(agent.target);
-  // Match team by: 1) exact member name, 2) cwd path match
-  const agentTeam = teams?.find(t => t.members.some(m =>
-    m.name === agent.name ||
-    (agent.cwd && m.cwd && m.cwd === agent.cwd)
-  ));
-  const teamMember = agentTeam?.members.find(m =>
-    m.name === agent.name || (agent.cwd && m.cwd && m.cwd === agent.cwd)
-  );
+  const membership = resolveAgentTeam(agent, teams, fleetAgents);
+  const agentTeam = membership?.team;
+  const teamMember = membership?.member;
   const teamColor = teamMember?.color ? COLOR_MAP[teamMember.color] || "#888" :
     agentTeam?.members[0]?.color ? COLOR_MAP[agentTeam.members[0].color] || "#888" : "#888";
   return (
     <div className="flex flex-col gap-1 flex-1 min-w-0">
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <span className="text-[15px] font-semibold truncate" style={{ color: isBusy ? accent : "#E2E8F0" }}>
           {displayName}
         </span>
@@ -132,10 +128,17 @@ function AgentInfo({ agent, isBusy, displayName, accent, agoLabel, feedLog, team
           );
         })()}
         {agentTeam && (
-          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded flex-shrink-0 flex items-center gap-1"
+          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded min-w-0 max-w-full flex items-center gap-1"
             style={{ background: `${teamColor}18`, color: teamColor }}>
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: teamColor }} />
-            {agentTeam.name}
+            <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: teamColor }} />
+            <span className="truncate">{agentTeam.name}</span>
+            <span className="opacity-60 flex-shrink-0">role:{membership?.role}</span>
+          </span>
+        )}
+        {showSessionBadge && (
+          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded max-w-full truncate"
+            style={{ background: "rgba(100,181,246,0.1)", color: "#64b5f6" }}>
+            room:{agent.session}
           </span>
         )}
         {agent.source && (() => {
@@ -251,11 +254,13 @@ interface AgentRowProps {
   send?: (msg: object) => void;
   onSendDone?: (agent: AgentState, accent: string, roomLabel: string) => void;
   teams?: Team[];
+  fleetAgents?: AgentState[];
+  showSessionBadge?: boolean;
 }
 
 export const AgentRow = memo(function AgentRow({
   agent, accent, roomLabel, isLast, agoLabel, featured,
-  feedLog, slept, alignWidth, observe, showPreview, hidePreview, onAgentClick, send, onSendDone, teams,
+  feedLog, slept, alignWidth, observe, showPreview, hidePreview, onAgentClick, send, onSendDone, teams, fleetAgents, showSessionBadge,
 }: AgentRowProps) {
   const isBusy = agent.status === "busy";
   const preview = useAgentPreview(agent.target);
@@ -320,7 +325,7 @@ export const AgentRow = memo(function AgentRow({
     return (
       <div ref={(el) => observe(el, agent.target)}>
         <div
-          className="flex items-center gap-4 px-6 py-2 transition-all duration-300 cursor-pointer hover:bg-white/[0.03]"
+          className="flex items-center gap-3 sm:gap-4 px-3 sm:px-6 py-2 transition-all duration-300 cursor-pointer hover:bg-white/[0.03]"
           style={{ borderBottom: !isLast ? "1px solid rgba(255,255,255,0.03)" : "none", opacity: 0.35 }}
           onClick={(e) => onAgentClick(agent, accent, roomLabel, e)}
           role="button" tabIndex={0} aria-label={`${agent.name} - sleeping`}
@@ -350,7 +355,7 @@ export const AgentRow = memo(function AgentRow({
   return (
     <div ref={(el) => observe(el, agent.target)}>
       <div
-        className="flex items-center gap-5 px-6 py-3.5 transition-all duration-150 cursor-pointer hover:bg-white/[0.03]"
+        className="flex items-center gap-3 sm:gap-5 px-3 sm:px-6 py-3.5 transition-all duration-150 cursor-pointer hover:bg-white/[0.03]"
         style={{
           borderBottom: !isLast && !inputOpen ? "1px solid rgba(255,255,255,0.04)" : "none",
           background: isBusy ? `${accent}06` : "transparent",
@@ -385,7 +390,7 @@ export const AgentRow = memo(function AgentRow({
         )}
 
         <AgentInfo agent={agent} isBusy={isBusy} displayName={displayName} accent={accent}
-          agoLabel={agoLabel} feedLog={feedLog} teams={teams} />
+          agoLabel={agoLabel} feedLog={feedLog} teams={teams} fleetAgents={fleetAgents} showSessionBadge={showSessionBadge} />
 
         {send && <AgentControls agent={agent} displayName={displayName} accent={accent}
           inputOpen={inputOpen} send={send} onMic={handleMic} />}

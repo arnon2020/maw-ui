@@ -10,6 +10,7 @@ export interface RecentEntry {
 }
 
 import type { AskItem, BoardItem, BoardField, ScanResult, ScanMineResult, TimelineItem, PulseBoard, TaskActivity, TaskLogSummary, Project, ProjectTask } from "./types";
+import type { FleetGroupMode } from "./fleetGrouping";
 
 export interface DispatchStatus {
   step: "routing" | "done" | "error";
@@ -38,6 +39,8 @@ interface FleetStore {
   setSortMode: (mode: "active" | "name") => void;
   grouped: boolean;
   toggleGrouped: () => void;
+  fleetGroupMode: FleetGroupMode;
+  setFleetGroupMode: (mode: FleetGroupMode) => void;
   collapsed: string[];
   toggleCollapsed: (key: string) => void;
   muted: boolean;
@@ -111,6 +114,7 @@ const RECENT_TTL = 30 * 60 * 1000; // 30 minutes
 
 let writeTimer: ReturnType<typeof setTimeout> | null = null;
 let pendingWrite: string | null = null;
+const UI_STATE_VERSION = 4;
 
 function flushWrite() {
   if (pendingWrite === null) return;
@@ -125,11 +129,15 @@ function flushWrite() {
 
 /** Sync server state into localStorage, then rehydrate Zustand. */
 function syncFromServer(name: string) {
+  const localAtRequestStart = localStorage.getItem(name);
   fetch(apiUrl("/api/ui-state")).then(async (res) => {
     if (!res.ok) return;
     const data = await res.json();
     if (!data || Object.keys(data).length === 0) return;
-    const value = JSON.stringify({ state: data, version: 2 });
+    // A slow initial response must not overwrite a preference the user changed
+    // while it was in flight (notably Fleet's group-by switch).
+    if (localStorage.getItem(name) !== localAtRequestStart) return;
+    const value = JSON.stringify({ state: data, version: UI_STATE_VERSION });
     const existing = localStorage.getItem(name);
     if (value !== existing) {
       localStorage.setItem(name, value);
@@ -223,6 +231,8 @@ export const useFleetStore = create<FleetStore>()(
       setSortMode: (mode) => set({ sortMode: mode }),
       grouped: true,
       toggleGrouped: () => set((s) => ({ grouped: !s.grouped })),
+      fleetGroupMode: "session",
+      setFleetGroupMode: (mode) => set({ fleetGroupMode: mode }),
       collapsed: [],
       toggleCollapsed: (key) => set((s) => ({
         collapsed: s.collapsed.includes(key)
@@ -391,12 +401,13 @@ export const useFleetStore = create<FleetStore>()(
     }),
     {
       name: "maw.fleet",
-      version: 3,
+      version: UI_STATE_VERSION,
       storage: createJSONStorage(() => hybridStorage),
       partialize: (s) => ({
         recentMap: s.recentMap,
         sortMode: s.sortMode,
         grouped: s.grouped,
+        fleetGroupMode: s.fleetGroupMode,
         collapsed: s.collapsed,
         muted: s.muted,
         stageMode: s.stageMode,
@@ -423,6 +434,10 @@ export const useFleetStore = create<FleetStore>()(
         if (version < 3) {
           // v2→v3: default stageMode to "stage" (was "pitch")
           state.stageMode = "stage";
+        }
+        if (version < 4) {
+          // v3→v4: Fleet is session-grouped by default; users may persist team view.
+          state.fleetGroupMode = "session";
         }
         return state;
       },
