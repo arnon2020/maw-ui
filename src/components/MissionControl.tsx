@@ -38,7 +38,7 @@ export const MissionControl = memo(function MissionControl({
     <div
       ref={mc.containerRef}
       className="relative w-full overflow-hidden"
-      style={{ background: "#020208", height: "calc(100vh - 60px)", cursor: mc.isPanning ? "grabbing" : "default" }}
+      style={{ background: "#020208", height: "calc(100dvh - 60px)", cursor: mc.isPanning ? "grabbing" : "default" }}
       onMouseDown={mc.onMouseDown}
       onMouseMove={mc.onMouseMove}
       onMouseUp={mc.onMouseUp}
@@ -190,7 +190,7 @@ export const MissionControl = memo(function MissionControl({
 
       {/* Multi-card bar */}
       {mc.multiCards.size > 0 && !mc.pinnedPreview && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center gap-2 overflow-x-auto pointer-events-auto p-3" style={{ height: "calc(100vh - 80px)", scrollbarWidth: "none", background: "transparent" }}>
+        <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center gap-2 overflow-x-auto pointer-events-auto p-3" style={{ height: "calc(100dvh - 80px)", scrollbarWidth: "none", background: "transparent" }}>
           {[...mc.multiCards].map(target => {
             const agent = agents.find(a => a.target === target);
             if (!agent) return null;

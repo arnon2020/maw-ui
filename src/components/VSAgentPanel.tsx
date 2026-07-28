@@ -3,6 +3,7 @@ import { AgentAvatar } from "./AgentAvatar";
 import { agentColor } from "../lib/constants";
 import { ansiToHtml, processCapture } from "../lib/ansi";
 import { apiUrl } from "../lib/api";
+import { useStaticMode } from "../lib/staticMode";
 import type { AgentState } from "../lib/types";
 
 interface VSAgentPanelProps {
@@ -12,6 +13,7 @@ interface VSAgentPanelProps {
 }
 
 export const VSAgentPanel = memo(function VSAgentPanel({ agent, send, onPickAgent }: VSAgentPanelProps) {
+  const staticMode = useStaticMode();
   const [content, setContent] = useState("");
   const [inputBuf, setInputBuf] = useState("");
   const termRef = useRef<HTMLDivElement>(null);
@@ -24,15 +26,18 @@ export const VSAgentPanel = memo(function VSAgentPanel({ agent, send, onPickAgen
     setContent("");
     isFirstContent.current = true;
     send({ type: "subscribe", target: agent.target });
-    const poll = setInterval(async () => {
+    const refresh = async () => {
       try {
         const res = await fetch(apiUrl(`/api/capture?target=${encodeURIComponent(agent.target)}`));
         const data = await res.json();
         setContent(data.content || "");
       } catch {}
-    }, 300);
+    };
+    void refresh();
+    if (staticMode) return;
+    const poll = setInterval(refresh, 300);
     return () => clearInterval(poll);
-  }, [agent?.target, send]);
+  }, [agent?.target, send, staticMode]);
 
   // Auto-scroll
   useEffect(() => {

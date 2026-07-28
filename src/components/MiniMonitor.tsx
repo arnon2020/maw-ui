@@ -1,6 +1,7 @@
 import { memo, useState, useEffect, useRef } from "react";
 import { ansiToHtml, processCapture } from "../lib/ansi";
 import { apiUrl } from "../lib/api";
+import { useStaticMode } from "../lib/staticMode";
 
 interface MiniMonitorProps {
   target: string;
@@ -31,6 +32,7 @@ export const MiniMonitor = memo(function MiniMonitor({
   onMouseLeave,
   onClick,
 }: MiniMonitorProps) {
+  const staticMode = useStaticMode();
   const [content, setContent] = useState("");
   const [activity, setActivity] = useState<"active" | "stale" | "idle">("idle");
   const ref = useRef<HTMLDivElement>(null);
@@ -42,7 +44,7 @@ export const MiniMonitor = memo(function MiniMonitor({
   // busy → 0.5s fast stream
   // hovered → 1s
   // idle → no polling, frozen frame
-  const shouldPoll = busy || hovered;
+  const shouldPoll = !staticMode && (busy || hovered);
   const pollInterval = busy ? 500 : 1000;
 
   // When busy stops, immediately transition activity down

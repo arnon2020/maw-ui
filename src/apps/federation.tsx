@@ -9,6 +9,7 @@ import { CSS2DRenderer, CSS2DObject } from "three/examples/jsm/renderers/CSS2DRe
 import "../index.css";
 import { useWebSocket } from "../hooks/useWebSocket";
 import { apiUrl } from "../lib/api";
+import { useStaticMode } from "../lib/staticMode";
 import type { FeedEvent, FeedEventType } from "../lib/feed";
 
 // ─── Types ───
@@ -154,7 +155,9 @@ interface Supernova {
 // ─── App ───
 
 function App() {
+  const staticMode = useStaticMode();
   const mountRef = useRef<HTMLDivElement>(null);
+  const renderSceneRef = useRef<() => void>(() => {});
   const sceneRef = useRef<{
     scene: THREE.Scene;
     camera: THREE.PerspectiveCamera;
@@ -545,13 +548,23 @@ function App() {
       renderer.setSize(w, h);
       composer.setSize(w, h);
       labelRenderer.setSize(w, h);
+      renderSceneRef.current();
     }
     window.addEventListener("resize", onResize);
 
     // Animate
     let time = 0;
+    let frame = 0;
+    const renderScene = () => {
+      composer.render();
+      labelRenderer.render(scene, camera);
+    };
+    renderSceneRef.current = renderScene;
+    controls.enableDamping = !staticMode;
+    controls.autoRotate = !staticMode;
+    controls.addEventListener("change", renderScene);
     function animate() {
-      requestAnimationFrame(animate);
+      if (!staticMode) frame = requestAnimationFrame(animate);
       time += 0.016;
       controls.update();
 
@@ -751,19 +764,22 @@ function App() {
         }
       }
 
-      composer.render();
-      s.labelRenderer.render(s.scene, s.camera);
+      renderScene();
     }
     animate();
 
     // Cleanup
     return () => {
       window.removeEventListener("resize", onResize);
+      if (frame) cancelAnimationFrame(frame);
+      controls.removeEventListener("change", renderScene);
+      controls.dispose();
+      renderSceneRef.current = () => {};
       renderer.dispose();
       el.removeChild(renderer.domElement);
       el.removeChild(labelRenderer.domElement);
     };
-  }, []);
+  }, [staticMode]);
 
   // ─── Build 3D scene from data ───
   useEffect(() => {
@@ -887,8 +903,9 @@ function App() {
       s.particleSystem = points;
     }
     s.particleData = particleData;
+    renderSceneRef.current();
 
-  }, [agents, edges]);
+  }, [agents, edges, staticMode]);
 
   // ─── Data fetching ───
   // Canonical v1 endpoints — see ψ/memory/feedback_ground_before_proposing.md
@@ -1029,11 +1046,13 @@ function App() {
         }
         // Note: don't reset here — let the animate loop handle non-hovered scales
       }
+      if (staticMode) renderSceneRef.current();
     } else {
       setHovered(null);
       el.style.cursor = "default";
+      if (staticMode) renderSceneRef.current();
     }
-  }, []);
+  }, [staticMode]);
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     const el = mountRef.current;
@@ -1054,9 +1073,10 @@ function App() {
       s.controls.autoRotate = false;
     } else {
       setSelected(null);
-      s.controls.autoRotate = true;
+      s.controls.autoRotate = !staticMode;
     }
-  }, []);
+    if (staticMode) renderSceneRef.current();
+  }, [staticMode]);
 
   // Highlight selected agent edges
   useEffect(() => {
@@ -1074,6 +1094,7 @@ function App() {
         mat.opacity = 0.9;
       }
     }
+    renderSceneRef.current();
   }, [selected, edges]);
 
   const selAgent = agents.find(a => a.id === selected);
@@ -1120,10 +1141,10 @@ function App() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Three.js viewport */}
-        <div ref={mountRef} className="flex-1" onPointerMove={handlePointerMove} onClick={handleClick} />
+        <div ref={mountRef} className="flex-1 min-w-0" onPointerMove={handlePointerMove} onClick={handleClick} />
 
         {/* Sidebar */}
-        <div className="w-[240px] flex-shrink-0 border-l overflow-y-auto p-4 space-y-4" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+        <div className="w-[42vw] sm:w-[240px] min-w-[140px] flex-shrink-0 border-l overflow-y-auto p-2 sm:p-4 space-y-4" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
           {selAgent ? (
             <>
               <div>

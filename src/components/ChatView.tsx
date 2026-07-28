@@ -167,7 +167,7 @@ export const ChatView = memo(function ChatView({ agents, send, connected }: Chat
   const toggleHighlight = (id: string) => setHighlighted(highlighted === id ? null : id);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-48px)]" style={{ background: "#0a0a0f" }}>
+    <div className="flex flex-col h-[calc(100dvh-48px)]" style={{ background: "#0a0a0f" }}>
       {/* Header */}
       <div
         className="flex items-center gap-3 px-4 py-2.5 border-b flex-shrink-0 flex-wrap"

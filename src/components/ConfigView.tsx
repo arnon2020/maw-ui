@@ -305,7 +305,7 @@ export const ConfigView = memo(function ConfigView() {
   return (
     <div className="flex-1 flex min-h-0 mx-4 sm:mx-6 mb-3 rounded-2xl overflow-hidden border border-white/[0.06]">
       {/* Sidebar */}
-      <div className="w-[220px] flex-shrink-0 flex flex-col border-r border-white/[0.06]" style={{ background: "#08080e" }}>
+      <div className="w-[108px] sm:w-[220px] flex-shrink-0 flex flex-col border-r border-white/[0.06]" style={{ background: "#08080e" }}>
         <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/[0.06]">
           <span className="text-[10px] font-mono text-white/30 tracking-[2px] uppercase">Files</span>
           <button

@@ -6,6 +6,7 @@ import { agentColor } from "../lib/constants";
 import { ChibiPortrait } from "./ChibiPortrait";
 import { useFileAttach, FileInput, AttachmentChips } from "../hooks/useFileAttach";
 import { useDevice } from "../hooks/useDevice";
+import { useStaticMode } from "../lib/staticMode";
 import { FULL_COMMANDS } from "../quickCommands";
 import type { AgentState, PaneStatus } from "../lib/types";
 
@@ -103,6 +104,7 @@ function FleetSidebar({ agents, selectedAgent, onSelectAgent, collapsed }: {
 
 // --- Terminal Panel (touch-optimized) ---
 function TerminalPanel({ agent, send }: { agent: AgentState; send: (msg: object) => void }) {
+  const staticMode = useStaticMode();
   const inputRef = useRef<HTMLInputElement>(null);
   const termRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef("");
@@ -132,11 +134,11 @@ function TerminalPanel({ agent, send }: { agent: AgentState; send: (msg: object)
           }
         }
       } catch {}
-      if (active) timer = setTimeout(poll, 1500);
+      if (active && !staticMode) timer = setTimeout(poll, 1500);
     }
     poll();
     return () => { active = false; clearTimeout(timer); };
-  }, [agent.target]);
+  }, [agent.target, staticMode]);
 
   useEffect(() => {
     const el = termRef.current;

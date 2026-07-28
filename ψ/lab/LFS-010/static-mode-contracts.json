@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "failures": [],
+  "flag": {
+    "defaultsOn": true,
+    "toggleTurnsOff": true,
+    "persistedOff": true,
+    "queryOverridesOn": true
+  },
+  "captures": {
+    "static": {
+      "targets": 4,
+      "requests": 4,
+      "maxRequestsPerTarget": 1,
+      "runningCssAnimations": 0
+    },
+    "motion": {
+      "targets": 4,
+      "requests": 8,
+      "maxRequestsPerTarget": 3,
+      "runningCssAnimations": 2
+    }
+  }
+}

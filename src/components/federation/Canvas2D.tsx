@@ -1,9 +1,12 @@
 import { useRef, useEffect, useCallback } from "react";
 import { useFederationStore } from "./store";
 import { drawGrid, drawClusterLabels, drawEdges, drawAgents, drawLegend, drawFamilyHulls } from "./draw";
+import { useStaticMode } from "../../lib/staticMode";
 
 export function Canvas2D() {
+  const staticMode = useStaticMode();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const redrawRef = useRef<() => void>(() => {});
   const camRef = useRef({ x: 0, y: 0, zoom: 1 });
   const dragRef = useRef<{ id: string; startX: number; startY: number; moved: boolean } | null>(null);
   const panRef = useRef<{ startX: number; startY: number; camX: number; camY: number } | null>(null);
@@ -26,6 +29,7 @@ export function Canvas2D() {
       canvas!.width = rect.width * dpr;
       canvas!.height = rect.height * dpr;
       ctx.scale(dpr, dpr);
+      redrawRef.current();
     }
     resize();
     window.addEventListener("resize", resize);
@@ -102,21 +106,37 @@ export function Canvas2D() {
           const targetZoom = Math.max(cam.zoom, 1.4);
           const tx = W / 2 - t.x * targetZoom;
           const ty = H / 2 - t.y * targetZoom;
-          cam.zoom += (targetZoom - cam.zoom) * 0.12;
-          cam.x += (tx - cam.x) * 0.12;
-          cam.y += (ty - cam.y) * 0.12;
+          if (staticMode) {
+            cam.zoom = targetZoom;
+            cam.x = tx;
+            cam.y = ty;
+          } else {
+            cam.zoom += (targetZoom - cam.zoom) * 0.12;
+            cam.x += (tx - cam.x) * 0.12;
+            cam.y += (ty - cam.y) * 0.12;
+          }
           if (Math.abs(tx - cam.x) < 1.5 && Math.abs(ty - cam.y) < 1.5 && Math.abs(targetZoom - cam.zoom) < 0.01) {
             useFederationStore.getState().clearFocus();
           }
         }
       }
 
-      animId = requestAnimationFrame(draw);
+      if (!staticMode) animId = requestAnimationFrame(draw);
     }
 
-    animId = requestAnimationFrame(draw);
-    return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); };
-  }, []);
+    redrawRef.current = draw;
+    const unsubscribe = useFederationStore.subscribe(() => {
+      if (staticMode) draw();
+    });
+    if (staticMode) draw();
+    else animId = requestAnimationFrame(draw);
+    return () => {
+      if (animId) cancelAnimationFrame(animId);
+      redrawRef.current = () => {};
+      unsubscribe();
+      window.removeEventListener("resize", resize);
+    };
+  }, [staticMode]);
 
   // Interaction helpers
   const screenToWorld = useCallback((sx: number, sy: number) => {
@@ -161,6 +181,7 @@ export function Canvas2D() {
         const agent = storeRef.current.agents.find(a => a.id === d.id);
         if (agent) { agent.x = wx; agent.y = wy; }
         canvasRef.current!.style.cursor = "grabbing";
+        redrawRef.current();
         return;
       }
     }
@@ -170,12 +191,14 @@ export function Canvas2D() {
       camRef.current.x = p.camX + (sx - p.startX);
       camRef.current.y = p.camY + (sy - p.startY);
       canvasRef.current!.style.cursor = "grabbing";
+      redrawRef.current();
       return;
     }
 
     const hit = hitTest(sx, sy);
     useFederationStore.getState().setHovered(hit);
     canvasRef.current!.style.cursor = hit ? "grab" : "default";
+    redrawRef.current();
   }, [hitTest, screenToWorld]);
 
   const handleUp = useCallback(() => {
@@ -183,6 +206,7 @@ export function Canvas2D() {
     if (d && !d.moved) useFederationStore.getState().setSelected(d.id);
     dragRef.current = null;
     panRef.current = null;
+    redrawRef.current();
   }, []);
 
   const handleWheel = useCallback((e: React.WheelEvent<HTMLCanvasElement>) => {
@@ -196,6 +220,7 @@ export function Canvas2D() {
     cam.x = sx - (sx - cam.x) * (newZoom / cam.zoom);
     cam.y = sy - (sy - cam.y) * (newZoom / cam.zoom);
     cam.zoom = newZoom;
+    redrawRef.current();
   }, []);
 
   return (

@@ -7,6 +7,7 @@ import type { Team } from "./TeamPanel";
 import { COLOR_MAP } from "./TeamPanel";
 import { guessCommand } from "../lib/constants";
 import { useAgentPreview } from "../lib/previewStore";
+import { useStaticMode } from "../lib/staticMode";
 
 const isTouch = typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0);
 
@@ -23,10 +24,15 @@ function formatElapsed(ms: number): string {
 /** Live ticking timer for running tool calls */
 function ElapsedTimer({ since }: { since: number }) {
   const [now, setNow] = useState(Date.now());
+  const staticMode = useStaticMode();
   useEffect(() => {
+    if (staticMode) {
+      setNow(Date.now());
+      return;
+    }
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [staticMode]);
   return <span style={{ color: "#fbbf24" }}>{formatElapsed(now - since)}</span>;
 }
 

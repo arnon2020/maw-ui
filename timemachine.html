@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="/static-mode.js"></script>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Fleet Time Machine</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -12,7 +13,7 @@
     color: #e0e0e0;
     font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
     overflow: hidden;
-    height: 100vh;
+    height: 100dvh;
     perspective: 1200px;
   }
 
@@ -47,7 +48,7 @@
   /* Card stack area */
   .stack-container {
     position: relative; z-index: 1;
-    width: 100%; height: calc(100vh - 80px);
+    width: 100%; height: calc(100dvh - 80px);
     display: flex; align-items: center; justify-content: center;
     padding-top: 60px; padding-bottom: 60px;
   }

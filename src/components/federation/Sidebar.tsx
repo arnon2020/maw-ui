@@ -49,7 +49,7 @@ export function Sidebar({ send }: { send?: (data: object) => void } = {}) {
   )].sort((a, b) => b.ts - a.ts);
 
   return (
-    <div className="w-[320px] flex-shrink-0 border-l overflow-hidden flex flex-col"
+    <div className="w-[42vw] sm:w-[320px] min-w-[140px] flex-shrink-0 border-l overflow-hidden flex flex-col"
       style={{ borderColor: "rgba(255,255,255,0.1)", background: "rgba(3,10,24,0.98)" }}>
 
       {/* Tab bar */}

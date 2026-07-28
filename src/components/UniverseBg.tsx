@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { useStaticMode } from "../lib/staticMode";
 
 function shouldUseLowPowerBackground() {
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -14,6 +15,7 @@ function shouldUseLowPowerBackground() {
 
 export function UniverseBg() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const staticMode = useStaticMode();
 
   useEffect(() => {
     const el = containerRef.current;
@@ -107,7 +109,7 @@ export function UniverseBg() {
       renderFrame(now);
     }
 
-    if (lowPower) {
+    if (lowPower || staticMode) {
       renderer.render(scene, camera);
     } else {
       frame = requestAnimationFrame(animate);
@@ -115,7 +117,7 @@ export function UniverseBg() {
 
     function onVisibilityChange() {
       paused = document.hidden;
-      if (!paused && !lowPower) {
+      if (!paused && !lowPower && !staticMode) {
         lastRender = 0;
       }
     }
@@ -151,7 +153,7 @@ export function UniverseBg() {
       renderer.dispose();
       if (el.contains(renderer.domElement)) el.removeChild(renderer.domElement);
     };
-  }, []);
+  }, [staticMode]);
 
   return <div ref={containerRef} className="fixed inset-0 z-0" />;
 }

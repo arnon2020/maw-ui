@@ -251,9 +251,9 @@ export const TerminalView = memo(function TerminalView({ sessions, agents, conne
     : "";
 
   return (
-    <div className="flex mx-4 sm:mx-6 mb-3 rounded-2xl overflow-hidden border border-white/[0.06]" style={{ height: "calc(100vh - 72px)" }}>
+    <div className="flex mx-2 sm:mx-6 mb-3 rounded-2xl overflow-hidden border border-white/[0.06]" style={{ height: "calc(100dvh - 72px)" }}>
       {/* Sidebar */}
-      <div className="w-[220px] flex-shrink-0 flex flex-col border-r border-white/[0.06] overflow-y-auto" style={{ background: "#08080e" }}>
+      <div className="w-[108px] sm:w-[220px] flex-shrink-0 flex flex-col border-r border-white/[0.06] overflow-y-auto" style={{ background: "#08080e" }}>
         {sessions.map(session => {
           const style = roomStyle(session.name);
           return (

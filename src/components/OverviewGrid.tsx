@@ -5,6 +5,7 @@ import { apiUrl } from "../lib/api";
 import { canonicalOracleName, fetchOracleRegistry } from "../lib/oracleRegistry";
 import { useFps } from "./FpsCounter";
 import { useFleetStore } from "../lib/store";
+import { useStaticMode } from "../lib/staticMode";
 import { SummonPanel } from "./SummonPanel";
 import type { AgentState, Session } from "../lib/types";
 
@@ -35,6 +36,7 @@ const OverviewTile = memo(function OverviewTile({
   shortcutKey?: number;
   onClick: () => void;
 }) {
+  const staticMode = useStaticMode();
   const [content, setContent] = useState("");
   const tileRef = useRef<HTMLDivElement>(null);
   const termRef = useRef<HTMLDivElement>(null);
@@ -69,11 +71,11 @@ const OverviewTile = memo(function OverviewTile({
         const data = await res.json();
         if (activeRef.current) setContent(data.content || "");
       } catch {}
-      if (activeRef.current) timer = setTimeout(poll, 2000);
+      if (activeRef.current && !staticMode) timer = setTimeout(poll, 2000);
     }
     poll();
     return () => { activeRef.current = false; clearTimeout(timer); };
-  }, [agent.target, visible]);
+  }, [agent.target, visible, staticMode]);
 
   const trimmed = useMemo(() => processCapture(content), [content]);
 
