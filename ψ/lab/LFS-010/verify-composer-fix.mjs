@@ -11,6 +11,7 @@ const profiles = [
 const pages = [
   { name: "main-chat-route", path: "/?static=1#chat", selector: 'input[placeholder*="Message @"], input[placeholder^="no agents"]', liveThread: true },
   { name: "standalone-chat", path: "/chat.html?static=1", selector: 'input[placeholder*="Message @"], input[placeholder^="no agents"]', liveThread: true },
+  { name: "main-vs-route", path: "/?static=1#vs", selector: 'input[placeholder="Type command..."]' },
   { name: "workspace", path: "/workspace.html?static=1", selector: 'input[placeholder="message..."]' },
   { name: "talk", path: "/talk.html?static=1", selector: "#msgInput" },
 ];
@@ -28,7 +29,8 @@ function visible(bounds) {
 
 async function measure(page, selector) {
   return page.evaluate((selector) => {
-    const input = document.querySelector(selector);
+    const inputs = document.querySelectorAll(selector);
+    const input = inputs[inputs.length - 1];
     const box = input?.getBoundingClientRect();
     const inputLayout = input?.parentElement?.parentElement;
     const scroller = inputLayout?.querySelector(".overflow-y-auto");
@@ -70,14 +72,14 @@ for (const profile of profiles) {
     // Acceptance explicitly calls for a cold reload with the real, already-long feed.
     await page.reload({ waitUntil: "domcontentloaded" });
     await page.waitForTimeout(1_500);
-    await page.locator(target.selector).waitFor({ state: "visible" });
+    await page.locator(target.selector).last().waitFor({ state: "visible" });
 
     const beforeFocus = await measure(page, target.selector);
     await page.screenshot({
       path: decodeURIComponent(new URL(`${profile.name}-${target.name}-before.png`, screenshotDir).pathname),
     });
 
-    await page.locator(target.selector).focus();
+    await page.locator(target.selector).last().focus();
     await page.setViewportSize({ width: profile.width, height: profile.keyboardHeight });
     await page.waitForTimeout(300);
     const afterKeyboard = await measure(page, target.selector);

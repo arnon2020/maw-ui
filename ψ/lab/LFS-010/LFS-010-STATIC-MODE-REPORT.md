@@ -113,22 +113,63 @@ Evidence: `ψ/lab/LFS-010/composer-fix-verification.json`, 32 before/keyboard
 screenshots under `ψ/lab/LFS-010/composer-fix-screenshots/`, and
 `ψ/lab/LFS-010/bottom-input-entry-audit.txt`.
 
+## FIX ROUND 2 — unobstructed controls and VS viewport lock
+
+Independent QA confirmed that the fixed `.maw-static-toggle` sat directly above the
+Chat Send button and intercepted its center point in all four profiles, both before
+and after the keyboard simulation. The toggle now docks into each entry's header as
+a normal-flow control (with a compact mobile treatment) and redocks after React
+replaces the route header. Its top-right fixed position is retained only as a
+fallback when an entry has no header host. The five app-level floating controls were
+also moved into the sticky status bar after the same-class audit found that their
+fixed right edge could cover other interactive controls.
+
+The audit also found the keyboard-only `#vs` route missing the shell's viewport-lock
+contract. It now uses `fullHeight`, a shrinking/contained VS view, and fixed-size
+composer rows. The Workspace composer was made responsive so its Send center remains
+reachable beside its responsive sidebars.
+
+The exhaustive hit-target harness covered 28 pages/routes × four profiles × two
+phases (before focus and simulated keyboard): 224 states and 4,075 visible-control
+center checks. Important controls had 0 blocked centers, fixed overlays blocked 0
+centers, the Static/Motion toggle was visible and self-hit at its center in 224/224
+states, and no state had horizontal document overflow.
+
+VS bottom-input bounds below are input bottom / viewport height. Each state also had
+`documentHeight === viewportHeight` and `scrollY === 0`.
+
+| Profile | Before focus | After keyboard |
+|---|---:|---:|
+| 360×800 | 794/800 | 494/500 |
+| 768×1024 | 1018/1024 | 718/724 |
+| 820×1180 | 1174/1180 | 874/880 |
+| 844×390 | 384/390 | 294/300 |
+
+Evidence: `ψ/lab/LFS-010/interactive-hit-target-verification.json`,
+`ψ/lab/LFS-010/hit-target-screenshots/`,
+`ψ/lab/LFS-010/composer-fix-verification.json`, 40 before/keyboard screenshots
+under `ψ/lab/LFS-010/composer-fix-screenshots/`, and the updated
+`ψ/lab/LFS-010/bottom-input-entry-audit.txt`.
+
 ## Verification
 
 - `npm run build`: pass.
 - `npm test`: 146 pass, 0 fail.
+- `npx tsc --noEmit`: pass.
 - Static performance trace: pass; zero continuous idle rAF and zero running CSS animation on all four measured pages.
 - Static flag/persistence/thumbnail contract: pass.
 - Viewport matrix: pass; 44 screenshots, 0 horizontal page overflow, keyboard composer visible.
-- FIX ROUND 1 composer harness: pass; 32/32 before-focus and post-keyboard
-  measurements visible across four profiles and four bottom-input entries.
+- Composer harness: pass; 40/40 before-focus and post-keyboard measurements visible
+  across four profiles and five bottom-input entries, including `#vs`.
+- Hit-target harness: pass; 224/224 states, 4,075 centers, 0 important controls
+  blocked, 0 fixed-overlay obstructions, and toggle accessible in 224/224 states.
 - `git diff --check`: pass.
 - No backend source or state was changed. No preview/deploy was started; deployment remains assigned to lead after review.
 
 branch: lfs-010-static-mode
-commit: 4d1a221
-commands+exit-codes: npm run build=0, npm test=0, node ψ/lab/LFS-010/verify-composer-fix.mjs=0, git diff --check=0
-files changed: src/App.tsx; src/core/AppShell.tsx; src/apps/{chat,inbox}.tsx; src/components/ChatView.tsx; ψ/lab/LFS-010/{LFS-010-STATIC-MODE-REPORT.md,bottom-input-entry-audit.txt,composer-fix-verification.json,verify-composer-fix.mjs,composer-fix-screenshots/*}
-verification: cold reload on a live 200-message thread, before-focus and post-keyboard bounds on four profiles × four bottom-input entries, 32 screenshots, production build, and 146-test suite
-Retro: Composer tests must measure before focus and must assert document height/scroll position; otherwise browser focus scrolling can turn an off-screen control into a false pass.
+commit: fbb1a3f
+commands+exit-codes: npm run build=0, npm test=0, npx tsc --noEmit=0, node ψ/lab/LFS-010/verify-composer-fix.mjs=0, node ψ/lab/LFS-010/verify-interactive-hit-targets.mjs=0, git diff --check=0
+files changed: public/static-mode.js; src/App.tsx; src/core/AppShell.tsx; src/apps/{chat,inbox,workspace}.tsx; src/components/{ChatView,VSAgentPanel,VSView}.tsx; ψ/lab/LFS-010/{LFS-010-STATIC-MODE-REPORT.md,bottom-input-entry-audit.txt,composer-fix-verification.json,interactive-hit-target-verification.json,verify-composer-fix.mjs,verify-interactive-hit-targets.mjs,composer-fix-screenshots/*,hit-target-screenshots/*}
+verification: cold reload with live 200-message Chat thread, before-focus and post-keyboard bounds on four profiles × five bottom-input entries, exhaustive center hit-testing across 224 page/profile/phase states, 40 composer screenshots, production build, TypeScript check, and 146-test suite
+Retro: Fixed/floating accessibility checks must use elementFromPoint at important-control centers across every responsive profile and keyboard phase; viewport geometry alone cannot reveal pointer interception.
 FINAL-REPORT END
