@@ -84,7 +84,7 @@ export function AppShell({ view, fullHeight, children }: AppShellProps) {
     <ErrorBoundary>
       <PinLock>
         <div className={wrapperClass} style={{ background: "#020208" }}>
-          <div className={`relative z-10${fullHeight ? " flex-shrink-0" : ""}`}>
+          <div className={`sticky top-0 z-20${fullHeight ? " flex-shrink-0" : ""}`}>
             <StatusBar
               connected={connected}
               agentCount={agents.length}

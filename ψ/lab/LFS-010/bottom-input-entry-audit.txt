@@ -8,6 +8,8 @@ Viewport-locked through AppShell/Layout fullHeight:
 - /?static=1#config and /config.html — already fullHeight.
 - /?static=1#terminal and /terminal.html — already fullHeight; terminal keyboard capture
   and internal scroll stay inside the viewport.
+- /?static=1#vs — both VSAgentPanel command inputs use the same fullHeight shell and
+  flex-1/min-h-0 internal terminal scroll pattern; fixed in QA round 2.
 
 Equivalent self-contained viewport layouts (no AppShell):
 - /workspace.html?static=1 — h-screen flex shell, internal feed scroll, bottom send bar.
