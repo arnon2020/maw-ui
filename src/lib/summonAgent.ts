@@ -1,5 +1,3 @@
-import { apiUrl } from "./api";
-
 export type SummonResult = {
   ok: boolean;
   message?: string;
@@ -15,6 +13,7 @@ function textField(value: unknown): string | undefined {
 }
 
 export async function launchAgent(name: string, task: string): Promise<SummonResult> {
+  const { apiUrl } = await import("./api");
   const trimmedTask = task.trim();
   const path = trimmedTask ? "/api/send" : "/api/wake";
   const body = trimmedTask
@@ -54,4 +53,3 @@ export async function launchAgent(name: string, task: string): Promise<SummonRes
     return { ok: false, error: error instanceof Error ? error.message : String(error) };
   }
 }
-

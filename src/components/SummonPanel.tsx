@@ -1,12 +1,52 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { filterOracleNames } from "../lib/oracleRegistry";
-import { launchAgent } from "../lib/summonAgent";
+import { launchAgent, type SummonResult } from "../lib/summonAgent";
 
 const RECENT_KEY = "maw-summon-recent";
 const PINNED_KEY = "maw-summon-pinned";
 
 function displayName(name: string): string {
   return name.replace(/-/g, " ");
+}
+
+export function showingAgentCount(count: number): string {
+  return `Showing ${count} ${count === 1 ? "agent" : "agents"}`;
+}
+
+export function shouldConfirmFromWindowKeydown({
+  step,
+  key,
+  shiftKey,
+  targetTag,
+}: {
+  step: "pick" | "confirm";
+  key: string;
+  shiftKey: boolean;
+  targetTag: string;
+}): boolean {
+  if (step !== "confirm" || key !== "Enter" || shiftKey) return false;
+  // INPUT protects the combobox Enter that just changed pick → confirm.
+  // BUTTON preserves native Enter behavior for Back and Launch.
+  return targetTag !== "INPUT" && targetTag !== "BUTTON";
+}
+
+export function launchUiResult(task: string, result: SummonResult): {
+  state: "success" | "error";
+  message: string;
+  task: string;
+} {
+  if (!result.ok) {
+    return {
+      state: "error",
+      message: result.error ?? "Launch failed",
+      task,
+    };
+  }
+  return {
+    state: "success",
+    message: result.message ?? "Launch sent",
+    task: "",
+  };
 }
 
 function readStoredNames(key: string): string[] {
@@ -94,7 +134,16 @@ export function SummonPanel({
         close();
         return;
       }
-      if (step === "confirm" && event.key === "Enter" && !event.shiftKey && launchState !== "loading") {
+      const targetTag = event.target instanceof HTMLElement ? event.target.tagName : "";
+      if (
+        launchState !== "loading"
+        && shouldConfirmFromWindowKeydown({
+          step,
+          key: event.key,
+          shiftKey: event.shiftKey,
+          targetTag,
+        })
+      ) {
         event.preventDefault();
         void confirmLaunch();
       }
@@ -116,17 +165,17 @@ export function SummonPanel({
     setLaunchState("loading");
     setLaunchMessage(`Launching ${displayName(selected)}...`);
     const result = await launchAgent(selected, task);
+    const nextUi = launchUiResult(task, result);
+    setTask(nextUi.task);
+    setLaunchState(nextUi.state);
+    setLaunchMessage(nextUi.message);
     if (!result.ok) {
-      setLaunchState("error");
-      setLaunchMessage(result.error ?? "Launch failed");
       return;
     }
 
     const nextRecent = [selected, ...recent.filter((name) => name !== selected)].slice(0, 3);
     setRecent(nextRecent);
     writeStoredNames(RECENT_KEY, nextRecent);
-    setLaunchState("success");
-    setLaunchMessage(result.message ?? "Launch sent");
   };
 
   const togglePinned = (name: string) => {
@@ -230,7 +279,7 @@ export function SummonPanel({
                 style={{ borderColor: "rgba(255,255,255,0.13)" }}
               />
               <div className="mt-2 flex items-center justify-between text-xs font-mono text-white/40">
-                <span>Showing {filtered.length} agents</span>
+                <span>{showingAgentCount(filtered.length)}</span>
                 <span>↑↓ navigate · Enter select</span>
               </div>
 
