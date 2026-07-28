@@ -1,9 +1,11 @@
-import { memo, useState, useEffect, useRef, useMemo } from "react";
+import { memo, useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { ansiToHtml, processCapture } from "../lib/ansi";
-import { roomStyle, agentColor } from "../lib/constants";
+import { roomStyle } from "../lib/constants";
 import { apiUrl } from "../lib/api";
+import { canonicalOracleName, fetchOracleRegistry } from "../lib/oracleRegistry";
 import { useFps } from "./FpsCounter";
 import { useFleetStore } from "../lib/store";
+import { SummonPanel } from "./SummonPanel";
 import type { AgentState, Session } from "../lib/types";
 
 /** Extract leading number from session name: "08-neo" → 8, "0" → 0 */
@@ -16,6 +18,7 @@ interface OverviewGridProps {
   sessions: Session[];
   agents: AgentState[];
   connected: boolean;
+  registryRevision: number;
   send: (msg: object) => void;
   onSelectAgent: (agent: AgentState) => void;
 }
@@ -141,12 +144,56 @@ export const OverviewGrid = memo(function OverviewGrid({
   sessions,
   agents,
   connected,
+  registryRevision,
   send,
   onSelectAgent,
 }: OverviewGridProps) {
   const fps = useFps();
+  const [knownAgents, setKnownAgents] = useState<string[]>([]);
+  const [registryLoading, setRegistryLoading] = useState(true);
+  const [registryError, setRegistryError] = useState<string | null>(null);
+  const registryRequestRef = useRef(0);
+  const registryMountedRef = useRef(true);
 
   const grouped = useFleetStore((s) => s.grouped);
+  useEffect(() => {
+    return () => { registryMountedRef.current = false; };
+  }, []);
+
+  const refreshRegistry = useCallback(async () => {
+    const request = ++registryRequestRef.current;
+    setRegistryLoading(true);
+    try {
+      const result = await fetchOracleRegistry();
+      if (!registryMountedRef.current || request !== registryRequestRef.current) return;
+      setKnownAgents(result.names);
+      setRegistryError(null);
+    } catch (error) {
+      if (!registryMountedRef.current || request !== registryRequestRef.current) return;
+      // Keep the last-known-good list; only freshness changes.
+      setRegistryError(error instanceof Error ? error.message : "Registry refresh failed");
+    } finally {
+      if (registryMountedRef.current && request === registryRequestRef.current) {
+        setRegistryLoading(false);
+      }
+    }
+  }, []);
+
+  // Mount fetch, registry-changed events, disconnects, and reconnects all
+  // re-evaluate the list. Request ordering prevents an older response winning.
+  useEffect(() => {
+    void refreshRegistry();
+  }, [connected, refreshRegistry, registryRevision]);
+
+  const dormantAgentNames = useMemo(() => {
+    const liveNames = new Set<string>();
+    for (const agent of agents) {
+      const canonical = canonicalOracleName(agent.name);
+      if (canonical) liveNames.add(canonical.toLowerCase());
+    }
+    return knownAgents.filter((name) => !liveNames.has(name.toLowerCase()));
+  }, [agents, knownAgents]);
+
   const busyCount = agents.filter(a => a.status === "busy").length;
   const readyCount = agents.filter(a => a.status === "ready").length;
   const idleCount = agents.length - busyCount - readyCount;
@@ -183,6 +230,12 @@ export const OverviewGrid = memo(function OverviewGrid({
           <span className="text-white/60">{sessions.length} rooms</span>
           <span className="text-white/20">/</span>
           <span className="text-white/60">{agents.length} agents</span>
+          {dormantAgentNames.length > 0 && (
+            <>
+              <span className="text-white/20">/</span>
+              <span className="text-white/60">{dormantAgentNames.length} summonable</span>
+            </>
+          )}
           <span className="text-white/20">/</span>
           <span style={{ color: fps >= 50 ? "#4caf50" : fps >= 30 ? "#ffa726" : "#ef5350" }}>{fps} fps</span>
         </div>
@@ -206,6 +259,14 @@ export const OverviewGrid = memo(function OverviewGrid({
           <span className="text-[9px] text-white/15 font-mono">J to jump</span>
         </div>
       </div>
+
+      <SummonPanel
+        agents={dormantAgentNames}
+        connected={connected}
+        loadingRegistry={registryLoading}
+        registryError={registryError}
+        onRetryRegistry={() => { void refreshRegistry(); }}
+      />
 
       {/* Session groups */}
       <div className="max-w-[1600px] mx-auto px-6 py-6 flex flex-col gap-6">

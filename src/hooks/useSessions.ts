@@ -23,6 +23,7 @@ function normalizePaneStatus(status: unknown): PaneStatus | undefined {
 
 export function useSessions() {
   const [sessions, setSessions] = useState<Session[]>([]);
+  const [registryRevision, setRegistryRevision] = useState(0);
   const sessionsRef = useRef(sessions);
   sessionsRef.current = sessions;
 
@@ -262,6 +263,10 @@ export function useSessions() {
         }
       }
       setSessions(nextSessions);
+    } else if (data.type === "registry-changed") {
+      // OverviewGrid observes this counter and refreshes through the same
+      // application WebSocket that delivered the registry event.
+      setRegistryRevision((revision) => revision + 1);
     } else if (data.type === "recent") {
       const agents: { target: string; name: string; session: string }[] = data.agents || [];
       if (agents.length > 0) {
@@ -366,5 +371,16 @@ export function useSessions() {
     return map;
   }, [feedEvents, resolveAgentFromFeed]);
 
-  return { sessions, agents, eventLog, addEvent, handleMessage, feedEvents, feedActive, agentFeedLog, teams };
+  return {
+    sessions,
+    agents,
+    eventLog,
+    addEvent,
+    handleMessage,
+    feedEvents,
+    feedActive,
+    agentFeedLog,
+    teams,
+    registryRevision,
+  };
 }

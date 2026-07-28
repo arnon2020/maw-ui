@@ -43,6 +43,11 @@ export default defineConfig({
   server: {
     host: true,
     allowedHosts: true,
+    // Browser-test artifacts and Codex session logs are written continuously.
+    // Watching them causes a full-reload loop during local verification.
+    watch: {
+      ignored: ["**/.playwright-mcp/**", "**/.codex-home/**"],
+    },
     proxy: {
       "/api": MAW_HTTP,
       "/ws/pty": { target: MAW_WS, ws: true },

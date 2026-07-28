@@ -294,7 +294,18 @@ export function App() {
     return () => window.removeEventListener("keydown", handler, true);
   }, []);
 
-  const { sessions, agents, eventLog, addEvent, handleMessage, feedEvents, feedActive, agentFeedLog, teams } = useSessions();
+  const {
+    sessions,
+    agents,
+    eventLog,
+    addEvent,
+    handleMessage,
+    feedEvents,
+    feedActive,
+    agentFeedLog,
+    teams,
+    registryRevision,
+  } = useSessions();
 
   // Source filter: all / local / remote (synced via CustomEvent from FloatingButtons)
   const [sourceFilter, setSourceFilter] = useState<"all" | "local" | "remote">(() => (localStorage.getItem("office-source-filter") as any) || "all");
@@ -472,7 +483,14 @@ export function App() {
   if (route === "overview") {
     return (
       <Layout activeView="overview" {...layoutProps}>
-        <OverviewGrid sessions={sessions} agents={agents} connected={connected} send={send} onSelectAgent={onSelectAgent} />
+        <OverviewGrid
+          sessions={sessions}
+          agents={agents}
+          connected={connected}
+          registryRevision={registryRevision}
+          send={send}
+          onSelectAgent={onSelectAgent}
+        />
       </Layout>
     );
   }

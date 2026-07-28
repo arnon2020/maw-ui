@@ -9,6 +9,7 @@ mount(() => (
         sessions={ctx.sessions}
         agents={ctx.agents}
         connected={ctx.connected}
+        registryRevision={ctx.registryRevision}
         send={ctx.send}
         onSelectAgent={ctx.onSelectAgent}
       />

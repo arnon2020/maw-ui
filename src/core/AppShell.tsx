@@ -31,6 +31,7 @@ export interface AppContext {
   feedActive: ReturnType<typeof useSessions>["feedActive"];
   agentFeedLog: ReturnType<typeof useSessions>["agentFeedLog"];
   teams: ReturnType<typeof useSessions>["teams"];
+  registryRevision: ReturnType<typeof useSessions>["registryRevision"];
   connected: boolean;
   reconnecting: boolean;
   send: (msg: object) => void;
@@ -38,7 +39,18 @@ export interface AppContext {
 }
 
 export function AppShell({ view, fullHeight, children }: AppShellProps) {
-  const { sessions, agents, eventLog, addEvent, handleMessage, feedEvents, feedActive, agentFeedLog, teams } = useSessions();
+  const {
+    sessions,
+    agents,
+    eventLog,
+    addEvent,
+    handleMessage,
+    feedEvents,
+    feedActive,
+    agentFeedLog,
+    teams,
+    registryRevision,
+  } = useSessions();
 
   const muted = useFleetStore((s) => s.muted);
   const toggleMuted = useFleetStore((s) => s.toggleMuted);
@@ -64,7 +76,7 @@ export function AppShell({ view, fullHeight, children }: AppShellProps) {
     : "relative min-h-screen";
 
   const ctx: AppContext = {
-    sessions, agents, eventLog, addEvent, feedEvents, feedActive, agentFeedLog, teams,
+    sessions, agents, eventLog, addEvent, feedEvents, feedActive, agentFeedLog, teams, registryRevision,
     connected, reconnecting, send, onSelectAgent,
   };
 
