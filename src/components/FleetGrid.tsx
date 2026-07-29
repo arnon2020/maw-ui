@@ -250,6 +250,17 @@ export const FleetGrid = memo(function FleetGrid({
   } = useFleetStore();
   const isCollapsed = useCallback((key: string) => collapsed.includes(key), [collapsed]);
 
+  // Mobile opens directly on the useful grouped directory. Keep the noisy
+  // recent section collapsed by default while preserving an explicit user
+  // choice once the state has been persisted.
+  useEffect(() => {
+    if (!matchMedia("(max-width: 640px)").matches) return;
+    const initialized = sessionStorage.getItem("maw-fleet-mobile-order-initialized");
+    if (initialized) return;
+    sessionStorage.setItem("maw-fleet-mobile-order-initialized", "1");
+    if (!collapsed.includes("_recent")) toggleCollapsed("_recent");
+  }, [collapsed, toggleCollapsed]);
+
   // Sync busy agents to store
   useEffect(() => {
     const busyAgentsData = agents.filter(a => a.status === "busy").map(a => ({ target: a.target, name: a.name, session: a.session }));
@@ -388,44 +399,46 @@ export const FleetGrid = memo(function FleetGrid({
   }, [agents, busyAgents, recentMap]);
 
   return (
-    <div ref={containerRef} className="relative w-full min-h-screen" style={{ background: "#0a0a12" }}>
+    <div ref={containerRef} className="relative w-full min-h-screen flex flex-col" style={{ background: "#0a0a12" }}>
       {/* Toggle: Stage vs Pitch */}
-      {stageMode === "pitch" ? (
-        <FootballPitch
-          agents={agents}
-          recentMap={recentMap}
-          showPreview={showPreview}
-          hidePreview={hidePreview}
-          onAgentClick={onAgentClick}
-          onToggleView={toggleStageMode}
-        />
-      ) : (
-        <>
-          <div className="max-w-5xl mx-auto px-6 lg:px-8 flex justify-end pt-4">
-            <button
-              onClick={toggleStageMode}
-              className="px-3 py-1 rounded-lg text-[11px] font-mono cursor-pointer hover:opacity-80 transition-opacity"
-              style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.1)" }}
-            >
-              Switch to Pitch
-            </button>
-          </div>
-          <StageSection
-            busyAgents={busyAgents}
-            recentlyActive={recentlyActive}
+      <div className="order-2 sm:order-1">
+        {stageMode === "pitch" ? (
+          <FootballPitch
+            agents={agents}
             recentMap={recentMap}
-            getAgentFeedLog={getAgentFeedLog}
             showPreview={showPreview}
             hidePreview={hidePreview}
             onAgentClick={onAgentClick}
+            onToggleView={toggleStageMode}
           />
-        </>
-      )}
+        ) : (
+          <>
+            <div className="max-w-5xl mx-auto px-6 lg:px-8 flex justify-end pt-4">
+              <button
+                onClick={toggleStageMode}
+                className="min-h-12 px-3 py-1 rounded-lg text-[11px] font-mono cursor-pointer hover:opacity-80 transition-opacity"
+                style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.1)" }}
+              >
+                Switch to Pitch
+              </button>
+            </div>
+            <StageSection
+              busyAgents={busyAgents}
+              recentlyActive={recentlyActive}
+              recentMap={recentMap}
+              getAgentFeedLog={getAgentFeedLog}
+              showPreview={showPreview}
+              hidePreview={hidePreview}
+              onAgentClick={onAgentClick}
+            />
+          </>
+        )}
+      </div>
 
       {/* Grouped agent directory */}
-      <div className="max-w-5xl mx-auto flex flex-col px-3 sm:px-6 lg:px-8 py-6 gap-4">
+      <div className="order-1 sm:order-2 w-full max-w-5xl mx-auto flex flex-col px-3 sm:px-6 lg:px-8 py-6 gap-4">
         {/* Recently Active group — always visible */}
-        <section className="rounded-2xl overflow-hidden" style={{ background: "#12121c", border: "1px solid rgba(251,191,36,0.15)", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>
+        <section className="order-3 sm:order-none rounded-2xl overflow-hidden" style={{ background: "#12121c", border: "1px solid rgba(251,191,36,0.15)", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>
           <div className="flex items-center gap-3 sm:gap-5 px-4 sm:px-6 py-4 cursor-pointer select-none" style={{ background: "rgba(251,191,36,0.03)" }}
             onClick={() => toggleCollapsed("_recent")} role="button" tabIndex={0}
             onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleCollapsed("_recent"); } }}>
@@ -466,12 +479,12 @@ export const FleetGrid = memo(function FleetGrid({
           )}
         </section>
 
-        <div className="flex flex-wrap items-center gap-2" aria-label="Fleet grouping controls">
+        <div className="order-1 sm:order-none flex flex-wrap items-center gap-2" aria-label="Fleet grouping controls">
           <span className="text-[10px] font-mono uppercase tracking-wider text-white/30 mr-1">Group by</span>
           <div className="flex rounded-lg overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
             {(["session", "team"] as const).map((mode) => (
               <button key={mode}
-                className="px-3 py-1.5 text-[11px] font-mono capitalize"
+                className="min-h-12 px-3 py-1.5 text-[11px] font-mono capitalize"
                 style={{
                   background: fleetGroupMode === mode ? "rgba(100,181,246,0.14)" : "transparent",
                   color: fleetGroupMode === mode ? "#64b5f6" : "rgba(255,255,255,0.35)",
@@ -488,7 +501,7 @@ export const FleetGrid = memo(function FleetGrid({
         </div>
 
         {fleetGroups.length === 0 && (
-          <div className="rounded-2xl px-5 py-10 text-center font-mono text-sm text-white/25"
+          <div className="order-2 sm:order-none rounded-2xl px-5 py-10 text-center font-mono text-sm text-white/25"
             style={{ background: "#12121c", border: "1px solid rgba(255,255,255,0.06)" }}>
             No agents in the fleet
           </div>
@@ -508,7 +521,7 @@ export const FleetGrid = memo(function FleetGrid({
           const subtitle = group.subtitle || (friendlyRoom && friendlyRoom.toLowerCase() !== group.label.toLowerCase() ? friendlyRoom : undefined);
           const collapsedKey = `fleet:${group.key}`;
           return (
-            <section key={group.key} className="rounded-2xl overflow-hidden"
+            <section key={group.key} className="order-2 sm:order-none rounded-2xl overflow-hidden"
               style={{ background: "#12121c", border: `1px solid ${hasBusy ? accent + "40" : accent + "18"}`, boxShadow: hasBusy ? `0 0 24px ${accent}12` : "0 2px 8px rgba(0,0,0,0.3)" }}
               aria-label={`${group.label} ${group.kind} group with ${group.agents.length} agents`}>
               <div className="sticky top-0 z-[5] flex flex-wrap items-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 sm:py-4 cursor-pointer select-none"
@@ -566,7 +579,9 @@ export const FleetGrid = memo(function FleetGrid({
         })}
       </div>
 
-      <BottomStats agents={agents} eventLog={eventLog} />
+      <div className="order-3">
+        <BottomStats agents={agents} eventLog={eventLog} />
+      </div>
 
       {/* Hover Preview — compact mini card */}
       {hoverPreview && !pinnedPreview && (

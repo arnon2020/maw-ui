@@ -10,6 +10,7 @@ import { useFeedStatusStore } from "../lib/feedStatusStore";
 import { usePreviewStore, usePaneRawStore } from "../lib/previewStore";
 import { detectAskFromPane } from "../lib/askDetect";
 import { activeOracles, type FeedEvent, type FeedEventType } from "../lib/feed";
+import { requestCaptureRefresh, setCaptureContent } from "../lib/captureStore";
 import type { AskType } from "../lib/types";
 
 const BUSY_TIMEOUT = 15_000; // 15s without feed → ready
@@ -294,6 +295,8 @@ export function useSessions() {
       });
       updateStatusFromFeed(feedEvent);
       detectAsk(feedEvent);
+      const agent = resolveAgentFromFeed(feedEvent);
+      if (agent) requestCaptureRefresh(agent.target);
     } else if (data.type === "feed-history") {
       const events = (data.events as FeedEvent[]).slice(-MAX_FEED);
       setFeedEvents(events);
@@ -311,6 +314,7 @@ export function useSessions() {
       const rawPreviews: Record<string, string> = data.data;
       const cleaned: Record<string, string> = {};
       for (const [target, raw] of Object.entries(rawPreviews)) {
+        setCaptureContent(target, raw);
         scanPaneForAsk(target, raw);
         const text = stripAnsi(raw);
         const lines = text.split("\n").filter((l: string) => l.trim());

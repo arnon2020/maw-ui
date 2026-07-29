@@ -24,10 +24,10 @@ const STATUS_DOT: Record<string, string> = {
 
 export function TerminalModal({ agent, send, onClose, onNavigate, onSelectSibling, siblings }: TerminalModalProps) {
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-[#0a0a0f]">
-      <div className="flex flex-col h-full">
+    <div className="fixed inset-0 z-50 flex flex-col min-h-0 bg-[#0a0a0f]">
+      <div className="flex flex-col h-full min-h-0">
         {/* Header */}
-        <div className="flex items-center gap-3 px-4 py-2 bg-[#0e0e18] border-b border-white/[0.06]">
+        <div className="flex items-center gap-3 px-4 py-2 bg-[#0e0e18] border-b border-white/[0.06] shrink-0">
           <div className="flex gap-1.5 shrink-0">
             <button onClick={onClose} className="w-3 h-3 rounded-full bg-[#ff5f57] hover:brightness-110 cursor-pointer" />
             <span className="w-3 h-3 rounded-full bg-[#febc2e]" />
@@ -79,7 +79,7 @@ export function TerminalModal({ agent, send, onClose, onNavigate, onSelectSiblin
         </div>
 
         {/* Terminal — xterm.js via PTY WebSocket */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 min-h-0 overflow-hidden">
           <Suspense fallback={
             <div className="flex items-center justify-center h-full text-white/30 text-sm font-mono">
               Loading terminal...

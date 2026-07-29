@@ -1,12 +1,14 @@
-import { memo, useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
-import { ansiToHtml } from "../lib/ansi";
+import { lazy, memo, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { roomStyle } from "../lib/constants";
-import { wsUrl } from "../lib/api";
+import {
+  TERMINAL_KEY_EVENT,
+  TERMINAL_KEY_SEQUENCES,
+  type TerminalKey,
+} from "../lib/terminalInput";
 import type { Session, AgentState } from "../lib/types";
+import { TerminalKeyBar } from "./TerminalKeyBar";
 
-const TERMINAL_CAPTURE_LINES = 200;
-const TERMINAL_WS_BASE_DELAY = 1000;
-const TERMINAL_WS_MAX_DELAY = 15000;
+const XTerminal = lazy(() => import("./XTerminal").then((module) => ({ default: module.XTerminal })));
 
 interface TerminalViewProps {
   sessions: Session[];
@@ -17,24 +19,36 @@ interface TerminalViewProps {
   initialAgent?: string | null;
 }
 
-export const TerminalView = memo(function TerminalView({ sessions, agents, connected, onSelectAgent, initialAgent }: TerminalViewProps) {
+export const TerminalView = memo(function TerminalView({
+  sessions,
+  agents,
+  connected,
+  initialAgent,
+}: TerminalViewProps) {
   const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
-
-  // Deep-link resolution: match by window name, window name minus -oracle,
-  // or session base name ("108-sage" → "sage"). Resolves once per hash value
-  // so a manual window pick afterwards is not overridden.
+  const [inputBuf, setInputBuf] = useState("");
+  const [historyActive, setHistoryActive] = useState(false);
+  const [ptyConnected, setPtyConnected] = useState(false);
+  const keyboardInputRef = useRef<HTMLInputElement>(null);
   const resolvedAgentRef = useRef<string | null>(null);
+
+  // Resolve the deep link once per value without overriding later manual picks.
   useEffect(() => {
     if (!initialAgent || sessions.length === 0) return;
     if (resolvedAgentRef.current === initialAgent) return;
     const want = initialAgent.toLowerCase();
     let found: string | null = null;
-    outer: for (const s of sessions) {
-      const sessionBase = s.name.replace(/^\d+-/, "").toLowerCase();
-      for (const w of s.windows) {
-        const wname = (w.name || "").toLowerCase();
-        if (wname === want || wname === `${want}-oracle` || wname.replace(/-oracle$/, "") === want || sessionBase === want) {
-          found = `${s.name}:${w.index}`;
+    outer: for (const session of sessions) {
+      const sessionBase = session.name.replace(/^\d+-/, "").toLowerCase();
+      for (const window of session.windows) {
+        const windowName = (window.name || "").toLowerCase();
+        if (
+          windowName === want
+          || windowName === `${want}-oracle`
+          || windowName.replace(/-oracle$/, "") === want
+          || sessionBase === want
+        ) {
+          found = `${session.name}:${window.index}`;
           break outer;
         }
       }
@@ -44,248 +58,129 @@ export const TerminalView = memo(function TerminalView({ sessions, agents, conne
       setSelectedTarget(found);
     }
   }, [initialAgent, sessions]);
-  const [captureHtml, setCaptureHtml] = useState("");
-  const [inputBuf, setInputBuf] = useState("");
-  const [sendQueue, setSendQueue] = useState<string[]>([]);
-  const wsRef = useRef<WebSocket | null>(null);
-  const outputRef = useRef<HTMLDivElement>(null);
-  const termRef = useRef<HTMLDivElement>(null);
-  const sendingRef = useRef(false);
-  const followTailRef = useRef(true);
-  const selectedTargetRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    selectedTargetRef.current = selectedTarget;
-  }, [selectedTarget]);
-
-  // Own WebSocket for capture stream (separate from main fleet WS)
-  useEffect(() => {
-    let alive = true;
-    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
-    let attempt = 0;
-
-    const subscribeCurrent = (ws: WebSocket) => {
-      const target = selectedTargetRef.current;
-      if (!target || ws.readyState !== WebSocket.OPEN) return;
-      ws.send(JSON.stringify({ type: "subscribe", target, lines: TERMINAL_CAPTURE_LINES }));
-      ws.send(JSON.stringify({ type: "select", target }));
-    };
-
-    const connect = () => {
-      if (!alive) return;
-      const ws = new WebSocket(wsUrl("/ws"));
-      wsRef.current = ws;
-
-      ws.onopen = () => {
-        attempt = 0;
-        subscribeCurrent(ws);
-      };
-
-      ws.onmessage = (e) => {
-        try {
-          const data = JSON.parse(e.data);
-          if (data.type === "capture") {
-            setCaptureHtml(ansiToHtml(data.content || "(empty)"));
-          }
-        } catch {}
-      };
-
-      ws.onclose = () => {
-        if (wsRef.current === ws) wsRef.current = null;
-        if (!alive) return;
-        const delay = Math.min(TERMINAL_WS_BASE_DELAY * 2 ** attempt, TERMINAL_WS_MAX_DELAY);
-        attempt++;
-        reconnectTimer = setTimeout(connect, delay);
-      };
-
-      ws.onerror = () => ws.close();
-    };
-
-    connect();
-
-    const onOnline = () => {
-      if (!alive || wsRef.current?.readyState === WebSocket.OPEN) return;
-      if (reconnectTimer) clearTimeout(reconnectTimer);
-      reconnectTimer = setTimeout(connect, 100);
-    };
-    window.addEventListener("online", onOnline);
-    document.addEventListener("visibilitychange", onOnline);
-
-    return () => {
-      alive = false;
-      if (reconnectTimer) clearTimeout(reconnectTimer);
-      window.removeEventListener("online", onOnline);
-      document.removeEventListener("visibilitychange", onOnline);
-      wsRef.current?.close();
-      wsRef.current = null;
-    };
-  }, []);
-
-  // Subscribe when target changes
-  useEffect(() => {
-    const ws = wsRef.current;
-    if (ws?.readyState === WebSocket.OPEN && selectedTarget) {
-      ws.send(JSON.stringify({ type: "subscribe", target: selectedTarget, lines: TERMINAL_CAPTURE_LINES }));
-      ws.send(JSON.stringify({ type: "select", target: selectedTarget }));
-    }
-  }, [selectedTarget]);
-
-  // Re-subscribe when WS reconnects
-  useEffect(() => {
-    const ws = wsRef.current;
-    if (!ws) return;
-    const handler = () => {
-      if (selectedTarget) ws.send(JSON.stringify({ type: "subscribe", target: selectedTarget, lines: TERMINAL_CAPTURE_LINES }));
-    };
-    ws.addEventListener("open", handler);
-    return () => ws.removeEventListener("open", handler);
-  }, [selectedTarget]);
 
   const selectWindow = useCallback((target: string) => {
     setSelectedTarget(target);
-    setCaptureHtml("");
     setInputBuf("");
-    setSendQueue([]);
-    followTailRef.current = true;
-    termRef.current?.focus();
+    setHistoryActive(false);
+    setPtyConnected(false);
   }, []);
 
-  useLayoutEffect(() => {
-    const out = outputRef.current;
-    if (!out || !followTailRef.current) return;
-    out.scrollTop = out.scrollHeight;
-  }, [captureHtml]);
-
-  useEffect(() => {
-    const out = outputRef.current;
-    if (!out) return;
-    const onScroll = () => {
-      followTailRef.current = out.scrollHeight - out.scrollTop - out.clientHeight < 80;
-    };
-    out.addEventListener("scroll", onScroll, { passive: true });
-    return () => out.removeEventListener("scroll", onScroll);
-  }, [selectedTarget]);
-
-  // Flush send queue
-  useEffect(() => {
-    if (sendingRef.current || sendQueue.length === 0) return;
-    const ws = wsRef.current;
-    if (!ws || ws.readyState !== WebSocket.OPEN || !selectedTarget) return;
-
-    sendingRef.current = true;
-    const text = sendQueue[0];
-    ws.send(JSON.stringify({ type: "send", target: selectedTarget, text, force: true }));
-    setTimeout(() => {
-      setSendQueue(q => q.slice(1));
-      sendingRef.current = false;
-    }, 100);
-  }, [sendQueue, selectedTarget]);
-
-  const queueSend = useCallback((text: string) => {
-    if (!text || !selectedTarget) return;
-    setSendQueue(q => [...q, text]);
-  }, [selectedTarget]);
-
-  // Paste handler — fires on right-click paste or Ctrl+Shift+V
-  const handlePaste = useCallback((e: React.ClipboardEvent) => {
-    e.preventDefault();
-    const text = e.clipboardData.getData("text");
-    if (text) setInputBuf(b => b + text);
-  }, []);
-
-  // Keyboard handler
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    // Alt+Arrow to navigate between windows
-    if (e.altKey && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
-      e.preventDefault();
-      if (!selectedTarget) return;
-      const allWindows = sessions.flatMap(s => s.windows.map(w => ({ target: `${s.name}:${w.index}`, name: w.name })));
-      const idx = allWindows.findIndex(w => w.target === selectedTarget);
-      if (idx < 0) return;
-      const dir = e.key === "ArrowLeft" ? -1 : 1;
-      const next = allWindows[(idx + dir + allWindows.length) % allWindows.length];
-      selectWindow(next.target);
-      return;
-    }
-
+  const dispatchTerminalInput = useCallback((detail: {
+    sequence?: string;
+    action?: "history" | "live" | "focus";
+  }) => {
     if (!selectedTarget) return;
+    window.dispatchEvent(new CustomEvent(TERMINAL_KEY_EVENT, {
+      detail: { target: selectedTarget, ...detail },
+    }));
+  }, [selectedTarget]);
 
-    if (e.key === "Enter") {
-      e.preventDefault();
-      if (e.shiftKey) {
-        // Shift+Enter → newline in buffer
-        setInputBuf(b => b + "\n");
+  const sendSequence = useCallback((sequence: string) => {
+    if (!sequence || !ptyConnected) return;
+    dispatchTerminalInput({ sequence });
+  }, [dispatchTerminalInput, ptyConnected]);
+
+  const handleVirtualKey = useCallback((key: TerminalKey) => {
+    sendSequence(TERMINAL_KEY_SEQUENCES[key]);
+    if (key === "esc") setHistoryActive(false);
+    if (key === "enter") setInputBuf("");
+  }, [sendSequence]);
+
+  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!selectedTarget) return;
+    if (event.key === "Enter") {
+      event.preventDefault();
+      if (event.shiftKey) setInputBuf((buffer) => buffer + "\n");
+      else if (inputBuf) {
+        sendSequence(`${inputBuf}\r`);
+        setInputBuf("");
       } else {
-        // Enter → send
-        if (inputBuf) { queueSend(inputBuf); setInputBuf(""); }
+        sendSequence(TERMINAL_KEY_SEQUENCES.enter);
       }
-    } else if (e.key === "Backspace") {
-      e.preventDefault();
-      if (e.metaKey || e.ctrlKey) setInputBuf("");
-      else setInputBuf(b => b.slice(0, -1));
-    } else if (e.key === "Escape") {
-      e.preventDefault();
-      setInputBuf(""); setSendQueue([]);
-    } else if (e.key === "c" && e.ctrlKey) {
-      e.preventDefault();
-      setInputBuf(""); setSendQueue([]);
-    } else if ((e.key === "v" && e.ctrlKey) || (e.key === "v" && e.metaKey)) {
-      // Ctrl+V / Cmd+V → paste from clipboard
-      e.preventDefault();
-      navigator.clipboard.readText().then(text => {
-        if (text) setInputBuf(b => b + text);
-      }).catch(() => {});
-    } else if (e.key === "Tab") {
-      e.preventDefault();
-      queueSend(inputBuf + "\t");
+    } else if (event.key === "Escape") {
+      event.preventDefault();
       setInputBuf("");
-    } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
-      e.preventDefault();
-      setInputBuf(b => b + e.key);
+      dispatchTerminalInput({ action: "live" });
+    } else if (event.key === "Tab") {
+      event.preventDefault();
+      sendSequence(`${inputBuf}\t`);
+      setInputBuf("");
+    } else if (event.key.toLowerCase() === "c" && event.ctrlKey) {
+      event.preventDefault();
+      sendSequence(TERMINAL_KEY_SEQUENCES.ctrlC);
+      setInputBuf("");
     }
-  }, [selectedTarget, inputBuf, queueSend, selectWindow, sessions]);
+  }, [dispatchTerminalInput, inputBuf, selectedTarget, sendSequence]);
 
-  // Get display name for selected target
-  const selectedName = selectedTarget
-    ? sessions.flatMap(s => s.windows.map(w => ({ target: `${s.name}:${w.index}`, name: w.name }))).find(w => w.target === selectedTarget)?.name || ""
-    : "";
+  const selectedAgent = selectedTarget
+    ? agents.find((agent) => agent.target === selectedTarget)
+    : undefined;
+  const selectedName = selectedAgent?.name
+    || sessions.flatMap((session) => session.windows.map((window) => ({
+      target: `${session.name}:${window.index}`,
+      name: window.name,
+    }))).find((window) => window.target === selectedTarget)?.name
+    || "";
+  const siblings = selectedAgent
+    ? agents.filter((agent) => agent.session === selectedAgent.session)
+    : [];
 
   return (
-    <div className="flex mx-2 sm:mx-6 mb-3 rounded-2xl overflow-hidden border border-white/[0.06]" style={{ height: "calc(100dvh - 72px)" }}>
-      {/* Sidebar */}
-      <div className="w-[108px] sm:w-[220px] flex-shrink-0 flex flex-col border-r border-white/[0.06] overflow-y-auto" style={{ background: "#08080e" }}>
-        {sessions.map(session => {
+    <div className="flex flex-1 min-h-0 mx-2 sm:mx-6 mb-3 rounded-2xl overflow-hidden border border-white/[0.06]">
+      <div
+        className="w-[108px] sm:w-[220px] flex-shrink-0 flex flex-col border-r border-white/[0.06] overflow-y-auto"
+        style={{ background: "#08080e" }}
+      >
+        {sessions.map((session) => {
           const style = roomStyle(session.name);
           return (
             <div key={session.name} className="py-1">
-              <div className="px-4 py-1 text-[10px] uppercase tracking-[1px]" style={{ color: style.accent + "80" }}>
+              <div
+                className="px-4 py-1 text-[10px] uppercase tracking-[1px]"
+                style={{ color: `${style.accent}80` }}
+              >
                 {session.name}
               </div>
-              {session.windows.map(w => {
-                const target = `${session.name}:${w.index}`;
-                const isSelected = target === selectedTarget;
-                const agent = agents.find(a => a.target === target);
-                const statusColor = agent?.status === "busy" ? "#ffa726" : agent?.status === "ready" ? "#4caf50" : "#333";
+              {session.windows.map((window) => {
+                const target = `${session.name}:${window.index}`;
+                const active = target === selectedTarget;
+                const agent = agents.find((candidate) => candidate.target === target);
+                const statusColor = agent?.status === "busy"
+                  ? "#ffa726"
+                  : agent?.status === "ready"
+                    ? "#4caf50"
+                    : "#333";
                 return (
-                  <div
+                  <button
                     key={target}
-                    className="flex items-center gap-2 py-1.5 cursor-pointer transition-colors"
+                    type="button"
+                    className="w-full min-h-12 flex items-center gap-2 cursor-pointer transition-colors text-left"
                     style={{
-                      paddingLeft: 12, paddingRight: 12,
-                      background: isSelected ? `${style.accent}12` : "transparent",
-                      borderLeft: isSelected ? `3px solid ${style.accent}` : "3px solid transparent",
+                      paddingLeft: 12,
+                      paddingRight: 12,
+                      background: active ? `${style.accent}12` : "transparent",
+                      borderLeft: active ? `3px solid ${style.accent}` : "3px solid transparent",
                     }}
                     onClick={() => selectWindow(target)}
                   >
-                    <span className="text-[11px] font-mono text-white/30 w-4 text-right flex-shrink-0">{w.index}</span>
-                    <span className="text-[12px] font-mono truncate" style={{ color: isSelected ? style.accent : "#999" }}>
-                      {w.name}
+                    <span className="text-[11px] font-mono text-white/30 w-4 text-right flex-shrink-0">
+                      {window.index}
+                    </span>
+                    <span
+                      className="text-[12px] font-mono truncate"
+                      style={{ color: active ? style.accent : "#999" }}
+                    >
+                      {window.name}
                     </span>
                     <span
                       className="w-1.5 h-1.5 rounded-full ml-auto flex-shrink-0"
-                      style={{ background: statusColor, boxShadow: w.active ? `0 0 4px ${statusColor}` : undefined }}
+                      style={{
+                        background: statusColor,
+                        boxShadow: window.active ? `0 0 4px ${statusColor}` : undefined,
+                      }}
                     />
-                  </div>
+                  </button>
                 );
               })}
             </div>
@@ -293,72 +188,86 @@ export const TerminalView = memo(function TerminalView({ sessions, agents, conne
         })}
       </div>
 
-      {/* Terminal pane */}
-      <div
-        ref={termRef}
-        className="flex-1 flex flex-col min-w-0 outline-none"
-        tabIndex={0}
-        onKeyDown={handleKeyDown}
-        onPaste={handlePaste}
-        onClick={() => termRef.current?.focus()}
-      >
-        {/* Header */}
-        <div className="flex items-center gap-3 px-4 py-2 border-b border-white/[0.06] flex-shrink-0" style={{ background: "#0a0a12" }}>
+      <div className="flex-1 flex flex-col min-w-0 min-h-0 outline-none">
+        <div
+          className="flex items-center gap-3 px-4 py-2 border-b border-white/[0.06] flex-shrink-0"
+          style={{ background: "#0a0a12" }}
+        >
           <span className="text-xs font-mono text-white/40">{selectedName || "select a window"}</span>
-          {selectedTarget && <span className="text-[10px] font-mono text-white/20">{selectedTarget}</span>}
-          <span className="ml-auto text-[10px] font-mono" style={{ color: connected ? "#4caf50" : "#ef5350" }}>
-            {connected ? "live" : "reconnecting"}
+          {selectedTarget && (
+            <span className="text-[10px] font-mono text-white/20">{selectedTarget}</span>
+          )}
+          <span
+            className="ml-auto text-[10px] font-mono"
+            style={{ color: connected && ptyConnected ? "#4caf50" : "#ef5350" }}
+          >
+            {connected && ptyConnected ? "interactive" : "reconnecting"}
           </span>
         </div>
 
-        {/* Output */}
-        <div
-          ref={outputRef}
-          className="flex-1 overflow-y-auto px-3 py-2 font-mono text-[13px] leading-[1.35]"
-          style={{
-            background: "#0a0a0f",
-            whiteSpace: "pre",
-            wordBreak: "normal",
-            overflowX: "auto",
-            color: "#aaa",
-            overscrollBehavior: "contain",
-            touchAction: "pan-y",
-            WebkitOverflowScrolling: "touch",
-            scrollbarGutter: "stable",
-          }}
-        >
-          {captureHtml ? (
-            <div dangerouslySetInnerHTML={{ __html: captureHtml }} />
+        <div className="flex-1 min-h-0 overflow-hidden" data-terminal-output>
+          {selectedAgent ? (
+            <Suspense fallback={(
+              <div className="flex items-center justify-center h-full text-white/30 text-sm font-mono">
+                Loading terminal...
+              </div>
+            )}>
+              <XTerminal
+                target={selectedAgent.target}
+                onClose={() => {}}
+                onNavigate={() => {}}
+                siblings={siblings}
+                onSelectSibling={(agent) => selectWindow(agent.target)}
+                showKeyBar={false}
+                onHistoryActiveChange={setHistoryActive}
+                onConnectedChange={setPtyConnected}
+              />
+            </Suspense>
           ) : (
             <div className="text-white/15 text-center mt-[30vh] text-sm">
-              {selectedTarget ? "connecting..." : "select a window \u2190"}
+              select a window ←
             </div>
           )}
         </div>
 
-        {/* Input line */}
         <div
-          className="flex items-start px-3 py-1.5 border-t border-white/[0.06] font-mono text-[13px] min-h-[32px]"
+          className="flex items-center px-3 py-1.5 border-t border-white/[0.06] font-mono text-[13px] min-h-12"
           style={{ background: "#0d0d14" }}
         >
-          <span className="text-white/30 mr-2 mt-[1px] flex-shrink-0">&gt;</span>
-          <span className="text-white/90 whitespace-pre flex-1">{inputBuf}</span>
-          <span
-            className="inline-block w-[7px] h-[15px] ml-[1px] flex-shrink-0"
-            style={{ background: selectedTarget ? "#89b4fa" : "#333", animation: "blink 1s step-end infinite", marginTop: "2px" }}
+          <span className="text-white/30 mr-2 flex-shrink-0">&gt;</span>
+          <input
+            ref={keyboardInputRef}
+            value={inputBuf}
+            onChange={(event) => setInputBuf(event.target.value)}
+            onKeyDown={handleKeyDown}
+            inputMode="text"
+            enterKeyHint="send"
+            autoCapitalize="off"
+            autoComplete="off"
+            spellCheck={false}
+            aria-label="Terminal keyboard input"
+            disabled={!selectedTarget || !ptyConnected}
+            className="text-white/90 flex-1 min-w-0 bg-transparent border-0 outline-none p-0 font-mono text-[16px] sm:text-[13px] disabled:opacity-30"
+            placeholder={selectedTarget ? "Type a command…" : "Select a window"}
           />
-          {sendQueue.length > 0 && (
-            <span className="text-white/30 text-[11px] ml-2">({sendQueue.length} queued)</span>
-          )}
-          {(inputBuf || sendQueue.length > 0) && (
-            <span
-              className="ml-auto text-white/30 text-[11px] cursor-pointer hover:text-red-400 px-2 rounded"
-              onClick={() => { setInputBuf(""); setSendQueue([]); }}
+          {inputBuf && (
+            <button
+              type="button"
+              className="min-h-12 min-w-12 px-2 text-white/30 text-[11px] hover:text-red-400"
+              onClick={() => setInputBuf("")}
             >
-              esc
-            </span>
+              clear
+            </button>
           )}
         </div>
+
+        <TerminalKeyBar
+          disabled={!selectedTarget || !ptyConnected}
+          historyActive={historyActive}
+          onKey={handleVirtualKey}
+          onHistoryToggle={() => dispatchTerminalInput({ action: historyActive ? "live" : "history" })}
+          onKeyboard={() => dispatchTerminalInput({ action: "focus" })}
+        />
       </div>
     </div>
   );

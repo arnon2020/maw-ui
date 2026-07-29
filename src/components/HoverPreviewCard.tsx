@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback, memo } from "react";
 import { ansiToHtml, processCapture } from "../lib/ansi";
 import { agentColor, PREVIEW_CARD } from "../lib/constants";
-import { apiUrl } from "../lib/api";
+import { refreshCapture, useCaptureContent } from "../lib/captureStore";
 import { useAgentPreview } from "../lib/previewStore";
 import { useStaticMode } from "../lib/staticMode";
 import type { AgentState, AgentEvent } from "../lib/types";
@@ -52,7 +52,7 @@ export const HoverPreviewCard = memo(function HoverPreviewCard({
   onInputBufChange,
 }: HoverPreviewCardProps) {
   const staticMode = useStaticMode();
-  const [content, setContent] = useState("");
+  const content = useCaptureContent(agent.target);
   const [localInputBuf, setLocalInputBuf] = useState("");
   const inputBuf = externalInputBuf ?? localInputBuf;
   const setInputBuf = useCallback((val: string) => {
@@ -154,12 +154,7 @@ export const HoverPreviewCard = memo(function HoverPreviewCard({
     let active = true;
     async function poll() {
       try {
-        const res = await fetch(apiUrl(`/api/capture?target=${encodeURIComponent(agent.target)}`));
-        const data = await res.json();
-        if (active) setContent(prev => {
-          const next = data.content || "";
-          return next === prev ? prev : next;
-        });
+        await refreshCapture(agent.target);
       } catch {}
       if (active && !staticMode) setTimeout(poll, 2000);
     }
@@ -440,6 +435,18 @@ export const HoverPreviewCard = memo(function HoverPreviewCard({
             animation: "agent-pulse 2s ease-in-out infinite",
           }}
         />
+        <button
+          type="button"
+          className="min-w-12 min-h-12 -my-2 flex items-center justify-center text-white/30 hover:text-white/80"
+          aria-label={`Refresh ${displayName} preview`}
+          title="Refresh preview"
+          onClick={(event) => {
+            event.stopPropagation();
+            void refreshCapture(agent.target);
+          }}
+        >
+          ↻
+        </button>
         {pinned && onFullscreen && (
           <button
             onClick={onFullscreen}

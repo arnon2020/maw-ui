@@ -1,6 +1,6 @@
 import { memo, useState, useEffect, useRef } from "react";
 import { ansiToHtml, processCapture } from "../lib/ansi";
-import { apiUrl } from "../lib/api";
+import { refreshCapture, useCaptureContent } from "../lib/captureStore";
 import { useStaticMode } from "../lib/staticMode";
 
 interface MiniMonitorProps {
@@ -33,7 +33,7 @@ export const MiniMonitor = memo(function MiniMonitor({
   onClick,
 }: MiniMonitorProps) {
   const staticMode = useStaticMode();
-  const [content, setContent] = useState("");
+  const content = useCaptureContent(target);
   const [activity, setActivity] = useState<"active" | "stale" | "idle">("idle");
   const ref = useRef<HTMLDivElement>(null);
   const prevHashRef = useRef<number>(0);
@@ -62,9 +62,7 @@ export const MiniMonitor = memo(function MiniMonitor({
     let active = true;
     async function poll() {
       try {
-        const res = await fetch(apiUrl(`/api/capture?target=${encodeURIComponent(target)}`));
-        const data = await res.json();
-        const text = data.content || "";
+        const text = await refreshCapture(target);
         if (!active) return;
 
         const hash = quickHash(text);
@@ -81,7 +79,6 @@ export const MiniMonitor = memo(function MiniMonitor({
           }
         }
         prevHashRef.current = hash;
-        setContent(text);
       } catch {}
       if (active) setTimeout(poll, pollInterval);
     }
@@ -94,12 +91,9 @@ export const MiniMonitor = memo(function MiniMonitor({
   useEffect(() => {
     if (mountedRef.current) return;
     mountedRef.current = true;
-    fetch(apiUrl(`/api/capture?target=${encodeURIComponent(target)}`))
-      .then(r => r.json())
-      .then(data => {
-        const text = data.content || "";
+    refreshCapture(target)
+      .then(text => {
         prevHashRef.current = quickHash(text);
-        setContent(text);
       })
       .catch(() => {});
   }, [target]);
@@ -138,6 +132,18 @@ export const MiniMonitor = memo(function MiniMonitor({
       onMouseLeave={() => { setHovered(false); onMouseLeave(); }}
       onClick={onClick}
     >
+      <button
+        type="button"
+        className="absolute right-0 top-0 z-10 min-w-12 min-h-12 flex items-center justify-center text-white/25 hover:text-white/70"
+        aria-label={`Refresh ${target} preview`}
+        title="Refresh preview"
+        onClick={(event) => {
+          event.stopPropagation();
+          void refreshCapture(target);
+        }}
+      >
+        ↻
+      </button>
       {/* Activity LED — top-right dot */}
       <div
         className="absolute top-[3px] right-[3px] z-20 rounded-full transition-all duration-500"

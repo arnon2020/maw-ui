@@ -9,10 +9,51 @@ import { guessCommand } from "../lib/constants";
 import { useAgentPreview } from "../lib/previewStore";
 import { useStaticMode } from "../lib/staticMode";
 import { resolveAgentTeam } from "../lib/fleetGrouping";
+import { TERMINAL_KEY_SEQUENCES } from "../lib/terminalInput";
 
 const isTouch = typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0);
 
 const RUNNING_EVENTS = new Set(["PreToolUse", "SubagentStart", "UserPromptSubmit"]);
+const FLEET_KEYS = [
+  { id: "esc", label: "Esc", sequence: TERMINAL_KEY_SEQUENCES.esc },
+  { id: "left", label: "←", sequence: TERMINAL_KEY_SEQUENCES.left },
+  { id: "up", label: "↑", sequence: TERMINAL_KEY_SEQUENCES.up },
+  { id: "down", label: "↓", sequence: TERMINAL_KEY_SEQUENCES.down },
+  { id: "right", label: "→", sequence: TERMINAL_KEY_SEQUENCES.right },
+  { id: "enter", label: "Enter", sequence: TERMINAL_KEY_SEQUENCES.enter },
+] as const;
+
+function FleetQuickKeys({
+  target,
+  send,
+}: {
+  target: string;
+  send: (msg: object) => void;
+}) {
+  return (
+    <div
+      className="flex items-center gap-2 px-3 sm:px-6 py-1.5 overflow-x-auto border-t border-white/[0.03] bg-black/10"
+      aria-label={`Virtual keys for ${target}`}
+      data-fleet-key-bar={target}
+    >
+      {FLEET_KEYS.map((key) => (
+        <button
+          key={key.id}
+          type="button"
+          className="min-w-12 min-h-12 px-2 rounded-lg border border-white/[0.08] bg-white/[0.04] text-[12px] font-mono text-white/55 hover:text-white hover:bg-white/[0.08] active:bg-cyan-400/15 shrink-0 touch-manipulation"
+          aria-label={`${key.label} ${target}`}
+          data-fleet-key={key.id}
+          onClick={(event) => {
+            event.stopPropagation();
+            send({ type: "send", target, text: key.sequence });
+          }}
+        >
+          {key.label}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 function formatElapsed(ms: number): string {
   const s = Math.floor(ms / 1000);
@@ -396,6 +437,7 @@ export const AgentRow = memo(function AgentRow({
           inputOpen={inputOpen} send={send} onMic={handleMic} />}
       </div>
 
+      {send && <FleetQuickKeys target={agent.target} send={send} />}
       <AgentInput accent={accent} displayName={displayName} isLast={isLast} inputOpen={inputOpen}
         text={text} setText={setTextOrClose} sent={sent} onSend={handleSend} inputRef={inputRef} />
     </div>

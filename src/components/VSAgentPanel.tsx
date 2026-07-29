@@ -2,7 +2,7 @@ import { memo, useState, useEffect, useRef, useCallback } from "react";
 import { AgentAvatar } from "./AgentAvatar";
 import { agentColor } from "../lib/constants";
 import { ansiToHtml, processCapture } from "../lib/ansi";
-import { apiUrl } from "../lib/api";
+import { refreshCapture, useCaptureContent } from "../lib/captureStore";
 import { useStaticMode } from "../lib/staticMode";
 import type { AgentState } from "../lib/types";
 
@@ -14,7 +14,7 @@ interface VSAgentPanelProps {
 
 export const VSAgentPanel = memo(function VSAgentPanel({ agent, send, onPickAgent }: VSAgentPanelProps) {
   const staticMode = useStaticMode();
-  const [content, setContent] = useState("");
+  const content = useCaptureContent(agent?.target || "");
   const [inputBuf, setInputBuf] = useState("");
   const termRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -23,14 +23,11 @@ export const VSAgentPanel = memo(function VSAgentPanel({ agent, send, onPickAgen
   // Poll terminal content
   useEffect(() => {
     if (!agent) return;
-    setContent("");
     isFirstContent.current = true;
     send({ type: "subscribe", target: agent.target });
     const refresh = async () => {
       try {
-        const res = await fetch(apiUrl(`/api/capture?target=${encodeURIComponent(agent.target)}`));
-        const data = await res.json();
-        setContent(data.content || "");
+        await refreshCapture(agent.target);
       } catch {}
     };
     void refresh();
@@ -118,7 +115,19 @@ export const VSAgentPanel = memo(function VSAgentPanel({ agent, send, onPickAgen
         >
           {status}
         </span>
-        <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth={2} className="ml-auto flex-shrink-0">
+        <button
+          type="button"
+          className="ml-auto min-w-12 min-h-12 flex items-center justify-center text-white/30 hover:text-white/70"
+          aria-label={`Refresh ${displayName} preview`}
+          title="Refresh preview"
+          onClick={(event) => {
+            event.stopPropagation();
+            void refreshCapture(agent.target);
+          }}
+        >
+          ↻
+        </button>
+        <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth={2} className="flex-shrink-0">
           <path d="M6 9l6 6 6-6" />
         </svg>
       </div>
