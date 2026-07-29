@@ -4,8 +4,8 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 const base = process.env.LFS012_BASE || "http://127.0.0.1:5177";
-const session = "lfs012-vkeys";
-const target = `${session}:0`;
+let session = "lfs012-vkeys";
+let target = `${session}:0`;
 const screenshotDir = new URL("screenshots/", import.meta.url);
 await mkdir(screenshotDir, { recursive: true });
 
@@ -16,8 +16,30 @@ const profiles = [
   { name: "landscape-844x390", width: 844, height: 390, keyboardHeight: 300 },
 ];
 const surfaces = ["page", "modal"];
-const keyNames = ["esc", "tab", "left", "up", "down", "right", "ctrlC", "enter"];
-const expectedHex = ["1b", "09", "1b", "5b", "44", "1b", "5b", "41", "1b", "5b", "42", "1b", "5b", "43", "03", "0d"];
+const keySequences = {
+  esc: "\x1b",
+  tab: "\t",
+  left: "\x1b[D",
+  up: "\x1b[A",
+  down: "\x1b[B",
+  right: "\x1b[C",
+  home: "\x1b[1~",
+  end: "\x1b[4~",
+  pageUp: "\x1b[5~",
+  pageDown: "\x1b[6~",
+  ctrlC: "\x03",
+  ctrlD: "\x04",
+  ctrlZ: "\x1a",
+  ctrlL: "\x0c",
+  ctrlR: "\x12",
+  slash: "/",
+  pipe: "|",
+  enter: "\r",
+};
+const keyNames = Object.keys(keySequences);
+const modifierProof = "\x1b[1;5A\x1b[1;5A\x1b\x1b[D\x1b\x1b[D";
+const expectedHex = [...Buffer.from(`${Object.values(keySequences).join("")}${modifierProof}`)]
+  .map((byte) => byte.toString(16).padStart(2, "0"));
 
 function tmux(args, options = {}) {
   return execFileSync("tmux", args, { encoding: "utf8", ...options }).trim();
@@ -77,6 +99,8 @@ async function openSurface(page, surface) {
 async function hitTestBar(page) {
   const selectors = [
     ...keyNames.map((key) => `[data-terminal-key="${key}"]`),
+    '[data-terminal-modifier="ctrl"]',
+    '[data-terminal-modifier="alt"]',
     "[data-terminal-history-toggle]",
     "[data-terminal-keyboard]",
   ];
@@ -91,6 +115,7 @@ async function hitTestBar(page) {
       const hit = document.elementFromPoint(x, y);
       return {
         selector: element.getAttribute("data-terminal-key")
+          || element.getAttribute("data-terminal-modifier")
           || (element.hasAttribute("data-terminal-history-toggle") ? "history-live" : "keyboard"),
         width: box.width,
         height: box.height,
@@ -133,7 +158,7 @@ const results = {
   generatedAt: new Date().toISOString(),
   base,
   disposableTarget: target,
-  keyBytes: null,
+  keyBytes: [],
   history: null,
   states: [],
   summary: {},
@@ -141,34 +166,58 @@ const results = {
 
 try {
   // Real PTY byte proof for every virtual key. stty raw keeps Ctrl+C observable.
-  createDisposable();
-  sendShell("stty raw -echo; od -An -tx1 -v -w1");
-  const keyPage = await browser.newPage({ viewport: { width: 360, height: 800 } });
-  await openSurface(keyPage, "page");
-  const keyHits = [];
-  for (const key of keyNames) {
-    const button = keyPage.locator(`[data-terminal-key="${key}"]`).first();
-    await button.scrollIntoViewIfNeeded();
-    const hit = (await hitTestBar(keyPage)).find((entry) => entry.selector === key);
-    keyHits.push(hit);
-    await button.click();
-    await keyPage.waitForTimeout(80);
+  for (const surfaceName of surfaces) {
+    session = `lfs012-vkeys-${surfaceName}`;
+    target = `${session}:0`;
+    createDisposable();
+    sendShell("stty raw -echo; od -An -tx1 -v -w1");
+    const keyPage = await browser.newPage({ viewport: { width: 360, height: 800 } });
+    await openSurface(keyPage, surfaceName);
+    const keyHits = [];
+    for (const key of keyNames) {
+      const button = keyPage.locator(`[data-terminal-key="${key}"]`).first();
+      await button.scrollIntoViewIfNeeded();
+      const hit = (await hitTestBar(keyPage)).find((entry) => entry.selector === key);
+      keyHits.push(hit);
+      await button.click();
+      await keyPage.waitForTimeout(80);
+    }
+    for (const modifier of ["ctrl", "alt"]) {
+      const button = keyPage.locator(`[data-terminal-modifier="${modifier}"]`).first();
+      await button.scrollIntoViewIfNeeded();
+      const hit = (await hitTestBar(keyPage)).find((entry) => entry.selector === modifier);
+      keyHits.push(hit);
+      await button.click();
+      const proofKey = modifier === "ctrl" ? "up" : "left";
+      await keyPage.locator(`[data-terminal-key="${proofKey}"]`).first().click();
+      await keyPage.locator(`[data-terminal-key="${proofKey}"]`).first().click();
+      const stayedPressed = await button.getAttribute("aria-pressed");
+      if (stayedPressed !== "true") throw new Error(`${modifier} modifier did not stay active`);
+      await button.click();
+    }
+    await keyPage.waitForTimeout(400);
+    await keyPage.close();
+    const capture = tmux(["capture-pane", "-p", "-t", target, "-S", "-500"]);
+    const actualHex = [...capture.matchAll(/(?:^|\s)([0-9a-f]{2})(?=\s|$)/g)]
+      .map((match) => match[1])
+      .slice(-expectedHex.length);
+    results.keyBytes.push({
+      surface: surfaceName,
+      expectedHex,
+      actualHex,
+      passed: JSON.stringify(actualHex) === JSON.stringify(expectedHex),
+      centersPassed: keyHits.every((hit) =>
+        hit?.selfHit && hit?.inViewport && hit.width >= 48 && hit.height >= 48),
+      capture,
+    });
+    killDisposable();
   }
-  await keyPage.waitForTimeout(400);
-  await keyPage.close();
-  const capture = tmux(["capture-pane", "-p", "-t", target, "-S", "-50"]);
-  const actualHex = [...capture.matchAll(/(?:^|\s)([0-9a-f]{2})(?=\s|$)/g)].map((match) => match[1]).slice(-expectedHex.length);
-  results.keyBytes = {
-    expectedHex,
-    actualHex,
-    passed: JSON.stringify(actualHex) === JSON.stringify(expectedHex),
-    centersPassed: keyHits.every((hit) => hit?.selfHit && hit?.inViewport && hit.width >= 48 && hit.height >= 48),
-    capture,
-  };
 
   // Server-side history proof: seq output, SGR History/swipe enter copy mode,
   // and Live/Escape returns to the live prompt.
-  tmux(["respawn-pane", "-k", "-t", target, "bash --noprofile --norc"]);
+  session = "lfs012-vkeys-history";
+  target = `${session}:0`;
+  createDisposable();
   sendShell('printf "LFS012_HISTORY_START\\n"; seq 1 500; printf "LFS012_LIVE_END\\n"');
   const historyPage = await browser.newPage({ viewport: { width: 360, height: 800 } });
   await openSurface(historyPage, "page");
@@ -204,8 +253,66 @@ try {
     escapeMode,
   };
   await historyPage.close();
+  killDisposable();
+
+  // Real shell workflows at every required profile: typing, Ctrl+C, arrow-up
+  // history recall and Tab completion. Scrollback is proven separately above.
+  results.workflows = [];
+  for (const profile of profiles) {
+    session = `lfs012-workflow-${profile.name.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`;
+    target = `${session}:0`;
+    createDisposable();
+    const slug = profile.name.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
+    const tabPath = `/tmp/lfs012-tab-${slug}-proof`;
+    const typeMarker = `LFS012_TYPE_${slug}`;
+    const historyMarker = `LFS012_HISTORY_${slug}`;
+    const tabMarker = `LFS012_TAB_${slug}`;
+    const ctrlMarker = `LFS012_CTRL_C_${slug}`;
+    sendShell(`printf '${tabMarker}\\\\n' > ${tabPath}`);
+    const page = await browser.newPage({ viewport: { width: profile.width, height: profile.height } });
+    await openSurface(page, "page");
+    const input = page.getByLabel("Terminal keyboard input");
+
+    await input.fill(`echo ${typeMarker}`);
+    await input.press("Enter");
+    await input.fill(`echo ${historyMarker}`);
+    await input.press("Enter");
+    await page.locator('[data-terminal-key="up"]').first().click();
+    await page.locator('[data-terminal-key="enter"]').first().click();
+
+    await input.fill(`cat ${tabPath.replace(/-proof$/, "")}`);
+    await page.locator('[data-terminal-key="tab"]').first().click();
+    await page.locator('[data-terminal-key="enter"]').first().click();
+
+    await input.fill("sleep 20");
+    await input.press("Enter");
+    await page.waitForTimeout(150);
+    await page.locator('[data-terminal-key="ctrlC"]').first().click();
+    await input.fill(`echo ${ctrlMarker}`);
+    await input.press("Enter");
+    await page.waitForTimeout(350);
+
+    const pane = tmux(["capture-pane", "-p", "-t", target, "-S", "-100"]);
+    const historyOccurrences = pane.split(historyMarker).length - 1;
+    const workflow = {
+      profile: profile.name,
+      typing: pane.includes(typeMarker),
+      ctrlC: pane.includes(ctrlMarker),
+      historyRecall: historyOccurrences >= 4,
+      tabCompletion: pane.includes(tabMarker),
+    };
+    results.workflows.push(workflow);
+    await page.screenshot({
+      path: fileURLToPath(new URL(`${profile.name}-terminal-workflow.png`, screenshotDir)),
+    });
+    await page.close();
+    killDisposable();
+  }
 
   // Responsive hit-target, keyboard, viewport and static-mode matrix.
+  session = "lfs012-responsive-matrix";
+  target = `${session}:0`;
+  createDisposable();
   for (const profile of profiles) {
     for (const surfaceName of surfaces) {
       const page = await browser.newPage({
@@ -282,9 +389,10 @@ try {
     staticAnimationsPassed: results.states.filter((state) => state.geometry.runningAnimations === 0).length,
   };
   results.passed = Boolean(
-    results.keyBytes.passed
-    && results.keyBytes.centersPassed
+    results.keyBytes.every((proof) => proof.passed && proof.centersPassed)
     && Object.values(results.history).every(Boolean)
+    && results.workflows.every((workflow) =>
+      workflow.typing && workflow.ctrlC && workflow.historyRecall && workflow.tabCompletion)
     && results.summary.centerHitsPassed === allHits.length
     && results.summary.minimumTargetPassed === allHits.length
     && results.summary.barsVisible === results.states.length

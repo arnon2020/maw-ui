@@ -1,9 +1,14 @@
-import type { TerminalKey } from "../lib/terminalInput";
+import { useState } from "react";
+import {
+  terminalKeySequence,
+  type TerminalKey,
+  type TerminalModifiers,
+} from "../lib/terminalInput";
 
 interface TerminalKeyBarProps {
   disabled?: boolean;
   historyActive: boolean;
-  onKey: (key: TerminalKey) => void;
+  onKey: (key: TerminalKey, sequence: string) => void;
   onHistoryToggle: () => void;
   onKeyboard: () => void;
 }
@@ -15,7 +20,17 @@ const KEYS: { key: TerminalKey; label: string; ariaLabel: string; group: string 
   { key: "up", label: "↑", ariaLabel: "Arrow up", group: "navigation" },
   { key: "down", label: "↓", ariaLabel: "Arrow down", group: "navigation" },
   { key: "right", label: "→", ariaLabel: "Arrow right", group: "navigation" },
+  { key: "home", label: "Home", ariaLabel: "Home", group: "navigation" },
+  { key: "end", label: "End", ariaLabel: "End", group: "navigation" },
+  { key: "pageUp", label: "PgUp", ariaLabel: "Page up", group: "navigation" },
+  { key: "pageDown", label: "PgDn", ariaLabel: "Page down", group: "navigation" },
   { key: "ctrlC", label: "Ctrl+C", ariaLabel: "Control C", group: "control" },
+  { key: "ctrlD", label: "Ctrl+D", ariaLabel: "Control D", group: "control" },
+  { key: "ctrlZ", label: "Ctrl+Z", ariaLabel: "Control Z", group: "control" },
+  { key: "ctrlL", label: "Ctrl+L", ariaLabel: "Control L", group: "control" },
+  { key: "ctrlR", label: "Ctrl+R", ariaLabel: "Control R", group: "control" },
+  { key: "slash", label: "/", ariaLabel: "Slash", group: "text" },
+  { key: "pipe", label: "|", ariaLabel: "Pipe", group: "text" },
   { key: "enter", label: "Enter", ariaLabel: "Enter", group: "control" },
 ];
 
@@ -28,12 +43,35 @@ export function TerminalKeyBar({
   onHistoryToggle,
   onKeyboard,
 }: TerminalKeyBarProps) {
+  const [modifiers, setModifiers] = useState<TerminalModifiers>({ ctrl: false, alt: false });
+  const toggleModifier = (modifier: keyof TerminalModifiers) => {
+    setModifiers((current) => ({ ...current, [modifier]: !current[modifier] }));
+  };
+  const sendKey = (key: TerminalKey) => {
+    onKey(key, terminalKeySequence(key, modifiers));
+  };
+
   return (
     <div
       className="terminal-key-bar flex gap-2 overflow-x-auto px-2 py-2 border-t border-white/[0.06] bg-[#0d0d14] overscroll-x-contain shrink-0"
       aria-label="Terminal virtual keys"
       data-terminal-key-bar
     >
+      {(["ctrl", "alt"] as const).map((modifier) => (
+        <button
+          key={modifier}
+          type="button"
+          className={`${keyClass} ${modifiers[modifier] ? "border-cyan-400/50 bg-cyan-400/15 text-cyan-100" : ""}`}
+          aria-label={`${modifier === "ctrl" ? "Control" : "Alt"} sticky modifier`}
+          aria-pressed={modifiers[modifier]}
+          data-terminal-modifier={modifier}
+          disabled={disabled}
+          onPointerDown={(event) => event.preventDefault()}
+          onClick={() => toggleModifier(modifier)}
+        >
+          {modifier === "ctrl" ? "Ctrl" : "Alt"}
+        </button>
+      ))}
       {KEYS.map(({ key, label, ariaLabel, group }) => (
         <button
           key={key}
@@ -44,7 +82,7 @@ export function TerminalKeyBar({
           data-terminal-key-group={group}
           disabled={disabled}
           onPointerDown={(event) => event.preventDefault()}
-          onClick={() => onKey(key)}
+          onClick={() => sendKey(key)}
         >
           {label}
         </button>

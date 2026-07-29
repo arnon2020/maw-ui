@@ -3,10 +3,8 @@ import { roomStyle } from "../lib/constants";
 import {
   TERMINAL_KEY_EVENT,
   TERMINAL_KEY_SEQUENCES,
-  type TerminalKey,
 } from "../lib/terminalInput";
 import type { Session, AgentState } from "../lib/types";
-import { TerminalKeyBar } from "./TerminalKeyBar";
 
 const XTerminal = lazy(() => import("./XTerminal").then((module) => ({ default: module.XTerminal })));
 
@@ -27,7 +25,6 @@ export const TerminalView = memo(function TerminalView({
 }: TerminalViewProps) {
   const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
   const [inputBuf, setInputBuf] = useState("");
-  const [historyActive, setHistoryActive] = useState(false);
   const [ptyConnected, setPtyConnected] = useState(false);
   const keyboardInputRef = useRef<HTMLInputElement>(null);
   const resolvedAgentRef = useRef<string | null>(null);
@@ -62,7 +59,6 @@ export const TerminalView = memo(function TerminalView({
   const selectWindow = useCallback((target: string) => {
     setSelectedTarget(target);
     setInputBuf("");
-    setHistoryActive(false);
     setPtyConnected(false);
   }, []);
 
@@ -80,12 +76,6 @@ export const TerminalView = memo(function TerminalView({
     if (!sequence || !ptyConnected) return;
     dispatchTerminalInput({ sequence });
   }, [dispatchTerminalInput, ptyConnected]);
-
-  const handleVirtualKey = useCallback((key: TerminalKey) => {
-    sendSequence(TERMINAL_KEY_SEQUENCES[key]);
-    if (key === "esc") setHistoryActive(false);
-    if (key === "enter") setInputBuf("");
-  }, [sendSequence]);
 
   const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
     if (!selectedTarget) return;
@@ -218,9 +208,39 @@ export const TerminalView = memo(function TerminalView({
                 onNavigate={() => {}}
                 siblings={siblings}
                 onSelectSibling={(agent) => selectWindow(agent.target)}
-                showKeyBar={false}
-                onHistoryActiveChange={setHistoryActive}
                 onConnectedChange={setPtyConnected}
+                inputAccessory={(
+                  <div
+                    className="flex items-center px-3 py-1.5 border-t border-white/[0.06] font-mono text-[13px] min-h-12"
+                    style={{ background: "#0d0d14" }}
+                  >
+                    <span className="text-white/30 mr-2 flex-shrink-0">&gt;</span>
+                    <input
+                      ref={keyboardInputRef}
+                      value={inputBuf}
+                      onChange={(event) => setInputBuf(event.target.value)}
+                      onKeyDown={handleKeyDown}
+                      inputMode="text"
+                      enterKeyHint="send"
+                      autoCapitalize="off"
+                      autoComplete="off"
+                      spellCheck={false}
+                      aria-label="Terminal keyboard input"
+                      disabled={!selectedTarget || !ptyConnected}
+                      className="text-white/90 flex-1 min-w-0 bg-transparent border-0 outline-none p-0 font-mono text-[16px] sm:text-[13px] disabled:opacity-30"
+                      placeholder={selectedTarget ? "Type a command…" : "Select a window"}
+                    />
+                    {inputBuf && (
+                      <button
+                        type="button"
+                        className="min-h-12 min-w-12 px-2 text-white/30 text-[11px] hover:text-red-400"
+                        onClick={() => setInputBuf("")}
+                      >
+                        clear
+                      </button>
+                    )}
+                  </div>
+                )}
               />
             </Suspense>
           ) : (
@@ -230,44 +250,6 @@ export const TerminalView = memo(function TerminalView({
           )}
         </div>
 
-        <div
-          className="flex items-center px-3 py-1.5 border-t border-white/[0.06] font-mono text-[13px] min-h-12"
-          style={{ background: "#0d0d14" }}
-        >
-          <span className="text-white/30 mr-2 flex-shrink-0">&gt;</span>
-          <input
-            ref={keyboardInputRef}
-            value={inputBuf}
-            onChange={(event) => setInputBuf(event.target.value)}
-            onKeyDown={handleKeyDown}
-            inputMode="text"
-            enterKeyHint="send"
-            autoCapitalize="off"
-            autoComplete="off"
-            spellCheck={false}
-            aria-label="Terminal keyboard input"
-            disabled={!selectedTarget || !ptyConnected}
-            className="text-white/90 flex-1 min-w-0 bg-transparent border-0 outline-none p-0 font-mono text-[16px] sm:text-[13px] disabled:opacity-30"
-            placeholder={selectedTarget ? "Type a command…" : "Select a window"}
-          />
-          {inputBuf && (
-            <button
-              type="button"
-              className="min-h-12 min-w-12 px-2 text-white/30 text-[11px] hover:text-red-400"
-              onClick={() => setInputBuf("")}
-            >
-              clear
-            </button>
-          )}
-        </div>
-
-        <TerminalKeyBar
-          disabled={!selectedTarget || !ptyConnected}
-          historyActive={historyActive}
-          onKey={handleVirtualKey}
-          onHistoryToggle={() => dispatchTerminalInput({ action: historyActive ? "live" : "history" })}
-          onKeyboard={() => dispatchTerminalInput({ action: "focus" })}
-        />
       </div>
     </div>
   );

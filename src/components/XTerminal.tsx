@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import "@xterm/xterm/css/xterm.css";
@@ -16,7 +16,7 @@ interface XTerminalProps {
   siblings: AgentState[];
   onSelectSibling: (agent: AgentState) => void;
   readOnly?: boolean;
-  showKeyBar?: boolean;
+  inputAccessory?: ReactNode;
   onHistoryActiveChange?: (active: boolean) => void;
   onConnectedChange?: (connected: boolean) => void;
 }
@@ -143,7 +143,7 @@ export function XTerminal({
   siblings,
   onSelectSibling,
   readOnly = false,
-  showKeyBar = true,
+  inputAccessory,
   onHistoryActiveChange,
   onConnectedChange,
 }: XTerminalProps) {
@@ -456,8 +456,8 @@ export function XTerminal({
     window.dispatchEvent(new CustomEvent(TERMINAL_KEY_EVENT, { detail: { target, ...detail } }));
   };
 
-  const handleVirtualKey = (key: TerminalKey) => {
-    dispatchTerminalInput({ sequence: TERMINAL_KEY_SEQUENCES[key] });
+  const handleVirtualKey = (_key: TerminalKey, sequence: string) => {
+    dispatchTerminalInput({ sequence });
   };
 
   return (
@@ -467,7 +467,8 @@ export function XTerminal({
         className="flex-1 min-h-0 w-full overflow-auto overscroll-contain"
         data-terminal-touch-surface
       />
-      {!readOnly && showKeyBar && (
+      {!readOnly && inputAccessory}
+      {!readOnly && (
         <TerminalKeyBar
           historyActive={historyActive}
           onKey={handleVirtualKey}

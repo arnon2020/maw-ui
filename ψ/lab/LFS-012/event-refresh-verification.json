@@ -1,17 +1,17 @@
 {
-  "generatedAt": "2026-07-29T01:56:58.323Z",
+  "generatedAt": "2026-07-29T02:39:50.660Z",
   "base": "http://127.0.0.1:5177",
   "liveTerminal": {
     "outputVisible": true,
-    "latencyMs": 65,
-    "finiteEventCaptureRequests": 4,
+    "latencyMs": 67,
+    "finiteEventCaptureRequests": 2,
     "idleCaptureRequests": 0,
     "paneContainsMarker": true
   },
   "previewRefresh": {
     "outputVisible": true,
-    "latencyMs": 167,
-    "finiteEventCaptureRequests": 2,
+    "latencyMs": 86,
+    "finiteEventCaptureRequests": 1,
     "manualRefreshRequests": 1,
     "idleCaptureRequests": 0,
     "paneContainsMarker": true
@@ -24,53 +24,11 @@
           "controlsTop": 276,
           "controlsBottom": 326,
           "firstGroupTop": 343,
-          "firstGroupBottom": 440,
-          "firstGroupInViewport": true
-        },
-        "keys": [
-          {
-            "key": "esc",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "left",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "up",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "down",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "right",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "enter",
-            "width": 54.015625,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          }
-        ]
+          "firstGroupBottom": 426,
+          "firstGroupInViewport": true,
+          "fleetKeyCount": 0,
+          "fleetKeyBarCount": 0
+        }
       },
       {
         "profile": "mobile-390x844",
@@ -78,191 +36,43 @@
           "controlsTop": 239,
           "controlsBottom": 289,
           "firstGroupTop": 306,
-          "firstGroupBottom": 403,
-          "firstGroupInViewport": true
-        },
-        "keys": [
-          {
-            "key": "esc",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "left",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "up",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "down",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "right",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "enter",
-            "width": 54.015625,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          }
-        ]
+          "firstGroupBottom": 389,
+          "firstGroupInViewport": true,
+          "fleetKeyCount": 0,
+          "fleetKeyBarCount": 0
+        }
       },
       {
         "profile": "tablet-768x1024",
         "initial": {
-          "controlsTop": 775,
-          "controlsBottom": 825,
-          "firstGroupTop": 842,
-          "firstGroupBottom": 915,
-          "firstGroupInViewport": true
-        },
-        "keys": [
-          {
-            "key": "esc",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "left",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "up",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "down",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "right",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "enter",
-            "width": 54.015625,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          }
-        ]
+          "controlsTop": 2268,
+          "controlsBottom": 2318,
+          "firstGroupTop": 2335,
+          "firstGroupBottom": 2395,
+          "firstGroupInViewport": false,
+          "fleetKeyCount": 0,
+          "fleetKeyBarCount": 0
+        }
       },
       {
         "profile": "landscape-844x390",
         "initial": {
-          "controlsTop": 742,
-          "controlsBottom": 792,
-          "firstGroupTop": 809,
-          "firstGroupBottom": 882,
-          "firstGroupInViewport": false
-        },
-        "keys": [
-          {
-            "key": "esc",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "left",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "up",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "down",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "right",
-            "width": 48,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          },
-          {
-            "key": "enter",
-            "width": 54.015625,
-            "height": 48,
-            "inViewport": true,
-            "selfHit": true
-          }
-        ]
+          "controlsTop": 2235,
+          "controlsBottom": 2285,
+          "firstGroupTop": 2302,
+          "firstGroupBottom": 2362,
+          "firstGroupInViewport": false,
+          "fleetKeyCount": 0,
+          "fleetKeyBarCount": 0
+        }
       }
-    ],
-    "byteProof": {
-      "note": "Exact WebSocket input frames from UI; backend rejection of disposable non-Claude pane is expected.",
-      "expectedSequences": [
-        "\u001b",
-        "\u001b[D",
-        "\u001b[A",
-        "\u001b[B",
-        "\u001b[C",
-        "\r"
-      ],
-      "actualSequences": [
-        "\u001b",
-        "\u001b[D",
-        "\u001b[A",
-        "\u001b[B",
-        "\u001b[C",
-        "\r"
-      ],
-      "passed": true
-    }
+    ]
   },
   "summary": {
     "liveTerminalPassed": true,
     "previewRefreshPassed": true,
-    "fleetCentersPassed": 24,
-    "fleetCentersTested": 24,
-    "mobileFirstGroupPassed": true,
-    "fleetByteProofPassed": true
+    "fleetProfilesWithoutKeys": 4,
+    "mobileFirstGroupPassed": true
   },
   "passed": true
 }

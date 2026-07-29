@@ -10,10 +10,6 @@ const profiles = [
   { name: "tablet-768x1024", width: 768, height: 1024 },
   { name: "landscape-844x390", width: 844, height: 390 },
 ];
-const fleetKeys = ["esc", "left", "up", "down", "right", "enter"];
-const expectedFleetSequences = [
-  "\x1b", "\x1b[D", "\x1b[A", "\x1b[B", "\x1b[C", "\r",
-];
 
 function tmux(args, options = {}) {
   return execFileSync("tmux", args, { encoding: "utf8", ...options }).trim();
@@ -38,10 +34,11 @@ async function waitForTarget(page, target) {
   return wrapper;
 }
 
-function observeCaptureRequests(page) {
+function observeCaptureRequests(page, target) {
   const requests = [];
   page.on("request", (request) => {
-    if (request.url().includes("/api/capture?")) {
+    const url = new URL(request.url());
+    if (url.pathname === "/api/capture" && url.searchParams.get("target") === target) {
       requests.push({ at: Date.now(), url: request.url() });
     }
   });
@@ -57,7 +54,7 @@ const result = {
   base,
   liveTerminal: {},
   previewRefresh: {},
-  fleet: { profiles: [], byteProof: {} },
+  fleet: { profiles: [] },
 };
 
 try {
@@ -67,7 +64,7 @@ try {
   const liveTarget = `${liveSession}:0`;
   createSession(liveSession);
   const livePage = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  const liveRequests = observeCaptureRequests(livePage);
+  const liveRequests = observeCaptureRequests(livePage, liveTarget);
   await livePage.goto(`${base}/?static=1#terminal/${liveSession}`, { waitUntil: "domcontentloaded" });
   const liveInput = livePage.getByLabel("Terminal keyboard input");
   await liveInput.waitFor({ state: "visible" });
@@ -101,14 +98,13 @@ try {
   killSession(liveSession);
 
   // Fleet pinned preview: safely mutate only the disposable pane out-of-band,
-  // then Fleet Enter must event-refresh that new output within two seconds.
-  // The production /ws intentionally rejects input to non-Claude bash panes,
-  // so this proves the refresh trigger without touching a real user PTY.
+  // then use the preview's explicit refresh control. Fleet rows intentionally
+  // have no terminal-key controls; terminal input belongs on terminal surfaces.
   const previewSession = "lfs012-preview";
   const previewTarget = `${previewSession}:0`;
   createSession(previewSession);
   const previewPage = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  const previewRequests = observeCaptureRequests(previewPage);
+  const previewRequests = observeCaptureRequests(previewPage, previewTarget);
   await previewPage.goto(`${base}/?static=1#fleet`, { waitUntil: "domcontentloaded" });
   const previewWrapper = await waitForTarget(previewPage, previewTarget);
   await previewWrapper.locator('[role="button"]').first().evaluate((element) => element.click());
@@ -117,7 +113,8 @@ try {
   previewRequests.length = 0;
   tmux(["send-keys", "-t", previewTarget, "echo LFS012_PREVIEW_OK", "Enter"]);
   const previewStarted = Date.now();
-  await previewWrapper.locator('[data-fleet-key="enter"]').evaluate((element) => element.click());
+  const refresh = previewPage.locator('.fixed.pointer-events-auto [title="Refresh preview"]').first();
+  await refresh.click();
   await previewPage.waitForFunction(
     () => document.body.textContent?.includes("LFS012_PREVIEW_OK"),
     undefined,
@@ -126,11 +123,6 @@ try {
   const previewLatencyMs = Date.now() - previewStarted;
   await previewPage.waitForTimeout(1_300);
   const previewEventRequests = previewRequests.length;
-  previewRequests.length = 0;
-  const refresh = previewPage.locator('.fixed.pointer-events-auto [title="Refresh preview"]').first();
-  await refresh.click();
-  await previewPage.waitForTimeout(300);
-  const manualRequests = previewRequests.length;
   await previewPage.waitForTimeout(1_000);
   previewRequests.length = 0;
   await previewPage.waitForTimeout(2_000);
@@ -138,34 +130,22 @@ try {
     outputVisible: true,
     latencyMs: previewLatencyMs,
     finiteEventCaptureRequests: previewEventRequests,
-    manualRefreshRequests: manualRequests,
+    manualRefreshRequests: previewEventRequests,
     idleCaptureRequests: previewRequests.length,
     paneContainsMarker: capture(previewSession).includes("LFS012_PREVIEW_OK"),
   };
   await previewPage.close();
   killSession(previewSession);
 
-  // Every Fleet quick key is center-hittable at every required profile. The
-  // first grouped room must be in the initial mobile viewport before scrolling.
-  const fleetSession = "lfs012-fleetkeys";
+  // Fleet must retain the responsive grouping/order work while containing no
+  // terminal key bars or virtual-key buttons.
+  const fleetSession = "lfs012-fleet-no-keys";
   const fleetTarget = `${fleetSession}:0`;
   createSession(fleetSession);
-  const fleetFrames = [];
   for (const profile of profiles) {
     const page = await browser.newPage({ viewport: { width: profile.width, height: profile.height } });
-    page.on("websocket", (socket) => {
-      if (!socket.url().endsWith("/ws")) return;
-      socket.on("framesent", (event) => {
-        try {
-          const message = JSON.parse(String(event.payload));
-          if (message.type === "send" && message.target === fleetTarget) {
-            fleetFrames.push(message.text);
-          }
-        } catch {}
-      });
-    });
     await page.goto(`${base}/?static=1#fleet`, { waitUntil: "domcontentloaded" });
-    const wrapper = await waitForTarget(page, fleetTarget);
+    await waitForTarget(page, fleetTarget);
     const initial = await page.evaluate(() => {
       const controls = document.querySelector('[aria-label="Fleet grouping controls"]');
       const firstGroup = document.querySelector('section[aria-label*=" group with"] > [role="button"]');
@@ -177,6 +157,8 @@ try {
         firstGroupTop: groupBox?.top ?? null,
         firstGroupBottom: groupBox?.bottom ?? null,
         firstGroupInViewport: Boolean(groupBox && groupBox.top >= 0 && groupBox.top < innerHeight),
+        fleetKeyCount: document.querySelectorAll("[data-fleet-key]").length,
+        fleetKeyBarCount: document.querySelectorAll("[data-fleet-key-bar]").length,
       };
     });
     if (profile.name === "mobile-390x844") {
@@ -184,46 +166,15 @@ try {
         path: fileURLToPath(new URL("screenshots/fleet-390-group-first.png", import.meta.url)),
       });
     }
-    const keys = [];
-    for (const key of fleetKeys) {
-      const button = wrapper.locator(`[data-fleet-key="${key}"]`);
-      await button.scrollIntoViewIfNeeded();
-      const hit = await button.evaluate((element) => {
-        const box = element.getBoundingClientRect();
-        const x = box.left + box.width / 2;
-        const y = box.top + box.height / 2;
-        const center = document.elementFromPoint(x, y);
-        return {
-          key: element.getAttribute("data-fleet-key"),
-          width: box.width,
-          height: box.height,
-          inViewport: x >= 0 && x < innerWidth && y >= 0 && y < innerHeight,
-          selfHit: center === element || element.contains(center),
-        };
-      });
-      keys.push(hit);
-      if (profile === profiles[0]) {
-        await button.click();
-        await page.waitForTimeout(80);
-      }
-    }
-    result.fleet.profiles.push({ profile: profile.name, initial, keys });
+    result.fleet.profiles.push({ profile: profile.name, initial });
     await page.close();
   }
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  result.fleet.byteProof = {
-    note: "Exact WebSocket input frames from UI; backend rejection of disposable non-Claude pane is expected.",
-    expectedSequences: expectedFleetSequences,
-    actualSequences: fleetFrames,
-    passed: JSON.stringify(expectedFleetSequences) === JSON.stringify(fleetFrames),
-  };
   killSession(fleetSession);
 } finally {
   await browser.close();
-  for (const name of ["lfs012-live", "lfs012-preview", "lfs012-fleetkeys"]) killSession(name);
+  for (const name of ["lfs012-live", "lfs012-preview", "lfs012-fleet-no-keys"]) killSession(name);
 }
 
-const fleetHits = result.fleet.profiles.flatMap((profile) => profile.keys);
 result.summary = {
   liveTerminalPassed: result.liveTerminal.outputVisible
     && result.liveTerminal.latencyMs < 2_000
@@ -236,23 +187,21 @@ result.summary = {
     && result.previewRefresh.finiteEventCaptureRequests > 0
     && result.previewRefresh.manualRefreshRequests > 0
     && result.previewRefresh.idleCaptureRequests === 0,
-  fleetCentersPassed: fleetHits.filter((hit) =>
-    hit.selfHit && hit.inViewport && hit.width >= 48 && hit.height >= 48).length,
-  fleetCentersTested: fleetHits.length,
+  fleetProfilesWithoutKeys: result.fleet.profiles
+    .filter((profile) => profile.initial.fleetKeyCount === 0 && profile.initial.fleetKeyBarCount === 0).length,
   mobileFirstGroupPassed: result.fleet.profiles
     .filter((profile) => profile.profile.startsWith("mobile"))
     .every((profile) => profile.initial.firstGroupInViewport),
-  fleetByteProofPassed: result.fleet.byteProof.passed,
 };
 result.passed = result.summary.liveTerminalPassed
   && result.summary.previewRefreshPassed
-  && result.summary.fleetCentersPassed === result.summary.fleetCentersTested
+  && result.summary.fleetProfilesWithoutKeys === profiles.length
   && result.summary.mobileFirstGroupPassed
-  && result.summary.fleetByteProofPassed;
+  ;
 
 await writeFile(
   new URL("event-refresh-verification.json", import.meta.url),
   `${JSON.stringify(result, null, 2)}\n`,
 );
-console.log(JSON.stringify({ passed: result.passed, summary: result.summary, liveTerminal: result.liveTerminal, previewRefresh: result.previewRefresh, fleetByteProof: result.fleet.byteProof }, null, 2));
+console.log(JSON.stringify({ passed: result.passed, summary: result.summary, liveTerminal: result.liveTerminal, previewRefresh: result.previewRefresh }, null, 2));
 if (!result.passed) process.exitCode = 1;

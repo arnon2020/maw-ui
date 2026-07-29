@@ -1,5 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { TERMINAL_KEY_SEQUENCES, tmuxMouseWheelSequence } from "./terminalInput";
+import {
+  TERMINAL_KEY_SEQUENCES,
+  terminalKeySequence,
+  tmuxMouseWheelSequence,
+} from "./terminalInput";
 
 describe("terminal input sequences", () => {
   test("maps every virtual key to its PTY sequence", () => {
@@ -10,9 +14,29 @@ describe("terminal input sequences", () => {
       down: "\x1b[B",
       left: "\x1b[D",
       right: "\x1b[C",
+      home: "\x1b[1~",
+      end: "\x1b[4~",
+      pageUp: "\x1b[5~",
+      pageDown: "\x1b[6~",
       ctrlC: "\x03",
+      ctrlD: "\x04",
+      ctrlZ: "\x1a",
+      ctrlL: "\x0c",
+      ctrlR: "\x12",
+      slash: "/",
+      pipe: "|",
       enter: "\r",
     });
+  });
+
+  test("applies sticky terminal modifiers to virtual keys", () => {
+    expect(terminalKeySequence("up", { ctrl: true, alt: false })).toBe("\x1b[1;5A");
+    expect(terminalKeySequence("pageDown", { ctrl: true, alt: false })).toBe("\x1b[6;5~");
+    expect(terminalKeySequence("slash", { ctrl: true, alt: false })).toBe("\x1f");
+    expect(terminalKeySequence("pipe", { ctrl: true, alt: false })).toBe("\x1c");
+    expect(terminalKeySequence("left", { ctrl: false, alt: true })).toBe("\x1b\x1b[D");
+    expect(terminalKeySequence("home", { ctrl: true, alt: true })).toBe("\x1b\x1b[1;5H");
+    expect(terminalKeySequence("ctrlD", { ctrl: true, alt: false })).toBe("\x04");
   });
 
   test("encodes tmux SGR wheel at the terminal center", () => {
