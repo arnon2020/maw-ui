@@ -18,7 +18,7 @@ function saveHost(host: string) {
 }
 
 /**
- * ConnectPage — shown when maw-ui has no backend connection.
+ * ConnectPage — shown when maw-ui-lite has no backend connection.
  *
  * On hosted origins (god.buildwithoracle.com) without ?host=, every /api
  * call fails. Instead of showing empty views, show this: one input field,
@@ -78,7 +78,7 @@ export const ConnectPage = memo(function ConnectPage() {
         {/* Hero */}
         <div className="text-4xl mb-4">👁</div>
         <h1 className="text-2xl font-bold tracking-tight mb-2" style={{ color: "#00f5d4" }}>
-          maw-ui
+          maw-ui-lite
         </h1>
         <p className="text-sm mb-8" style={{ color: "rgba(255,255,255,0.35)" }}>
           Connect to any maw-js node to see the mesh

@@ -6,11 +6,11 @@
  * feat/wormhole-client-draft branch. See
  * mawui-oracle/ψ/writing/federation-join-easy.md for context.
  *
- * maw-ui has no explicit test runner in package.json (only vite scripts), but
+ * maw-ui-lite uses Bun for the test script in package.json, and
  * `bun test` works natively on `.test.ts` files and the PeerExecClient has no
  * React/DOM/vite dependencies beyond `fetch` and `crypto.randomUUID` which are
  * both globals in modern bun. Runs via: `bun test src/lib/peerExecClient.test.ts`
- * from the maw-ui repo root.
+ * from the maw-ui-lite repo root.
  */
 
 import { describe, test, expect, beforeEach, afterEach, mock } from "bun:test";

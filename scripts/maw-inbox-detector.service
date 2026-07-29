@@ -5,7 +5,7 @@ Wants=maw-serve.service
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/bun /home/user/ghq/github.com/Soul-Brews-Studio/maw-ui/scripts/inbox-detector.ts
+ExecStart=/usr/local/bin/bun /home/user/ghq/github.com/arnon2020/maw-ui-lite/scripts/inbox-detector.ts
 Restart=always
 RestartSec=5
 StandardOutput=append:/tmp/maw-inbox-detector.log
