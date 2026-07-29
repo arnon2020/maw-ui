@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { persist, createJSONStorage, type StateStorage } from "zustand/middleware";
 import { apiUrl } from "./api";
+import { fetchWithRetry } from "./fetchWithRetry";
+import { setNetworkStatus } from "./networkStatus";
 
 export interface RecentEntry {
   name: string;
@@ -114,23 +116,50 @@ const RECENT_TTL = 30 * 60 * 1000; // 30 minutes
 
 let writeTimer: ReturnType<typeof setTimeout> | null = null;
 let pendingWrite: string | null = null;
+let writeController: AbortController | null = null;
+let writePromise: Promise<boolean> | null = null;
+let syncController: AbortController | null = null;
+let lastStorageName = "maw.fleet";
 const UI_STATE_VERSION = 4;
+const UI_STATE_PENDING_KEY = "maw.ui-state.pending";
 
-function flushWrite() {
-  if (pendingWrite === null) return;
+async function flushWrite(): Promise<boolean> {
+  if (writePromise) return writePromise;
+  if (pendingWrite === null) return true;
   const body = pendingWrite;
-  pendingWrite = null;
-  fetch(apiUrl(`/api/ui-state`), {
+  const controller = new AbortController();
+  writeController = controller;
+  writePromise = fetchWithRetry(apiUrl("/api/ui-state"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body,
-  }).catch(() => {}); // fire-and-forget
+    signal: controller.signal,
+  }).then((response) => {
+    if (!response.ok) return false;
+    if (pendingWrite === body) {
+      pendingWrite = null;
+      localStorage.removeItem(UI_STATE_PENDING_KEY);
+    }
+    return true;
+  }).catch(() => false).finally(() => {
+    if (writeController === controller) writeController = null;
+    writePromise = null;
+    if (pendingWrite !== null && pendingWrite !== body) {
+      setTimeout(() => void flushWrite(), 0);
+    }
+  });
+  return writePromise;
 }
 
 /** Sync server state into localStorage, then rehydrate Zustand. */
-function syncFromServer(name: string) {
+async function syncFromServer(name: string): Promise<void> {
+  if (pendingWrite !== null) return;
+  syncController?.abort();
+  const controller = new AbortController();
+  syncController = controller;
   const localAtRequestStart = localStorage.getItem(name);
-  fetch(apiUrl("/api/ui-state")).then(async (res) => {
+  try {
+    const res = await fetchWithRetry(apiUrl("/api/ui-state"), { signal: controller.signal });
     if (!res.ok) return;
     const data = await res.json();
     if (!data || Object.keys(data).length === 0) return;
@@ -143,43 +172,86 @@ function syncFromServer(name: string) {
       localStorage.setItem(name, value);
       useFleetStore.persist.rehydrate();
     }
-  }).catch(() => {});
+  } catch {
+    // The bounded helper updates the shared network indicator. A future
+    // online/visibility event performs one fresh sync attempt.
+  } finally {
+    if (syncController === controller) syncController = null;
+  }
+}
+
+let recoveryQueued = false;
+function recoverUIStateOnce() {
+  if (recoveryQueued || typeof document === "undefined") return;
+  if (typeof navigator !== "undefined" && navigator.onLine === false) {
+    setNetworkStatus("offline");
+    return;
+  }
+  recoveryQueued = true;
+  setTimeout(async () => {
+    try {
+      // A network transition invalidates an in-flight attempt. Cancel its stale
+      // backoff and start one fresh bounded cycle for the latest pending body.
+      writeController?.abort();
+      if (writePromise) await writePromise;
+      await flushWrite();
+      if (pendingWrite === null) await syncFromServer(lastStorageName);
+    } finally {
+      recoveryQueued = false;
+    }
+  }, 0);
 }
 
 const hybridStorage: StateStorage = {
   getItem: (name) => {
+    lastStorageName = name;
+    pendingWrite ??= localStorage.getItem(UI_STATE_PENDING_KEY);
     // Return localStorage synchronously → instant hydration
-    // Then background-sync from server for cross-device updates
-    setTimeout(() => syncFromServer(name), 0);
+    // Flush a reload-surviving pending write before accepting server state.
+    setTimeout(() => {
+      if (pendingWrite !== null) recoverUIStateOnce();
+      else void syncFromServer(name);
+    }, 0);
     return localStorage.getItem(name);
   },
   setItem: (name, value) => {
+    lastStorageName = name;
     // Write to localStorage immediately (instant on next refresh)
     localStorage.setItem(name, value);
     // Debounced write to server (cross-device sync)
     try {
       const { state } = JSON.parse(value);
       pendingWrite = JSON.stringify(state);
+      localStorage.setItem(UI_STATE_PENDING_KEY, pendingWrite);
+      writeController?.abort();
       if (writeTimer) clearTimeout(writeTimer);
-      writeTimer = setTimeout(flushWrite, 1000);
+      writeTimer = setTimeout(() => void flushWrite(), 1000);
     } catch {}
   },
   removeItem: (name) => {
+    lastStorageName = name;
     localStorage.removeItem(name);
-    fetch(apiUrl(`/api/ui-state`), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: "{}",
-    }).catch(() => {});
+    pendingWrite = "{}";
+    localStorage.setItem(UI_STATE_PENDING_KEY, pendingWrite);
+    writeController?.abort();
+    void flushWrite();
   },
 };
+
+if (typeof window !== "undefined") {
+  window.addEventListener("online", recoverUIStateOnce);
+  window.addEventListener("offline", () => setNetworkStatus("offline"));
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") recoverUIStateOnce();
+  });
+}
 
 // --- Asks persistence (separate from ui-state) ---
 let askSaveTimer: ReturnType<typeof setTimeout> | null = null;
 function persistAsks(asks: AskItem[]) {
   if (askSaveTimer) clearTimeout(askSaveTimer);
   askSaveTimer = setTimeout(() => {
-    fetch(apiUrl(`/api/asks`), {
+    fetchWithRetry(apiUrl("/api/asks"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(asks),
@@ -447,7 +519,7 @@ export const useFleetStore = create<FleetStore>()(
 
 // Load asks from server on startup
 setTimeout(() => {
-  fetch(apiUrl("/api/asks"))
+  fetchWithRetry(apiUrl("/api/asks"))
     .then((r) => r.json())
     .then((data: AskItem[]) => {
       if (Array.isArray(data) && data.length > 0) {

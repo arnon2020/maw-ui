@@ -1,0 +1,73 @@
+{
+  "generatedAt": "2026-07-29T05:41:05.320Z",
+  "base": "http://127.0.0.1:5178",
+  "uiState": {
+    "failedAttemptsBeforeRecovery": 1,
+    "localValueSurvived": true,
+    "pendingSurvived": true,
+    "indicatorDuringFailure": "offline",
+    "recoveryWrites": 1,
+    "recoveryBodyIsLatest": true,
+    "pendingCleared": true,
+    "indicatorCleared": true,
+    "requests": [
+      {
+        "at": 1785303667290,
+        "bodyLength": 3804,
+        "fleetGroupMode": "team",
+        "failed": true
+      },
+      {
+        "at": 1785303667379,
+        "bodyLength": 3804,
+        "fleetGroupMode": "team",
+        "failed": false
+      },
+      {
+        "at": 1785303671671,
+        "bodyLength": 3804,
+        "fleetGroupMode": "team",
+        "failed": false
+      },
+      {
+        "at": 1785303676632,
+        "bodyLength": 3804,
+        "fleetGroupMode": "team",
+        "failed": false
+      }
+    ]
+  },
+  "boundedRetry": {
+    "result": "Failed to fetch",
+    "attempts": 4,
+    "attemptsAfterQuietWindow": 4,
+    "stopped": true,
+    "elapsedBetweenAttemptsMs": [
+      502,
+      1502,
+      4003
+    ]
+  },
+  "send": {
+    "ambiguousResult": {
+      "ok": false,
+      "error": "Failed to fetch"
+    },
+    "requestsAfterAmbiguousFailure": 1,
+    "noAutomaticRetry": true,
+    "paneUntouchedAfterAmbiguousFailure": true,
+    "manualResult": {
+      "ok": true
+    },
+    "totalRequestsAfterManualRetry": 2,
+    "deliveredKBytes": 1,
+    "exactlyOnceAfterManualRetry": true,
+    "capture": "bash-5.2$ stty raw -echo; od -An -tx1 -v -w1\n 4b\n    0d"
+  },
+  "staticMode": {
+    "uiStateRequestsDuringIdle": 0,
+    "boundedRetryRequestsDuringIdle": 0,
+    "runningAnimations": 0
+  },
+  "passed": true
+}

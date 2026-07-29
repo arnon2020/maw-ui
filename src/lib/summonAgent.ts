@@ -46,11 +46,17 @@ export async function launchAgent(
   }
 
   const { apiUrl } = await import("./api");
+  const { fetchWithRetry } = await import("./fetchWithRetry");
   try {
-    const response = await fetch(apiUrl(action.path), {
+    const response = await fetchWithRetry(apiUrl(action.path), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(action.body),
+      // /api/send is non-idempotent. Retry at most once, and only if the
+      // browser was already offline before the first attempt (it could not
+      // have left the device). A mid-request network change stays ambiguous.
+      retrySafety: action.path === "/api/send" ? "offline-only" : "network",
+      retryDelays: action.path === "/api/send" ? [750] : undefined,
     });
     const raw = await response.text();
     let payload: unknown;
