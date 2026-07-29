@@ -249,17 +249,27 @@ export const FleetGrid = memo(function FleetGrid({
     collapsed, toggleCollapsed, sleptTargets, stageMode, toggleStageMode,
   } = useFleetStore();
   const isCollapsed = useCallback((key: string) => collapsed.includes(key), [collapsed]);
+  const [compactFleet, setCompactFleet] = useState(
+    () => typeof window !== "undefined" && matchMedia("(max-width: 1023px)").matches,
+  );
+  const [compactRecentExpanded, setCompactRecentExpanded] = useState(false);
+  const [compactStageExpanded, setCompactStageExpanded] = useState(false);
 
-  // Mobile opens directly on the useful grouped directory. Keep the noisy
-  // recent section collapsed by default while preserving an explicit user
-  // choice once the state has been persisted.
+  // Grouped-first Fleet applies to phones, tablets and narrow landscape.
+  // This is viewport state, not a first-visit preference: returning users
+  // receive the same useful default without a per-visit storage gate.
   useEffect(() => {
-    if (!matchMedia("(max-width: 640px)").matches) return;
-    const initialized = sessionStorage.getItem("maw-fleet-mobile-order-initialized");
-    if (initialized) return;
-    sessionStorage.setItem("maw-fleet-mobile-order-initialized", "1");
-    if (!collapsed.includes("_recent")) toggleCollapsed("_recent");
-  }, [collapsed, toggleCollapsed]);
+    const query = matchMedia("(max-width: 1023px)");
+    const update = () => setCompactFleet(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+  const recentCollapsed = compactFleet ? !compactRecentExpanded : isCollapsed("_recent");
+  const toggleRecent = useCallback(() => {
+    if (compactFleet) setCompactRecentExpanded((expanded) => !expanded);
+    else toggleCollapsed("_recent");
+  }, [compactFleet, toggleCollapsed]);
 
   // Sync busy agents to store
   useEffect(() => {
@@ -401,8 +411,21 @@ export const FleetGrid = memo(function FleetGrid({
   return (
     <div ref={containerRef} className="relative w-full min-h-screen flex flex-col" style={{ background: "#0a0a12" }}>
       {/* Toggle: Stage vs Pitch */}
-      <div className="order-2 sm:order-1">
-        {stageMode === "pitch" ? (
+      <div className="order-2 lg:order-1" data-fleet-stage>
+        {compactFleet && (
+          <button
+            type="button"
+            className="lg:hidden w-[calc(100%-1.5rem)] mx-3 mt-2 min-h-12 px-4 rounded-xl flex items-center gap-3 text-left font-mono text-xs text-white/45"
+            style={{ background: "#12121c", border: "1px solid rgba(255,255,255,0.06)" }}
+            aria-expanded={compactStageExpanded}
+            data-fleet-stage-toggle
+            onClick={() => setCompactStageExpanded((expanded) => !expanded)}
+          >
+            <span className="text-amber-400/70">Stage / activity</span>
+            <span className="ml-auto">{compactStageExpanded ? "Hide" : "Show"}</span>
+          </button>
+        )}
+        {(!compactFleet || compactStageExpanded) && (stageMode === "pitch" ? (
           <FootballPitch
             agents={agents}
             recentMap={recentMap}
@@ -432,26 +455,28 @@ export const FleetGrid = memo(function FleetGrid({
               onAgentClick={onAgentClick}
             />
           </>
-        )}
+        ))}
       </div>
 
       {/* Grouped agent directory */}
-      <div className="order-1 sm:order-2 w-full max-w-5xl mx-auto flex flex-col px-3 sm:px-6 lg:px-8 py-6 gap-4">
+      <div className="order-1 lg:order-2 w-full max-w-5xl mx-auto flex flex-col px-3 sm:px-6 lg:px-8 py-6 gap-4" data-fleet-directory>
         {/* Recently Active group — always visible */}
-        <section className="order-3 sm:order-none rounded-2xl overflow-hidden" style={{ background: "#12121c", border: "1px solid rgba(251,191,36,0.15)", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>
+        <section className="order-3 lg:order-none rounded-2xl overflow-hidden" data-fleet-recent style={{ background: "#12121c", border: "1px solid rgba(251,191,36,0.15)", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>
           <div className="flex items-center gap-3 sm:gap-5 px-4 sm:px-6 py-4 cursor-pointer select-none" style={{ background: "rgba(251,191,36,0.03)" }}
-            onClick={() => toggleCollapsed("_recent")} role="button" tabIndex={0}
-            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleCollapsed("_recent"); } }}>
+            onClick={toggleRecent} role="button" tabIndex={0}
+            aria-expanded={!recentCollapsed}
+            data-fleet-recent-toggle
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleRecent(); } }}>
             <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: "#fbbf24", boxShadow: "0 0 6px #fbbf24" }} />
             <h3 className="min-w-0 truncate text-sm sm:text-base font-bold tracking-[2px] sm:tracking-[4px] uppercase" style={{ color: "#fbbf24" }}>Recently Active</h3>
             <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-md" style={{ background: "rgba(251,191,36,0.15)", color: "#fbbf24" }}>{recentlyActive.length}</span>
             <svg width={16} height={16} viewBox="0 0 16 16" fill="none" className="ml-auto flex-shrink-0 transition-transform duration-200"
-              style={{ transform: isCollapsed("_recent") ? "rotate(-90deg)" : "rotate(0deg)" }}>
+              style={{ transform: recentCollapsed ? "rotate(-90deg)" : "rotate(0deg)" }}>
               <path d="M4 6l4 4 4-4" stroke="#fbbf24" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" opacity={0.5} />
             </svg>
           </div>
-          {!isCollapsed("_recent") && <div className="h-[1px]" style={{ background: "rgba(251,191,36,0.12)" }} />}
-          {!isCollapsed("_recent") && (
+          {!recentCollapsed && <div className="h-[1px]" style={{ background: "rgba(251,191,36,0.12)" }} />}
+          {!recentCollapsed && (
             <div className="flex flex-col">
               {recentlyActive.length === 0 && (
                 <div className="px-6 py-4 text-[13px] font-mono text-white/20">No recent activity yet</div>
@@ -479,7 +504,7 @@ export const FleetGrid = memo(function FleetGrid({
           )}
         </section>
 
-        <div className="order-1 sm:order-none flex flex-wrap items-center gap-2" aria-label="Fleet grouping controls">
+        <div className="order-1 lg:order-none flex flex-wrap items-center gap-2" aria-label="Fleet grouping controls">
           <span className="text-[10px] font-mono uppercase tracking-wider text-white/30 mr-1">Group by</span>
           <div className="flex rounded-lg overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
             {(["session", "team"] as const).map((mode) => (
@@ -501,7 +526,7 @@ export const FleetGrid = memo(function FleetGrid({
         </div>
 
         {fleetGroups.length === 0 && (
-          <div className="order-2 sm:order-none rounded-2xl px-5 py-10 text-center font-mono text-sm text-white/25"
+          <div className="order-2 lg:order-none rounded-2xl px-5 py-10 text-center font-mono text-sm text-white/25"
             style={{ background: "#12121c", border: "1px solid rgba(255,255,255,0.06)" }}>
             No agents in the fleet
           </div>
@@ -521,7 +546,7 @@ export const FleetGrid = memo(function FleetGrid({
           const subtitle = group.subtitle || (friendlyRoom && friendlyRoom.toLowerCase() !== group.label.toLowerCase() ? friendlyRoom : undefined);
           const collapsedKey = `fleet:${group.key}`;
           return (
-            <section key={group.key} className="order-2 sm:order-none rounded-2xl overflow-hidden"
+            <section key={group.key} className="order-2 lg:order-none rounded-2xl overflow-hidden"
               style={{ background: "#12121c", border: `1px solid ${hasBusy ? accent + "40" : accent + "18"}`, boxShadow: hasBusy ? `0 0 24px ${accent}12` : "0 2px 8px rgba(0,0,0,0.3)" }}
               aria-label={`${group.label} ${group.kind} group with ${group.agents.length} agents`}>
               <div className="sticky top-0 z-[5] flex flex-wrap items-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 sm:py-4 cursor-pointer select-none"

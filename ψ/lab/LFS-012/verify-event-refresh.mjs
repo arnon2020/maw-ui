@@ -8,6 +8,7 @@ const profiles = [
   { name: "mobile-360x800", width: 360, height: 800 },
   { name: "mobile-390x844", width: 390, height: 844 },
   { name: "tablet-768x1024", width: 768, height: 1024 },
+  { name: "tablet-820x1180", width: 820, height: 1180 },
   { name: "landscape-844x390", width: 844, height: 390 },
 ];
 
@@ -149,6 +150,11 @@ try {
     const initial = await page.evaluate(() => {
       const controls = document.querySelector('[aria-label="Fleet grouping controls"]');
       const firstGroup = document.querySelector('section[aria-label*=" group with"] > [role="button"]');
+      const stage = document.querySelector("[data-fleet-stage]");
+      const directory = document.querySelector("[data-fleet-directory]");
+      const recent = document.querySelector("[data-fleet-recent]");
+      const stageToggle = document.querySelector("[data-fleet-stage-toggle]");
+      const recentToggle = document.querySelector("[data-fleet-recent-toggle]");
       const controlsBox = controls?.getBoundingClientRect();
       const groupBox = firstGroup?.getBoundingClientRect();
       return {
@@ -159,13 +165,20 @@ try {
         firstGroupInViewport: Boolean(groupBox && groupBox.top >= 0 && groupBox.top < innerHeight),
         fleetKeyCount: document.querySelectorAll("[data-fleet-key]").length,
         fleetKeyBarCount: document.querySelectorAll("[data-fleet-key-bar]").length,
+        computedOrder: {
+          directory: directory ? Number(getComputedStyle(directory).order) : null,
+          stage: stage ? Number(getComputedStyle(stage).order) : null,
+          controls: controls ? Number(getComputedStyle(controls).order) : null,
+          firstGroup: firstGroup?.parentElement ? Number(getComputedStyle(firstGroup.parentElement).order) : null,
+          recent: recent ? Number(getComputedStyle(recent).order) : null,
+        },
+        stageExpanded: stageToggle?.getAttribute("aria-expanded"),
+        recentExpanded: recentToggle?.getAttribute("aria-expanded"),
       };
     });
-    if (profile.name === "mobile-390x844") {
-      await page.screenshot({
-        path: fileURLToPath(new URL("screenshots/fleet-390-group-first.png", import.meta.url)),
-      });
-    }
+    await page.screenshot({
+      path: fileURLToPath(new URL(`screenshots/${profile.name}-fleet-group-first.png`, import.meta.url)),
+    });
     result.fleet.profiles.push({ profile: profile.name, initial });
     await page.close();
   }
@@ -189,14 +202,25 @@ result.summary = {
     && result.previewRefresh.idleCaptureRequests === 0,
   fleetProfilesWithoutKeys: result.fleet.profiles
     .filter((profile) => profile.initial.fleetKeyCount === 0 && profile.initial.fleetKeyBarCount === 0).length,
-  mobileFirstGroupPassed: result.fleet.profiles
-    .filter((profile) => profile.profile.startsWith("mobile"))
+  compactFirstGroupPassed: result.fleet.profiles
     .every((profile) => profile.initial.firstGroupInViewport),
+  compactOrderPassed: result.fleet.profiles.every((profile) => {
+    const order = profile.initial.computedOrder;
+    return order.directory === 1
+      && order.stage === 2
+      && order.controls === 1
+      && order.firstGroup === 2
+      && order.recent === 3;
+  }),
+  compactDefaultsCollapsed: result.fleet.profiles.every((profile) =>
+    profile.initial.stageExpanded === "false" && profile.initial.recentExpanded === "false"),
 };
 result.passed = result.summary.liveTerminalPassed
   && result.summary.previewRefreshPassed
   && result.summary.fleetProfilesWithoutKeys === profiles.length
-  && result.summary.mobileFirstGroupPassed
+  && result.summary.compactFirstGroupPassed
+  && result.summary.compactOrderPassed
+  && result.summary.compactDefaultsCollapsed
   ;
 
 await writeFile(
