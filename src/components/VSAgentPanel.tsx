@@ -2,7 +2,8 @@ import { memo, useState, useEffect, useRef, useCallback } from "react";
 import { AgentAvatar } from "./AgentAvatar";
 import { agentColor } from "../lib/constants";
 import { ansiToHtml, processCapture } from "../lib/ansi";
-import { apiUrl } from "../lib/api";
+import { refreshCapture, useCaptureContent } from "../lib/captureStore";
+import { useStaticMode } from "../lib/staticMode";
 import type { AgentState } from "../lib/types";
 
 interface VSAgentPanelProps {
@@ -12,7 +13,8 @@ interface VSAgentPanelProps {
 }
 
 export const VSAgentPanel = memo(function VSAgentPanel({ agent, send, onPickAgent }: VSAgentPanelProps) {
-  const [content, setContent] = useState("");
+  const staticMode = useStaticMode();
+  const content = useCaptureContent(agent?.target || "");
   const [inputBuf, setInputBuf] = useState("");
   const termRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -21,18 +23,18 @@ export const VSAgentPanel = memo(function VSAgentPanel({ agent, send, onPickAgen
   // Poll terminal content
   useEffect(() => {
     if (!agent) return;
-    setContent("");
     isFirstContent.current = true;
     send({ type: "subscribe", target: agent.target });
-    const poll = setInterval(async () => {
+    const refresh = async () => {
       try {
-        const res = await fetch(apiUrl(`/api/capture?target=${encodeURIComponent(agent.target)}`));
-        const data = await res.json();
-        setContent(data.content || "");
+        await refreshCapture(agent.target);
       } catch {}
-    }, 300);
+    };
+    void refresh();
+    if (staticMode) return;
+    const poll = setInterval(refresh, 300);
     return () => clearInterval(poll);
-  }, [agent?.target, send]);
+  }, [agent?.target, send, staticMode]);
 
   // Auto-scroll
   useEffect(() => {
@@ -53,6 +55,7 @@ export const VSAgentPanel = memo(function VSAgentPanel({ agent, send, onPickAgen
       e.preventDefault();
       if (inputBuf && agent) {
         send({ type: "send", target: agent.target, text: inputBuf });
+        setTimeout(() => send({ type: "send", target: agent.target, text: "\r" }), 50);
         setInputBuf("");
       }
     } else if (e.key === "c" && e.ctrlKey) {
@@ -82,7 +85,7 @@ export const VSAgentPanel = memo(function VSAgentPanel({ agent, send, onPickAgen
   }
 
   return (
-    <div className="flex-1 flex flex-col min-w-0" style={{ background: "#0a0a12" }}>
+    <div className="flex-1 flex flex-col min-w-0 min-h-0" style={{ background: "#0a0a12" }}>
       {/* Header: chibi + name + pick button */}
       <div
         className="flex items-center gap-3 px-3 py-2 border-b cursor-pointer hover:bg-white/[0.02] transition-colors"
@@ -113,7 +116,19 @@ export const VSAgentPanel = memo(function VSAgentPanel({ agent, send, onPickAgen
         >
           {status}
         </span>
-        <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth={2} className="ml-auto flex-shrink-0">
+        <button
+          type="button"
+          className="ml-auto min-w-12 min-h-12 flex items-center justify-center text-white/30 hover:text-white/70"
+          aria-label={`Refresh ${displayName} preview`}
+          title="Refresh preview"
+          onClick={(event) => {
+            event.stopPropagation();
+            void refreshCapture(agent.target);
+          }}
+        >
+          ↻
+        </button>
+        <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth={2} className="flex-shrink-0">
           <path d="M6 9l6 6 6-6" />
         </svg>
       </div>
@@ -128,7 +143,7 @@ export const VSAgentPanel = memo(function VSAgentPanel({ agent, send, onPickAgen
 
       {/* Input */}
       <div
-        className="flex items-center gap-2 px-3 py-1.5 border-t font-mono text-[11px] cursor-text"
+        className="flex flex-shrink-0 items-center gap-2 px-3 py-1.5 border-t font-mono text-[11px] cursor-text"
         style={{ background: "#0e0e18", borderColor: "rgba(255,255,255,0.06)" }}
         onClick={() => inputRef.current?.focus()}
       >

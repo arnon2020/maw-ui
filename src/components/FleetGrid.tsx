@@ -11,6 +11,8 @@ import { useFleetStore, RECENT_TTL_MS, type RecentEntry } from "../lib/store";
 import type { AgentState, Session, AgentEvent } from "../lib/types";
 import { describeActivity, type FeedEvent } from "../lib/feed";
 import type { Team } from "./TeamPanel";
+import { COLOR_MAP } from "./TeamPanel";
+import { buildFleetGroups } from "../lib/fleetGrouping";
 
 export type FeedLogEntry = { text: string; ts: number; project?: string; eventType?: string };
 
@@ -242,8 +244,32 @@ export const FleetGrid = memo(function FleetGrid({
   const containerRef = useRef<HTMLDivElement>(null);
 
   // --- Zustand store ---
-  const { recentMap, markBusy, pruneRecent, sortMode, setSortMode, collapsed, toggleCollapsed, sleptTargets, stageMode, toggleStageMode } = useFleetStore();
+  const {
+    recentMap, markBusy, pruneRecent, sortMode, setSortMode, fleetGroupMode, setFleetGroupMode,
+    collapsed, toggleCollapsed, sleptTargets, stageMode, toggleStageMode,
+  } = useFleetStore();
   const isCollapsed = useCallback((key: string) => collapsed.includes(key), [collapsed]);
+  const [compactFleet, setCompactFleet] = useState(
+    () => typeof window !== "undefined" && matchMedia("(max-width: 1023px)").matches,
+  );
+  const [compactRecentExpanded, setCompactRecentExpanded] = useState(false);
+  const [compactStageExpanded, setCompactStageExpanded] = useState(false);
+
+  // Grouped-first Fleet applies to phones, tablets and narrow landscape.
+  // This is viewport state, not a first-visit preference: returning users
+  // receive the same useful default without a per-visit storage gate.
+  useEffect(() => {
+    const query = matchMedia("(max-width: 1023px)");
+    const update = () => setCompactFleet(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+  const recentCollapsed = compactFleet ? !compactRecentExpanded : isCollapsed("_recent");
+  const toggleRecent = useCallback(() => {
+    if (compactFleet) setCompactRecentExpanded((expanded) => !expanded);
+    else toggleCollapsed("_recent");
+  }, [compactFleet, toggleCollapsed]);
 
   // Sync busy agents to store
   useEffect(() => {
@@ -318,27 +344,20 @@ export const FleetGrid = memo(function FleetGrid({
     return map;
   }, [agents]);
 
-  // Room actions
-  const sleepRoom = useCallback((roomKey: string) => {
-    const ra = sessionAgents.get(roomKey) || [];
-    for (const a of ra) send({ type: "sleep", target: a.target });
-  }, [sessionAgents, send]);
-
-  const stopRoom = useCallback((roomKey: string) => {
-    if (!confirm(`Stop all agents in this room?`)) return;
-    const ra = sessionAgents.get(roomKey) || [];
-    for (const a of ra) send({ type: "stop", target: a.target });
-  }, [sessionAgents, send]);
-
   const sorted = useMemo(() => sortRooms(sessions, sessionAgents, sortMode), [sessions, sessionAgents, sortMode]);
+  const fleetGroups = useMemo(
+    () => buildFleetGroups(fleetGroupMode, sorted, agents, teams),
+    [fleetGroupMode, sorted, agents, teams],
+  );
 
-  type VRoom = { key: string; label: string; accent: string; floor: string; agents: AgentState[]; hasBusy: boolean; busyCount: number };
-  const visualRooms = useMemo((): VRoom[] => {
-    return sorted.map(s => {
-      const st = roomStyle(s.name); const ra = sessionAgents.get(s.name) || []; const ba = ra.filter(a => a.status === "busy");
-      return { key: s.name, label: s.name, accent: st.accent, floor: st.floor, agents: ra, hasBusy: ba.length > 0, busyCount: ba.length };
-    });
-  }, [sorted, sessionAgents]);
+  const sleepGroup = useCallback((groupAgents: AgentState[]) => {
+    for (const agent of groupAgents) send({ type: "sleep", target: agent.target });
+  }, [send]);
+
+  const stopGroup = useCallback((label: string, groupAgents: AgentState[]) => {
+    if (!confirm(`Stop all agents in ${label}?`)) return;
+    for (const agent of groupAgents) send({ type: "stop", target: agent.target });
+  }, [send]);
 
   // Resolve per-agent feed log — primary oracle + worktree windows
   const getAgentFeedLog = useCallback((agentName: string): FeedLogEntry[] | null => {
@@ -390,57 +409,74 @@ export const FleetGrid = memo(function FleetGrid({
   }, [agents, busyAgents, recentMap]);
 
   return (
-    <div ref={containerRef} className="relative w-full min-h-screen" style={{ background: "#0a0a12" }}>
+    <div ref={containerRef} className="relative w-full min-h-screen flex flex-col" style={{ background: "#0a0a12" }}>
       {/* Toggle: Stage vs Pitch */}
-      {stageMode === "pitch" ? (
-        <FootballPitch
-          agents={agents}
-          recentMap={recentMap}
-          showPreview={showPreview}
-          hidePreview={hidePreview}
-          onAgentClick={onAgentClick}
-          onToggleView={toggleStageMode}
-        />
-      ) : (
-        <>
-          <div className="max-w-5xl mx-auto px-6 lg:px-8 flex justify-end pt-4">
-            <button
-              onClick={toggleStageMode}
-              className="px-3 py-1 rounded-lg text-[11px] font-mono cursor-pointer hover:opacity-80 transition-opacity"
-              style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.1)" }}
-            >
-              Switch to Pitch
-            </button>
-          </div>
-          <StageSection
-            busyAgents={busyAgents}
-            recentlyActive={recentlyActive}
+      <div className="order-2 lg:order-1" data-fleet-stage>
+        {compactFleet && (
+          <button
+            type="button"
+            className="lg:hidden w-[calc(100%-1.5rem)] mx-3 mt-2 min-h-12 px-4 rounded-xl flex items-center gap-3 text-left font-mono text-xs text-white/45"
+            style={{ background: "#12121c", border: "1px solid rgba(255,255,255,0.06)" }}
+            aria-expanded={compactStageExpanded}
+            data-fleet-stage-toggle
+            onClick={() => setCompactStageExpanded((expanded) => !expanded)}
+          >
+            <span className="text-amber-400/70">Stage / activity</span>
+            <span className="ml-auto">{compactStageExpanded ? "Hide" : "Show"}</span>
+          </button>
+        )}
+        {(!compactFleet || compactStageExpanded) && (stageMode === "pitch" ? (
+          <FootballPitch
+            agents={agents}
             recentMap={recentMap}
-            getAgentFeedLog={getAgentFeedLog}
             showPreview={showPreview}
             hidePreview={hidePreview}
             onAgentClick={onAgentClick}
+            onToggleView={toggleStageMode}
           />
-        </>
-      )}
+        ) : (
+          <>
+            <div className="max-w-5xl mx-auto px-6 lg:px-8 flex justify-end pt-4">
+              <button
+                onClick={toggleStageMode}
+                className="min-h-12 px-3 py-1 rounded-lg text-[11px] font-mono cursor-pointer hover:opacity-80 transition-opacity"
+                style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.1)" }}
+              >
+                Switch to Pitch
+              </button>
+            </div>
+            <StageSection
+              busyAgents={busyAgents}
+              recentlyActive={recentlyActive}
+              recentMap={recentMap}
+              getAgentFeedLog={getAgentFeedLog}
+              showPreview={showPreview}
+              hidePreview={hidePreview}
+              onAgentClick={onAgentClick}
+            />
+          </>
+        ))}
+      </div>
 
-      {/* Rooms */}
-      <div className="max-w-5xl mx-auto flex flex-col px-6 lg:px-8 py-6 gap-4">
+      {/* Grouped agent directory */}
+      <div className="order-1 lg:order-2 w-full max-w-5xl mx-auto flex flex-col px-3 sm:px-6 lg:px-8 py-6 gap-4" data-fleet-directory>
         {/* Recently Active group — always visible */}
-        <section className="rounded-2xl overflow-hidden" style={{ background: "#12121c", border: "1px solid rgba(251,191,36,0.15)", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>
-          <div className="flex items-center gap-5 px-6 py-4 cursor-pointer select-none" style={{ background: "rgba(251,191,36,0.03)" }}
-            onClick={() => toggleCollapsed("_recent")} role="button" tabIndex={0}
-            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleCollapsed("_recent"); } }}>
+        <section className="order-3 lg:order-none rounded-2xl overflow-hidden" data-fleet-recent style={{ background: "#12121c", border: "1px solid rgba(251,191,36,0.15)", boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>
+          <div className="flex items-center gap-3 sm:gap-5 px-4 sm:px-6 py-4 cursor-pointer select-none" style={{ background: "rgba(251,191,36,0.03)" }}
+            onClick={toggleRecent} role="button" tabIndex={0}
+            aria-expanded={!recentCollapsed}
+            data-fleet-recent-toggle
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleRecent(); } }}>
             <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: "#fbbf24", boxShadow: "0 0 6px #fbbf24" }} />
-            <h3 className="text-base font-bold tracking-[4px] uppercase" style={{ color: "#fbbf24" }}>Recently Active</h3>
+            <h3 className="min-w-0 truncate text-sm sm:text-base font-bold tracking-[2px] sm:tracking-[4px] uppercase" style={{ color: "#fbbf24" }}>Recently Active</h3>
             <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-md" style={{ background: "rgba(251,191,36,0.15)", color: "#fbbf24" }}>{recentlyActive.length}</span>
             <svg width={16} height={16} viewBox="0 0 16 16" fill="none" className="ml-auto flex-shrink-0 transition-transform duration-200"
-              style={{ transform: isCollapsed("_recent") ? "rotate(-90deg)" : "rotate(0deg)" }}>
+              style={{ transform: recentCollapsed ? "rotate(-90deg)" : "rotate(0deg)" }}>
               <path d="M4 6l4 4 4-4" stroke="#fbbf24" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" opacity={0.5} />
             </svg>
           </div>
-          {!isCollapsed("_recent") && <div className="h-[1px]" style={{ background: "rgba(251,191,36,0.12)" }} />}
-          {!isCollapsed("_recent") && (
+          {!recentCollapsed && <div className="h-[1px]" style={{ background: "rgba(251,191,36,0.12)" }} />}
+          {!recentCollapsed && (
             <div className="flex flex-col">
               {recentlyActive.length === 0 && (
                 <div className="px-6 py-4 text-[13px] font-mono text-white/20">No recent activity yet</div>
@@ -461,55 +497,105 @@ export const FleetGrid = memo(function FleetGrid({
                     featured={i === 0} agoLabel={agoLabel} feedLog={getAgentFeedLog(agent.name)}
                     slept={sleptTargets.includes(entry.target)} alignWidth={96}
                     observe={observe} showPreview={showPreview} hidePreview={hidePreview} onAgentClick={onAgentClick}
-                    send={send} onSendDone={onSendDone} teams={teams} />
+                    send={send} onSendDone={onSendDone} teams={teams} fleetAgents={agents} />
                 );
               })}
             </div>
           )}
         </section>
 
-        {/* Room cards */}
-        {visualRooms.map((vr) => {
-          const style = { accent: vr.accent, floor: vr.floor };
+        <div className="order-1 lg:order-none flex flex-wrap items-center gap-2" aria-label="Fleet grouping controls">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-white/30 mr-1">Group by</span>
+          <div className="flex rounded-lg overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
+            {(["session", "team"] as const).map((mode) => (
+              <button key={mode}
+                className="min-h-12 px-3 py-1.5 text-[11px] font-mono capitalize"
+                style={{
+                  background: fleetGroupMode === mode ? "rgba(100,181,246,0.14)" : "transparent",
+                  color: fleetGroupMode === mode ? "#64b5f6" : "rgba(255,255,255,0.35)",
+                }}
+                aria-pressed={fleetGroupMode === mode}
+                onClick={() => setFleetGroupMode(mode)}>
+                {mode}
+              </button>
+            ))}
+          </div>
+          <span className="text-[10px] font-mono text-white/20 ml-auto">
+            {fleetGroups.length} {fleetGroupMode === "session" ? "rooms" : "teams"} · {agents.length} agents
+          </span>
+        </div>
+
+        {fleetGroups.length === 0 && (
+          <div className="order-2 lg:order-none rounded-2xl px-5 py-10 text-center font-mono text-sm text-white/25"
+            style={{ background: "#12121c", border: "1px solid rgba(255,255,255,0.06)" }}>
+            No agents in the fleet
+          </div>
+        )}
+
+        {/* Session/team cards */}
+        {fleetGroups.map((group) => {
+          const sessionStyle = roomStyle(group.label);
+          const memberColor = group.team?.members.find((member) => member.color)?.color;
+          const accent = group.kind === "standalone"
+            ? "#94a3b8"
+            : group.kind === "team" && memberColor
+              ? COLOR_MAP[memberColor] || sessionStyle.accent
+              : sessionStyle.accent;
+          const hasBusy = group.counts.busy > 0;
+          const friendlyRoom = group.kind === "session" ? roomStyle(group.label).label : undefined;
+          const subtitle = group.subtitle || (friendlyRoom && friendlyRoom.toLowerCase() !== group.label.toLowerCase() ? friendlyRoom : undefined);
+          const collapsedKey = `fleet:${group.key}`;
           return (
-            <section key={vr.key} className="rounded-2xl overflow-hidden"
-              style={{ background: "#12121c", border: `1px solid ${vr.hasBusy ? style.accent + "40" : style.accent + "18"}`, boxShadow: vr.hasBusy ? `0 0 24px ${style.accent}12` : "0 2px 8px rgba(0,0,0,0.3)" }}
-              aria-label={`${vr.label} room with ${vr.agents.length} agents`}>
-              <div className="flex items-center gap-5 px-6 py-4 cursor-pointer transition-colors duration-150 select-none" style={{ background: `${style.accent}08` }}
-                onClick={() => toggleCollapsed(vr.key)} role="button" tabIndex={0}
-                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleCollapsed(vr.key); } }}>
-                <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: vr.hasBusy ? "#ffa726" : "#22C55E", boxShadow: vr.hasBusy ? "0 0 10px #ffa726" : "0 0 6px #22C55E" }} />
-                <h3 className="text-base font-bold tracking-[4px] uppercase" style={{ color: style.accent }}>{vr.label}</h3>
-                <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-md" style={{ background: `${style.accent}20`, color: style.accent }}>{vr.agents.length}</span>
-                {vr.hasBusy && <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-amber-400/15 text-amber-400">{vr.busyCount} busy</span>}
-                {/* Room controls */}
-                <div className="flex items-center gap-1.5 ml-2">
-                  <button title="Sleep all (Ctrl+C)" onClick={(e) => { e.stopPropagation(); sleepRoom(vr.key); }}
+            <section key={group.key} className="order-2 lg:order-none rounded-2xl overflow-hidden"
+              style={{ background: "#12121c", border: `1px solid ${hasBusy ? accent + "40" : accent + "18"}`, boxShadow: hasBusy ? `0 0 24px ${accent}12` : "0 2px 8px rgba(0,0,0,0.3)" }}
+              aria-label={`${group.label} ${group.kind} group with ${group.agents.length} agents`}>
+              <div className="sticky top-0 z-[5] flex flex-wrap items-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 sm:py-4 cursor-pointer select-none"
+                style={{ background: `color-mix(in srgb, #12121c 94%, ${accent})` }}
+                onClick={() => toggleCollapsed(collapsedKey)} role="button" tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleCollapsed(collapsedKey); } }}>
+                <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: hasBusy ? "#ffa726" : group.agents.length ? "#22C55E" : "#475569", boxShadow: hasBusy ? "0 0 10px #ffa726" : undefined }} />
+                <div className="min-w-0 flex-1 basis-36">
+                  <h3 className="truncate text-sm sm:text-base font-bold tracking-[1px] sm:tracking-[2px] uppercase" style={{ color: accent }}>{group.label}</h3>
+                  {subtitle && <div className="truncate text-[10px] font-mono text-white/30 mt-0.5">{subtitle}</div>}
+                </div>
+                <span className="text-[10px] sm:text-xs font-mono font-bold px-2 py-1 rounded-md" style={{ background: `${accent}20`, color: accent }}>{group.agents.length}</span>
+                <div className="flex flex-wrap items-center gap-1 text-[9px] sm:text-[10px] font-mono">
+                  {group.counts.busy > 0 && <span className="px-1.5 py-0.5 rounded bg-amber-400/15 text-amber-400">{group.counts.busy} busy</span>}
+                  {group.counts.ready > 0 && <span className="px-1.5 py-0.5 rounded bg-emerald-400/10 text-emerald-400">{group.counts.ready} ready</span>}
+                  {group.counts.idle > 0 && <span className="px-1.5 py-0.5 rounded bg-white/[0.05] text-white/35">{group.counts.idle} idle</span>}
+                  {group.counts.crashed > 0 && <span className="px-1.5 py-0.5 rounded bg-red-400/10 text-red-400">{group.counts.crashed} crashed</span>}
+                </div>
+                <div className="flex items-center gap-1">
+                  <button title={`Sleep ${group.label}`} onClick={(e) => { e.stopPropagation(); sleepGroup(group.agents); }}
                     className="w-7 h-7 rounded-md flex items-center justify-center cursor-pointer transition-all active:scale-90"
                     style={{ background: "rgba(251,191,36,0.12)" }}>
                     <svg width={12} height={12} viewBox="0 0 24 24" fill="#fbbf24"><rect x={6} y={5} width={4} height={14} rx={1} /><rect x={14} y={5} width={4} height={14} rx={1} /></svg>
                   </button>
-                  <button title="Stop room" onClick={(e) => { e.stopPropagation(); stopRoom(vr.key); }}
+                  <button title={`Stop ${group.label}`} onClick={(e) => { e.stopPropagation(); stopGroup(group.label, group.agents); }}
                     className="w-7 h-7 rounded-md flex items-center justify-center cursor-pointer transition-all active:scale-90"
                     style={{ background: "rgba(239,68,68,0.12)" }}>
                     <svg width={12} height={12} viewBox="0 0 24 24" fill="#ef4444"><rect x={5} y={5} width={14} height={14} rx={2} /></svg>
                   </button>
                 </div>
                 <svg width={16} height={16} viewBox="0 0 16 16" fill="none" className="ml-auto flex-shrink-0 transition-transform duration-200"
-                  style={{ transform: isCollapsed(vr.key) ? "rotate(-90deg)" : "rotate(0deg)" }}>
-                  <path d="M4 6l4 4 4-4" stroke={style.accent} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" opacity={0.5} />
+                  style={{ transform: isCollapsed(collapsedKey) ? "rotate(-90deg)" : "rotate(0deg)" }}>
+                  <path d="M4 6l4 4 4-4" stroke={accent} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" opacity={0.5} />
                 </svg>
               </div>
-              {!isCollapsed(vr.key) && <div className="h-[1px]" style={{ background: `${style.accent}25` }} />}
-              {!isCollapsed(vr.key) && (
+              {!isCollapsed(collapsedKey) && <div className="h-[1px]" style={{ background: `${accent}25` }} />}
+              {!isCollapsed(collapsedKey) && (
                 <div className="flex flex-col">
-                  {vr.agents.map((agent, i) => (
-                    <AgentRow key={agent.target} agent={agent} accent={style.accent} roomLabel={vr.label}
-                      isLast={i === vr.agents.length - 1}
+                  {group.agents.length === 0 && (
+                    <div className="px-4 sm:px-6 py-4 text-[12px] font-mono text-white/20">No agents in this group</div>
+                  )}
+                  {group.agents.map((agent, i) => (
+                    <AgentRow key={agent.target} agent={agent} accent={accent} roomLabel={group.label}
+                      isLast={i === group.agents.length - 1}
                       feedLog={getAgentFeedLog(agent.name)}
                       slept={sleptTargets.includes(agent.target)}
                       observe={observe} showPreview={showPreview} hidePreview={hidePreview} onAgentClick={onAgentClick}
-                      send={send} onSendDone={onSendDone} teams={teams} />
+                      send={send} onSendDone={onSendDone} teams={teams} fleetAgents={agents}
+                      showSessionBadge={fleetGroupMode === "team"} />
                   ))}
                 </div>
               )}
@@ -518,7 +604,9 @@ export const FleetGrid = memo(function FleetGrid({
         })}
       </div>
 
-      <BottomStats agents={agents} eventLog={eventLog} />
+      <div className="order-3">
+        <BottomStats agents={agents} eventLog={eventLog} />
+      </div>
 
       {/* Hover Preview — compact mini card */}
       {hoverPreview && !pinnedPreview && (

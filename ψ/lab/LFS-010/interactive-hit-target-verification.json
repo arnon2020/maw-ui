@@ -1,0 +1,5029 @@
+{
+  "passed": true,
+  "failures": [],
+  "summary": {
+    "profiles": 4,
+    "pages": 28,
+    "phases": 2,
+    "states": 224,
+    "centersTested": 4075,
+    "blockedCenters": 98,
+    "importantBlockedCenters": 0,
+    "fixedOverlayBlockedCenters": 0,
+    "accessibleToggles": 224
+  },
+  "results": [
+    {
+      "profile": "mobile-360x800",
+      "page": "route-office",
+      "focused": null,
+      "before": {
+        "tested": 15,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              343.21,
+              160
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 15,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              343.21,
+              160
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "route-fleet",
+      "focused": null,
+      "before": {
+        "tested": 20,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              341.4,
+              193
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 20,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              341.4,
+              193
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "route-mission",
+      "focused": null,
+      "before": {
+        "tested": 22,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              344.49,
+              160
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-8 h-8 rounded-lg bg-black/50 backdrop-blur border border-white/10 text-[9px] text-white/50 hover:text-white hover:bg-w",
+            "label": "Show all rooms",
+            "center": [
+              303,
+              707
+            ],
+            "hitTag": "button",
+            "hitClass": "w-9 h-8 rounded-lg bg-black/70 backdrop-blur border border-white/10 text-white/50 hover:text-white hover:bg-white/10 cur",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 22,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              344.49,
+              160
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-8 h-8 rounded-lg bg-black/50 backdrop-blur border border-white/10 text-[9px] text-white/50 hover:text-white hover:bg-w",
+            "label": "Show all rooms",
+            "center": [
+              303,
+              407
+            ],
+            "hitTag": "button",
+            "hitClass": "w-9 h-8 rounded-lg bg-black/70 backdrop-blur border border-white/10 text-white/50 hover:text-white hover:bg-white/10 cur",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-10 h-10 rounded-xl flex items-center justify-center text-xl font-bold text-white/30 hover:text-white/70 hover:bg-red-5",
+            "label": "Close (Esc)",
+            "center": [
+              316,
+              429.5
+            ],
+            "hitTag": "button",
+            "hitClass": "w-9 h-8 rounded-lg bg-black/70 backdrop-blur border border-white/10 text-white/50 hover:text-white hover:bg-white/10 cur",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "route-dashboard",
+      "focused": null,
+      "before": {
+        "tested": 50,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              344.46,
+              160
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 31,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              344.46,
+              160
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "route-overview",
+      "focused": null,
+      "before": {
+        "tested": 16,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-cyan-400 font-bold",
+            "label": "Overview",
+            "center": [
+              341.79,
+              160
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 16,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-cyan-400 font-bold",
+            "label": "Overview",
+            "center": [
+              341.79,
+              160
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "route-vs",
+      "focused": "input[placeholder=\"Type command...\"]",
+      "before": {
+        "tested": 17,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              160
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 17,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              160
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "route-terminal",
+      "focused": null,
+      "before": {
+        "tested": 15,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              160
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 15,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              160
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "route-chat",
+      "focused": "input[placeholder*=\"Message @\"]",
+      "before": {
+        "tested": 21,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              160
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 21,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              160
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "route-teams",
+      "focused": null,
+      "before": {
+        "tested": 31,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              160
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 21,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              160
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "route-config",
+      "focused": null,
+      "before": {
+        "tested": 20,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              160
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 21,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              160
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "textarea",
+            "id": null,
+            "className": "ime-text-area",
+            "label": "",
+            "center": [
+              217.5,
+              253
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "route-federation",
+      "focused": null,
+      "before": {
+        "tested": 16,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              160
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 16,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              160
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "index.html",
+      "focused": null,
+      "before": {
+        "tested": 15,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              343.21,
+              160
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 15,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              343.21,
+              160
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "mission.html",
+      "focused": null,
+      "before": {
+        "tested": 17,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              344.49,
+              158
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-8 h-8 rounded-lg bg-black/50 backdrop-blur border border-white/10 text-[9px] text-white/50 hover:text-white hover:bg-w",
+            "label": "Show all rooms",
+            "center": [
+              299,
+              705
+            ],
+            "hitTag": "button",
+            "hitClass": "w-9 h-8 rounded-lg bg-black/70 backdrop-blur border border-white/10 text-white/50 hover:text-white hover:bg-white/10 cur",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 17,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              344.49,
+              158
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-8 h-8 rounded-lg bg-black/50 backdrop-blur border border-white/10 text-[9px] text-white/50 hover:text-white hover:bg-w",
+            "label": "Show all rooms",
+            "center": [
+              299,
+              405
+            ],
+            "hitTag": "button",
+            "hitClass": "w-9 h-8 rounded-lg bg-black/70 backdrop-blur border border-white/10 text-white/50 hover:text-white hover:bg-white/10 cur",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-10 h-10 rounded-xl flex items-center justify-center text-xl font-bold text-white/30 hover:text-white/70 hover:bg-red-5",
+            "label": "Close (Esc)",
+            "center": [
+              312,
+              427.5
+            ],
+            "hitTag": "button",
+            "hitClass": "w-9 h-8 rounded-lg bg-black/70 backdrop-blur border border-white/10 text-white/50 hover:text-white hover:bg-white/10 cur",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "fleet.html",
+      "focused": null,
+      "before": {
+        "tested": 11,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              341.4,
+              158
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 11,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              341.4,
+              158
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "dashboard.html",
+      "focused": null,
+      "before": {
+        "tested": 10,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              344.46,
+              158
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 10,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              344.46,
+              158
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "terminal.html",
+      "focused": null,
+      "before": {
+        "tested": 10,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              158
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 10,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              158
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "office.html",
+      "focused": null,
+      "before": {
+        "tested": 10,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              343.21,
+              158
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 10,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              343.21,
+              158
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "overview.html",
+      "focused": null,
+      "before": {
+        "tested": 11,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-cyan-400 font-bold",
+            "label": "Overview",
+            "center": [
+              341.79,
+              158
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 11,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-cyan-400 font-bold",
+            "label": "Overview",
+            "center": [
+              341.79,
+              158
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "chat.html",
+      "focused": "input[placeholder*=\"Message @\"]",
+      "before": {
+        "tested": 16,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              158
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 16,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              158
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "config.html",
+      "focused": null,
+      "before": {
+        "tested": 16,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              158
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "textarea",
+            "id": null,
+            "className": "ime-text-area",
+            "label": "",
+            "center": [
+              217.5,
+              251
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 16,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              158
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "textarea",
+            "id": null,
+            "className": "ime-text-area",
+            "label": "",
+            "center": [
+              217.5,
+              251
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "inbox.html",
+      "focused": null,
+      "before": {
+        "tested": 21,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              158
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 12,
+        "blocked": [
+          {
+            "tag": "a",
+            "id": null,
+            "className": "transition-colors whitespace-nowrap text-white/50 hover:text-white/80",
+            "label": "Overview",
+            "center": [
+              339.84,
+              158
+            ],
+            "hitTag": "header",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "federation.html",
+      "focused": null,
+      "before": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "federation_2d.html",
+      "focused": null,
+      "before": {
+        "tested": 11,
+        "blocked": [
+          {
+            "tag": "button",
+            "id": null,
+            "className": "text-[10px] font-mono cursor-pointer px-2 py-0.5 rounded flex-shrink-0",
+            "label": "LIVE",
+            "center": [
+              134.21,
+              765
+            ],
+            "hitTag": "button",
+            "hitClass": "px-3 py-2 rounded-lg border text-[10px] font-mono cursor-pointer hover:bg-white/[0.05] transition-colors",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "input",
+            "id": null,
+            "className": "absolute inset-x-0 w-full cursor-pointer opacity-70",
+            "label": "",
+            "center": [
+              176.01,
+              765
+            ],
+            "hitTag": "button",
+            "hitClass": "px-3 py-2 rounded-lg border text-[10px] font-mono cursor-pointer hover:bg-white/[0.05] transition-colors",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 11,
+        "blocked": [
+          {
+            "tag": "button",
+            "id": null,
+            "className": "text-[10px] font-mono cursor-pointer px-2 py-0.5 rounded flex-shrink-0",
+            "label": "LIVE",
+            "center": [
+              134.21,
+              465
+            ],
+            "hitTag": "button",
+            "hitClass": "px-3 py-2 rounded-lg border text-[10px] font-mono cursor-pointer hover:bg-white/[0.05] transition-colors",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "input",
+            "id": null,
+            "className": "absolute inset-x-0 w-full cursor-pointer opacity-70",
+            "label": "",
+            "center": [
+              176.01,
+              465
+            ],
+            "hitTag": "button",
+            "hitClass": "px-3 py-2 rounded-lg border text-[10px] font-mono cursor-pointer hover:bg-white/[0.05] transition-colors",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "workspace.html",
+      "focused": "input[placeholder=\"message...\"]",
+      "before": {
+        "tested": 5,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 5,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "arena.html",
+      "focused": null,
+      "before": {
+        "tested": 2,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 2,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "talk.html",
+      "focused": "#msgInput",
+      "before": {
+        "tested": 5,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 5,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "timemachine.html",
+      "focused": null,
+      "before": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "mobile-360x800",
+      "page": "shrine.html",
+      "focused": null,
+      "before": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "route-office",
+      "focused": null,
+      "before": {
+        "tested": 21,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 21,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "route-fleet",
+      "focused": null,
+      "before": {
+        "tested": 32,
+        "blocked": [
+          {
+            "tag": "input",
+            "id": null,
+            "className": "flex-1 px-4 py-3 rounded-xl text-[15px] text-white outline-none placeholder:text-white/20 [&::-webkit-search-cancel-butt",
+            "label": "Talk to coder 1...",
+            "center": [
+              358,
+              981.5
+            ],
+            "hitTag": "div",
+            "hitClass": "flex items-center gap-5 px-6 py-3.5 transition-all duration-150 cursor-pointer hover:bg-white/[0.03]",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 cursor-pointer active:scale-90",
+            "label": "",
+            "center": [
+              697,
+              981.5
+            ],
+            "hitTag": "div",
+            "hitClass": "flex items-center gap-5 px-6 py-3.5 transition-all duration-150 cursor-pointer hover:bg-white/[0.03]",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 26,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "route-mission",
+      "focused": null,
+      "before": {
+        "tested": 39,
+        "blocked": [
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-8 h-8 rounded-lg bg-black/50 backdrop-blur border border-white/10 text-[9px] text-white/50 hover:text-white hover:bg-w",
+            "label": "Show all rooms",
+            "center": [
+              714,
+              880
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-8 h-8 rounded-lg bg-black/50 backdrop-blur border border-white/10 text-white/70 hover:text-white hover:bg-white/10 tex",
+            "label": "+",
+            "center": [
+              714,
+              998
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 38,
+        "blocked": [
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-8 h-8 rounded-lg bg-black/50 backdrop-blur border border-white/10 text-[9px] text-white/50 hover:text-white hover:bg-w",
+            "label": "Show all rooms",
+            "center": [
+              714,
+              580
+            ],
+            "hitTag": "button",
+            "hitClass": "w-9 h-8 rounded-lg bg-black/70 backdrop-blur border border-white/10 text-white/50 hover:text-white hover:bg-white/10 cur",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-8 h-8 rounded-lg bg-black/50 backdrop-blur border border-white/10 text-white/70 hover:text-white hover:bg-white/10 tex",
+            "label": "+",
+            "center": [
+              714,
+              698
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "route-dashboard",
+      "focused": null,
+      "before": {
+        "tested": 56,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 56,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "route-overview",
+      "focused": null,
+      "before": {
+        "tested": 22,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 22,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "route-vs",
+      "focused": "input[placeholder=\"Type command...\"]",
+      "before": {
+        "tested": 23,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 23,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "route-terminal",
+      "focused": null,
+      "before": {
+        "tested": 21,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 21,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "route-chat",
+      "focused": "input[placeholder*=\"Message @\"]",
+      "before": {
+        "tested": 28,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 28,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "route-teams",
+      "focused": null,
+      "before": {
+        "tested": 37,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 37,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "route-config",
+      "focused": null,
+      "before": {
+        "tested": 26,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 27,
+        "blocked": [
+          {
+            "tag": "textarea",
+            "id": null,
+            "className": "ime-text-area",
+            "label": "",
+            "center": [
+              337.5,
+              202
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "route-federation",
+      "focused": null,
+      "before": {
+        "tested": 22,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 22,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "index.html",
+      "focused": null,
+      "before": {
+        "tested": 21,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 21,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "mission.html",
+      "focused": null,
+      "before": {
+        "tested": 34,
+        "blocked": [
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-8 h-8 rounded-lg bg-black/50 backdrop-blur border border-white/10 text-[9px] text-white/50 hover:text-white hover:bg-w",
+            "label": "Show all rooms",
+            "center": [
+              714,
+              878
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-8 h-8 rounded-lg bg-black/50 backdrop-blur border border-white/10 text-white/70 hover:text-white hover:bg-white/10 tex",
+            "label": "+",
+            "center": [
+              714,
+              996
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 33,
+        "blocked": [
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-8 h-8 rounded-lg bg-black/50 backdrop-blur border border-white/10 text-[9px] text-white/50 hover:text-white hover:bg-w",
+            "label": "Show all rooms",
+            "center": [
+              714,
+              578
+            ],
+            "hitTag": "button",
+            "hitClass": "w-9 h-8 rounded-lg bg-black/70 backdrop-blur border border-white/10 text-white/50 hover:text-white hover:bg-white/10 cur",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-8 h-8 rounded-lg bg-black/50 backdrop-blur border border-white/10 text-white/70 hover:text-white hover:bg-white/10 tex",
+            "label": "+",
+            "center": [
+              714,
+              696
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "fleet.html",
+      "focused": null,
+      "before": {
+        "tested": 26,
+        "blocked": [
+          {
+            "tag": "input",
+            "id": null,
+            "className": "flex-1 px-4 py-3 rounded-xl text-[15px] text-white outline-none placeholder:text-white/20 [&::-webkit-search-cancel-butt",
+            "label": "Talk to coder 1...",
+            "center": [
+              358,
+              946.5
+            ],
+            "hitTag": "div",
+            "hitClass": "flex items-center gap-5 px-6 py-3.5 transition-all duration-150 cursor-pointer hover:bg-white/[0.03]",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 cursor-pointer active:scale-90",
+            "label": "",
+            "center": [
+              697,
+              946.5
+            ],
+            "hitTag": "div",
+            "hitClass": "flex items-center gap-5 px-6 py-3.5 transition-all duration-150 cursor-pointer hover:bg-white/[0.03]",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 17,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "dashboard.html",
+      "focused": null,
+      "before": {
+        "tested": 16,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 16,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "terminal.html",
+      "focused": null,
+      "before": {
+        "tested": 16,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 16,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "office.html",
+      "focused": null,
+      "before": {
+        "tested": 16,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 16,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "overview.html",
+      "focused": null,
+      "before": {
+        "tested": 17,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 17,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "chat.html",
+      "focused": "input[placeholder*=\"Message @\"]",
+      "before": {
+        "tested": 23,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 23,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "config.html",
+      "focused": null,
+      "before": {
+        "tested": 22,
+        "blocked": [
+          {
+            "tag": "textarea",
+            "id": null,
+            "className": "ime-text-area",
+            "label": "",
+            "center": [
+              337.5,
+              200
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 22,
+        "blocked": [
+          {
+            "tag": "textarea",
+            "id": null,
+            "className": "ime-text-area",
+            "label": "",
+            "center": [
+              337.5,
+              200
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "inbox.html",
+      "focused": null,
+      "before": {
+        "tested": 32,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 27,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "federation.html",
+      "focused": null,
+      "before": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "federation_2d.html",
+      "focused": null,
+      "before": {
+        "tested": 13,
+        "blocked": [
+          {
+            "tag": "button",
+            "id": null,
+            "className": "text-[10px] font-mono cursor-pointer px-2 py-0.5 rounded flex-shrink-0",
+            "label": "LIVE",
+            "center": [
+              244.38,
+              989
+            ],
+            "hitTag": "button",
+            "hitClass": "px-3 py-2 rounded-lg border text-[10px] font-mono cursor-pointer hover:bg-white/[0.05] transition-colors",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 13,
+        "blocked": [
+          {
+            "tag": "button",
+            "id": null,
+            "className": "text-[10px] font-mono cursor-pointer px-2 py-0.5 rounded flex-shrink-0",
+            "label": "LIVE",
+            "center": [
+              244.38,
+              689
+            ],
+            "hitTag": "button",
+            "hitClass": "px-3 py-2 rounded-lg border text-[10px] font-mono cursor-pointer hover:bg-white/[0.05] transition-colors",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "workspace.html",
+      "focused": "input[placeholder=\"message...\"]",
+      "before": {
+        "tested": 7,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 7,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "arena.html",
+      "focused": null,
+      "before": {
+        "tested": 2,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 2,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "talk.html",
+      "focused": "#msgInput",
+      "before": {
+        "tested": 6,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 6,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "timemachine.html",
+      "focused": null,
+      "before": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-768x1024",
+      "page": "shrine.html",
+      "focused": null,
+      "before": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "route-office",
+      "focused": null,
+      "before": {
+        "tested": 21,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 21,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "route-fleet",
+      "focused": null,
+      "before": {
+        "tested": 42,
+        "blocked": [
+          {
+            "tag": "input",
+            "id": null,
+            "className": "flex-1 px-4 py-3 rounded-xl text-[15px] text-white outline-none placeholder:text-white/20 [&::-webkit-search-cancel-butt",
+            "label": "Talk to coder 1...",
+            "center": [
+              384,
+              948.5
+            ],
+            "hitTag": "div",
+            "hitClass": "flex items-center gap-5 px-6 py-3.5 transition-all duration-150 cursor-pointer hover:bg-white/[0.03]",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 cursor-pointer active:scale-90",
+            "label": "",
+            "center": [
+              749,
+              948.5
+            ],
+            "hitTag": "div",
+            "hitClass": "flex items-center gap-5 px-6 py-3.5 transition-all duration-150 cursor-pointer hover:bg-white/[0.03]",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "input",
+            "id": null,
+            "className": "flex-1 px-4 py-3 rounded-xl text-[15px] text-white outline-none placeholder:text-white/20 [&::-webkit-search-cancel-butt",
+            "label": "Talk to tars...",
+            "center": [
+              384,
+              1057
+            ],
+            "hitTag": "div",
+            "hitClass": "flex items-center gap-5 px-6 py-3.5 transition-all duration-150 cursor-pointer hover:bg-white/[0.03]",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 cursor-pointer active:scale-90",
+            "label": "",
+            "center": [
+              749,
+              1057
+            ],
+            "hitTag": "div",
+            "hitClass": "flex items-center gap-5 px-6 py-3.5 transition-all duration-150 cursor-pointer hover:bg-white/[0.03]",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "input",
+            "id": null,
+            "className": "flex-1 px-4 py-3 rounded-xl text-[15px] text-white outline-none placeholder:text-white/20 [&::-webkit-search-cancel-butt",
+            "label": "Talk to researcher...",
+            "center": [
+              384,
+              1142
+            ],
+            "hitTag": "div",
+            "hitClass": "flex items-center gap-5 px-6 py-3.5 transition-all duration-150 cursor-pointer hover:bg-white/[0.03]",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 cursor-pointer active:scale-90",
+            "label": "",
+            "center": [
+              749,
+              1142
+            ],
+            "hitTag": "div",
+            "hitClass": "flex items-center gap-5 px-6 py-3.5 transition-all duration-150 cursor-pointer hover:bg-white/[0.03]",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 27,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "route-mission",
+      "focused": null,
+      "before": {
+        "tested": 39,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 38,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "route-dashboard",
+      "focused": null,
+      "before": {
+        "tested": 56,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 56,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "route-overview",
+      "focused": null,
+      "before": {
+        "tested": 22,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 22,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "route-vs",
+      "focused": "input[placeholder=\"Type command...\"]",
+      "before": {
+        "tested": 23,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 23,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "route-terminal",
+      "focused": null,
+      "before": {
+        "tested": 21,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 21,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "route-chat",
+      "focused": "input[placeholder*=\"Message @\"]",
+      "before": {
+        "tested": 28,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 28,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "route-teams",
+      "focused": null,
+      "before": {
+        "tested": 37,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 39,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "route-config",
+      "focused": null,
+      "before": {
+        "tested": 26,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 27,
+        "blocked": [
+          {
+            "tag": "textarea",
+            "id": null,
+            "className": "ime-text-area",
+            "label": "",
+            "center": [
+              337.5,
+              202
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "route-federation",
+      "focused": null,
+      "before": {
+        "tested": 22,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 22,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "index.html",
+      "focused": null,
+      "before": {
+        "tested": 21,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 21,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "mission.html",
+      "focused": null,
+      "before": {
+        "tested": 34,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 33,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "fleet.html",
+      "focused": null,
+      "before": {
+        "tested": 33,
+        "blocked": [
+          {
+            "tag": "input",
+            "id": null,
+            "className": "flex-1 px-4 py-3 rounded-xl text-[15px] text-white outline-none placeholder:text-white/20 [&::-webkit-search-cancel-butt",
+            "label": "Talk to coder 1...",
+            "center": [
+              384,
+              946.5
+            ],
+            "hitTag": "div",
+            "hitClass": "flex items-center gap-5 px-6 py-3.5 transition-all duration-150 cursor-pointer hover:bg-white/[0.03]",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 cursor-pointer active:scale-90",
+            "label": "",
+            "center": [
+              749,
+              946.5
+            ],
+            "hitTag": "div",
+            "hitClass": "flex items-center gap-5 px-6 py-3.5 transition-all duration-150 cursor-pointer hover:bg-white/[0.03]",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "input",
+            "id": null,
+            "className": "flex-1 px-4 py-3 rounded-xl text-[15px] text-white outline-none placeholder:text-white/20 [&::-webkit-search-cancel-butt",
+            "label": "Talk to tars...",
+            "center": [
+              384,
+              1055
+            ],
+            "hitTag": "div",
+            "hitClass": "flex items-center gap-5 px-6 py-3.5 transition-all duration-150 cursor-pointer hover:bg-white/[0.03]",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 cursor-pointer active:scale-90",
+            "label": "",
+            "center": [
+              749,
+              1055
+            ],
+            "hitTag": "div",
+            "hitClass": "flex items-center gap-5 px-6 py-3.5 transition-all duration-150 cursor-pointer hover:bg-white/[0.03]",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "input",
+            "id": null,
+            "className": "flex-1 px-4 py-3 rounded-xl text-[15px] text-white outline-none placeholder:text-white/20 [&::-webkit-search-cancel-butt",
+            "label": "Talk to researcher...",
+            "center": [
+              384,
+              1140
+            ],
+            "hitTag": "div",
+            "hitClass": "flex items-center gap-5 px-6 py-3.5 transition-all duration-150 cursor-pointer hover:bg-white/[0.03]",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 cursor-pointer active:scale-90",
+            "label": "",
+            "center": [
+              749,
+              1140
+            ],
+            "hitTag": "div",
+            "hitClass": "flex items-center gap-5 px-6 py-3.5 transition-all duration-150 cursor-pointer hover:bg-white/[0.03]",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 18,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "dashboard.html",
+      "focused": null,
+      "before": {
+        "tested": 16,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 16,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "terminal.html",
+      "focused": null,
+      "before": {
+        "tested": 16,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 16,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "office.html",
+      "focused": null,
+      "before": {
+        "tested": 16,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 16,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "overview.html",
+      "focused": null,
+      "before": {
+        "tested": 17,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 17,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "chat.html",
+      "focused": "input[placeholder*=\"Message @\"]",
+      "before": {
+        "tested": 23,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 23,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "config.html",
+      "focused": null,
+      "before": {
+        "tested": 22,
+        "blocked": [
+          {
+            "tag": "textarea",
+            "id": null,
+            "className": "ime-text-area",
+            "label": "",
+            "center": [
+              337.5,
+              200
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 22,
+        "blocked": [
+          {
+            "tag": "textarea",
+            "id": null,
+            "className": "ime-text-area",
+            "label": "",
+            "center": [
+              337.5,
+              200
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "inbox.html",
+      "focused": null,
+      "before": {
+        "tested": 32,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 32,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "federation.html",
+      "focused": null,
+      "before": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "federation_2d.html",
+      "focused": null,
+      "before": {
+        "tested": 13,
+        "blocked": [
+          {
+            "tag": "button",
+            "id": null,
+            "className": "text-[10px] font-mono cursor-pointer px-2 py-0.5 rounded flex-shrink-0",
+            "label": "LIVE",
+            "center": [
+              258.41,
+              1145
+            ],
+            "hitTag": "button",
+            "hitClass": "px-3 py-2 rounded-lg border text-[10px] font-mono cursor-pointer hover:bg-white/[0.05] transition-colors",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 13,
+        "blocked": [
+          {
+            "tag": "button",
+            "id": null,
+            "className": "text-[10px] font-mono cursor-pointer px-2 py-0.5 rounded flex-shrink-0",
+            "label": "LIVE",
+            "center": [
+              258.41,
+              845
+            ],
+            "hitTag": "button",
+            "hitClass": "px-3 py-2 rounded-lg border text-[10px] font-mono cursor-pointer hover:bg-white/[0.05] transition-colors",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "workspace.html",
+      "focused": "input[placeholder=\"message...\"]",
+      "before": {
+        "tested": 7,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 7,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "arena.html",
+      "focused": null,
+      "before": {
+        "tested": 2,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 2,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "talk.html",
+      "focused": "#msgInput",
+      "before": {
+        "tested": 6,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 6,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "timemachine.html",
+      "focused": null,
+      "before": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "tablet-820x1180",
+      "page": "shrine.html",
+      "focused": null,
+      "before": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "route-office",
+      "focused": null,
+      "before": {
+        "tested": 21,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 21,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "route-fleet",
+      "focused": null,
+      "before": {
+        "tested": 26,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 26,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "route-mission",
+      "focused": null,
+      "before": {
+        "tested": 38,
+        "blocked": [
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-10 h-10 rounded-xl flex items-center justify-center text-xl font-bold text-white/30 hover:text-white/70 hover:bg-red-5",
+            "label": "Close (Esc)",
+            "center": [
+              739,
+              297.5
+            ],
+            "hitTag": "button",
+            "hitClass": "w-9 h-8 rounded-lg bg-black/70 backdrop-blur border border-white/10 text-white/50 hover:text-white hover:bg-white/10 cur",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 27,
+        "blocked": [
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-8 h-8 rounded-lg bg-black/50 backdrop-blur border border-white/10 text-[9px] text-white/50 hover:text-white hover:bg-w",
+            "label": "Show all rooms",
+            "center": [
+              790,
+              156
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          },
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-10 h-10 rounded-xl flex items-center justify-center text-xl font-bold text-white/30 hover:text-white/70 hover:bg-red-5",
+            "label": "Close (Esc)",
+            "center": [
+              739,
+              297.5
+            ],
+            "hitTag": "button",
+            "hitClass": "w-9 h-8 rounded-lg bg-black/70 backdrop-blur border border-white/10 text-white/50 hover:text-white hover:bg-white/10 cur",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "route-dashboard",
+      "focused": null,
+      "before": {
+        "tested": 41,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 22,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "route-overview",
+      "focused": null,
+      "before": {
+        "tested": 22,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 22,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "route-vs",
+      "focused": "input[placeholder=\"Type command...\"]",
+      "before": {
+        "tested": 23,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 23,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "route-terminal",
+      "focused": null,
+      "before": {
+        "tested": 21,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 21,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "route-chat",
+      "focused": "input[placeholder*=\"Message @\"]",
+      "before": {
+        "tested": 28,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 28,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "route-teams",
+      "focused": null,
+      "before": {
+        "tested": 25,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 21,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "route-config",
+      "focused": null,
+      "before": {
+        "tested": 26,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 24,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "route-federation",
+      "focused": null,
+      "before": {
+        "tested": 22,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 22,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "index.html",
+      "focused": null,
+      "before": {
+        "tested": 21,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 21,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "mission.html",
+      "focused": null,
+      "before": {
+        "tested": 33,
+        "blocked": [
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-10 h-10 rounded-xl flex items-center justify-center text-xl font-bold text-white/30 hover:text-white/70 hover:bg-red-5",
+            "label": "Close (Esc)",
+            "center": [
+              739,
+              295.5
+            ],
+            "hitTag": "button",
+            "hitClass": "w-9 h-8 rounded-lg bg-black/70 backdrop-blur border border-white/10 text-white/50 hover:text-white hover:bg-white/10 cur",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 19,
+        "blocked": [
+          {
+            "tag": "button",
+            "id": null,
+            "className": "w-8 h-8 rounded-lg bg-black/50 backdrop-blur border border-white/10 text-[9px] text-white/50 hover:text-white hover:bg-w",
+            "label": "Show all rooms",
+            "center": [
+              790,
+              154
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "fleet.html",
+      "focused": null,
+      "before": {
+        "tested": 17,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 17,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "dashboard.html",
+      "focused": null,
+      "before": {
+        "tested": 16,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 16,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "terminal.html",
+      "focused": null,
+      "before": {
+        "tested": 16,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 16,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "office.html",
+      "focused": null,
+      "before": {
+        "tested": 16,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 16,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "overview.html",
+      "focused": null,
+      "before": {
+        "tested": 17,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 17,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "chat.html",
+      "focused": "input[placeholder*=\"Message @\"]",
+      "before": {
+        "tested": 23,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 23,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "config.html",
+      "focused": null,
+      "before": {
+        "tested": 22,
+        "blocked": [
+          {
+            "tag": "textarea",
+            "id": null,
+            "className": "ime-text-area",
+            "label": "",
+            "center": [
+              337.5,
+              200
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 20,
+        "blocked": [
+          {
+            "tag": "textarea",
+            "id": null,
+            "className": "ime-text-area",
+            "label": "",
+            "center": [
+              337.5,
+              200
+            ],
+            "hitTag": "div",
+            "hitClass": null,
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "inbox.html",
+      "focused": null,
+      "before": {
+        "tested": 17,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 17,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "federation.html",
+      "focused": null,
+      "before": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "federation_2d.html",
+      "focused": null,
+      "before": {
+        "tested": 13,
+        "blocked": [
+          {
+            "tag": "button",
+            "id": null,
+            "className": "text-[10px] font-mono cursor-pointer px-2 py-0.5 rounded flex-shrink-0",
+            "label": "LIVE",
+            "center": [
+              264.89,
+              355
+            ],
+            "hitTag": "button",
+            "hitClass": "px-3 py-2 rounded-lg border text-[10px] font-mono cursor-pointer hover:bg-white/[0.05] transition-colors",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 13,
+        "blocked": [
+          {
+            "tag": "button",
+            "id": null,
+            "className": "text-[10px] font-mono cursor-pointer px-2 py-0.5 rounded flex-shrink-0",
+            "label": "LIVE",
+            "center": [
+              264.89,
+              265
+            ],
+            "hitTag": "button",
+            "hitClass": "px-3 py-2 rounded-lg border text-[10px] font-mono cursor-pointer hover:bg-white/[0.05] transition-colors",
+            "passed": false,
+            "important": false,
+            "blockedByFixed": false
+          }
+        ],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "workspace.html",
+      "focused": "input[placeholder=\"message...\"]",
+      "before": {
+        "tested": 7,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 7,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "arena.html",
+      "focused": null,
+      "before": {
+        "tested": 2,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 2,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "talk.html",
+      "focused": "#msgInput",
+      "before": {
+        "tested": 6,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 6,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "timemachine.html",
+      "focused": null,
+      "before": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    },
+    {
+      "profile": "landscape-844x390",
+      "page": "shrine.html",
+      "focused": null,
+      "before": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      },
+      "afterKeyboard": {
+        "tested": 1,
+        "blocked": [],
+        "importantBlocked": [],
+        "fixedOverlayBlocked": [],
+        "horizontalOverflow": 0,
+        "toggle": {
+          "found": true,
+          "visible": true,
+          "centerHitsSelf": true,
+          "parent": true
+        }
+      }
+    }
+  ]
+}

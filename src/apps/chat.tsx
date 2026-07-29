@@ -3,7 +3,7 @@ import { AppShell } from "../core/AppShell";
 import { ChatView } from "../components/ChatView";
 
 mount(() => (
-  <AppShell view="chat">
+  <AppShell view="chat" fullHeight>
     {(ctx) => <ChatView agents={ctx.agents} send={ctx.send} connected={ctx.connected} />}
   </AppShell>
 ));

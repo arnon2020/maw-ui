@@ -1,0 +1,4155 @@
+{
+  "generatedAt": "2026-07-29T02:37:06.001Z",
+  "base": "http://127.0.0.1:5177",
+  "disposableTarget": "lfs012-vkeys:0",
+  "keyBytes": [
+    {
+      "surface": "page",
+      "expectedHex": [
+        "1b",
+        "09",
+        "1b",
+        "5b",
+        "44",
+        "1b",
+        "5b",
+        "41",
+        "1b",
+        "5b",
+        "42",
+        "1b",
+        "5b",
+        "43",
+        "1b",
+        "5b",
+        "31",
+        "7e",
+        "1b",
+        "5b",
+        "34",
+        "7e",
+        "1b",
+        "5b",
+        "35",
+        "7e",
+        "1b",
+        "5b",
+        "36",
+        "7e",
+        "03",
+        "04",
+        "1a",
+        "0c",
+        "12",
+        "2f",
+        "7c",
+        "0d",
+        "1b",
+        "5b",
+        "31",
+        "3b",
+        "35",
+        "41",
+        "1b",
+        "5b",
+        "31",
+        "3b",
+        "35",
+        "41",
+        "1b",
+        "1b",
+        "5b",
+        "44",
+        "1b",
+        "1b",
+        "5b",
+        "44"
+      ],
+      "actualHex": [
+        "1b",
+        "09",
+        "1b",
+        "5b",
+        "44",
+        "1b",
+        "5b",
+        "41",
+        "1b",
+        "5b",
+        "42",
+        "1b",
+        "5b",
+        "43",
+        "1b",
+        "5b",
+        "31",
+        "7e",
+        "1b",
+        "5b",
+        "34",
+        "7e",
+        "1b",
+        "5b",
+        "35",
+        "7e",
+        "1b",
+        "5b",
+        "36",
+        "7e",
+        "03",
+        "04",
+        "1a",
+        "0c",
+        "12",
+        "2f",
+        "7c",
+        "0d",
+        "1b",
+        "5b",
+        "31",
+        "3b",
+        "35",
+        "41",
+        "1b",
+        "5b",
+        "31",
+        "3b",
+        "35",
+        "41",
+        "1b",
+        "1b",
+        "5b",
+        "44",
+        "1b",
+        "1b",
+        "5b",
+        "44"
+      ],
+      "passed": true,
+      "centersPassed": true,
+      "capture": "bash-5.2$ stty raw -echo; od -An -tx1 -v -w1\n 1b\n    09\n       1b\n          5b\n             44\n                1b\n                   5b\n                      41\n                         1b\n                            5b\n                               42\n                                  1b\n                                     5b\n                                        43\n                                           1b\n                                              5b\n                                                 31\n                                                    7e\n                                                       1b\n                                                          5b\n                                                             34\n                                                                7e\n                                                                   1b\n                                                                      5b\n                                                                         35\n                                                                            7e\n                                                                               1b\n                                                                                  5b\n                                                                                     36\n                                                                                        7e\n                                                                                           03\n                                                                                              04\n                                                                                                 1a\n\n0c\n   12\n      2f\n         7c\n            0d\n               1b\n                  5b\n                     31\n                        3b\n                           35\n                              41\n                                 1b\n                                    5b\n                                       31\n                                          3b\n                                             35\n                                                41\n                                                   1b\n                                                      1b\n                                                         5b\n                                                            44\n                                                               1b\n                                                                  1b\n                                                                     5b\n                                                                        44"
+    },
+    {
+      "surface": "modal",
+      "expectedHex": [
+        "1b",
+        "09",
+        "1b",
+        "5b",
+        "44",
+        "1b",
+        "5b",
+        "41",
+        "1b",
+        "5b",
+        "42",
+        "1b",
+        "5b",
+        "43",
+        "1b",
+        "5b",
+        "31",
+        "7e",
+        "1b",
+        "5b",
+        "34",
+        "7e",
+        "1b",
+        "5b",
+        "35",
+        "7e",
+        "1b",
+        "5b",
+        "36",
+        "7e",
+        "03",
+        "04",
+        "1a",
+        "0c",
+        "12",
+        "2f",
+        "7c",
+        "0d",
+        "1b",
+        "5b",
+        "31",
+        "3b",
+        "35",
+        "41",
+        "1b",
+        "5b",
+        "31",
+        "3b",
+        "35",
+        "41",
+        "1b",
+        "1b",
+        "5b",
+        "44",
+        "1b",
+        "1b",
+        "5b",
+        "44"
+      ],
+      "actualHex": [
+        "1b",
+        "09",
+        "1b",
+        "5b",
+        "44",
+        "1b",
+        "5b",
+        "41",
+        "1b",
+        "5b",
+        "42",
+        "1b",
+        "5b",
+        "43",
+        "1b",
+        "5b",
+        "31",
+        "7e",
+        "1b",
+        "5b",
+        "34",
+        "7e",
+        "1b",
+        "5b",
+        "35",
+        "7e",
+        "1b",
+        "5b",
+        "36",
+        "7e",
+        "03",
+        "04",
+        "1a",
+        "0c",
+        "12",
+        "2f",
+        "7c",
+        "0d",
+        "1b",
+        "5b",
+        "31",
+        "3b",
+        "35",
+        "41",
+        "1b",
+        "5b",
+        "31",
+        "3b",
+        "35",
+        "41",
+        "1b",
+        "1b",
+        "5b",
+        "44",
+        "1b",
+        "1b",
+        "5b",
+        "44"
+      ],
+      "passed": true,
+      "centersPassed": true,
+      "capture": "bash-5.2$ stty raw -echo; od -An -tx1 -v -w1\n 1b\n    09\n       1b\n          5b\n             44\n                1b\n                   5b\n                      41\n                         1b\n                            5b\n                               42\n                                  1b\n                                     5b\n                                        43\n                                           1b\n                                              5b\n                                                 31\n                                                    7e\n                                                       1b\n                                                          5b\n                                                             34\n                                                                7e\n                                                                   1b\n                                                                      5b\n                                                                         35\n                                                                            7e\n                                                                               1b\n                                                                                  5b\n                                                                                     36\n                                                                                        7e\n                                                                                           03\n                                                                                              04\n                                                                                                 1a\n\n0c\n   12\n      2f\n         7c\n            0d\n               1b\n                  5b\n                     31\n                        3b\n                           35\n                              41\n                                 1b\n                                    5b\n                                       31\n                                          3b\n                                             35\n                                                41\n                                                   1b\n                                                      1b\n                                                         5b\n                                                            44\n                                                               1b\n                                                                  1b\n                                                                     5b\n                                                                        44"
+    }
+  ],
+  "history": {
+    "historyMode": true,
+    "historyShowsEarlyOutput": true,
+    "liveMode": true,
+    "liveShowsTail": true,
+    "swipeMode": true,
+    "escapeMode": true
+  },
+  "states": [
+    {
+      "profile": "mobile-360x800",
+      "surface": "page",
+      "phase": "before-keyboard",
+      "geometry": {
+        "viewportWidth": 360,
+        "viewportHeight": 800,
+        "documentWidth": 360,
+        "documentHeight": 800,
+        "scrollY": 0,
+        "barTop": 722,
+        "barBottom": 787,
+        "barVisible": true,
+        "surfaceViewportLocked": true,
+        "runningAnimations": 0
+      },
+      "rafCount": 0,
+      "hitTargets": [
+        {
+          "selector": "esc",
+          "width": 48,
+          "height": 48,
+          "centerX": 261,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "tab",
+          "width": 48,
+          "height": 48,
+          "centerX": 317,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "left",
+          "width": 48,
+          "height": 48,
+          "centerX": 327,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "up",
+          "width": 48,
+          "height": 48,
+          "centerX": 234,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "down",
+          "width": 48,
+          "height": 48,
+          "centerX": 290,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "right",
+          "width": 48,
+          "height": 48,
+          "centerX": 327,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "home",
+          "width": 48,
+          "height": 48,
+          "centerX": 234,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "end",
+          "width": 48,
+          "height": 48,
+          "centerX": 290,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageUp",
+          "width": 48,
+          "height": 48,
+          "centerX": 327,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageDown",
+          "width": 48,
+          "height": 48,
+          "centerX": 234,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlC",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 296.609375,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlD",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 320.828125,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlZ",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 234.046875,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlL",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 303.265625,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlR",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 320.484375,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "slash",
+          "width": 48,
+          "height": 48,
+          "centerX": 234.09375,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pipe",
+          "width": 48,
+          "height": 48,
+          "centerX": 290.09375,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "enter",
+          "width": 54.015625,
+          "height": 48,
+          "centerX": 324.1015625,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrl",
+          "width": 48,
+          "height": 48,
+          "centerX": 149,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "alt",
+          "width": 48,
+          "height": 48,
+          "centerX": 205,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "history-live",
+          "width": 68.421875,
+          "height": 48,
+          "centerX": 234.3203125,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "keyboard",
+          "width": 75.609375,
+          "height": 48,
+          "centerX": 313.3359375,
+          "centerY": 755,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        }
+      ]
+    },
+    {
+      "profile": "mobile-360x800",
+      "surface": "page",
+      "phase": "keyboard",
+      "geometry": {
+        "viewportWidth": 360,
+        "viewportHeight": 500,
+        "documentWidth": 360,
+        "documentHeight": 500,
+        "scrollY": 0,
+        "barTop": 422,
+        "barBottom": 487,
+        "barVisible": true,
+        "surfaceViewportLocked": true,
+        "runningAnimations": 0
+      },
+      "focusedTerminalInput": true,
+      "hitTargets": [
+        {
+          "selector": "esc",
+          "width": 48,
+          "height": 48,
+          "centerX": 234,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "tab",
+          "width": 48,
+          "height": 48,
+          "centerX": 290,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "left",
+          "width": 48,
+          "height": 48,
+          "centerX": 327,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "up",
+          "width": 48,
+          "height": 48,
+          "centerX": 234,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "down",
+          "width": 48,
+          "height": 48,
+          "centerX": 290,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "right",
+          "width": 48,
+          "height": 48,
+          "centerX": 327,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "home",
+          "width": 48,
+          "height": 48,
+          "centerX": 234,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "end",
+          "width": 48,
+          "height": 48,
+          "centerX": 290,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageUp",
+          "width": 48,
+          "height": 48,
+          "centerX": 327,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageDown",
+          "width": 48,
+          "height": 48,
+          "centerX": 234,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlC",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 296.609375,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlD",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 320.828125,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlZ",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 234.046875,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlL",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 303.265625,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlR",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 320.484375,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "slash",
+          "width": 48,
+          "height": 48,
+          "centerX": 234.09375,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pipe",
+          "width": 48,
+          "height": 48,
+          "centerX": 290.09375,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "enter",
+          "width": 54.015625,
+          "height": 48,
+          "centerX": 324.1015625,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrl",
+          "width": 48,
+          "height": 48,
+          "centerX": 149,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "alt",
+          "width": 48,
+          "height": 48,
+          "centerX": 205,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "history-live",
+          "width": 68.421875,
+          "height": 48,
+          "centerX": 234.3203125,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "keyboard",
+          "width": 75.609375,
+          "height": 48,
+          "centerX": 313.3359375,
+          "centerY": 455,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        }
+      ]
+    },
+    {
+      "profile": "mobile-360x800",
+      "surface": "modal",
+      "phase": "before-keyboard",
+      "geometry": {
+        "viewportWidth": 360,
+        "viewportHeight": 800,
+        "documentWidth": 360,
+        "documentHeight": 7105,
+        "scrollY": 0,
+        "barTop": 735,
+        "barBottom": 800,
+        "barVisible": true,
+        "surfaceViewportLocked": true,
+        "runningAnimations": 0
+      },
+      "rafCount": 0,
+      "hitTargets": [
+        {
+          "selector": "esc",
+          "width": 48,
+          "height": 48,
+          "centerX": 144,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "tab",
+          "width": 48,
+          "height": 48,
+          "centerX": 200,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "left",
+          "width": 48,
+          "height": 48,
+          "centerX": 256,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "up",
+          "width": 48,
+          "height": 48,
+          "centerX": 312,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "down",
+          "width": 48,
+          "height": 48,
+          "centerX": 336,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "right",
+          "width": 48,
+          "height": 48,
+          "centerX": 180,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "home",
+          "width": 48,
+          "height": 48,
+          "centerX": 236,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "end",
+          "width": 48,
+          "height": 48,
+          "centerX": 292,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageUp",
+          "width": 48,
+          "height": 48,
+          "centerX": 336,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageDown",
+          "width": 48,
+          "height": 48,
+          "centerX": 180,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlC",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 242.609375,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlD",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 311.828125,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlZ",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 329.046875,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlL",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 180.265625,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlR",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 249.484375,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "slash",
+          "width": 48,
+          "height": 48,
+          "centerX": 312.09375,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pipe",
+          "width": 48,
+          "height": 48,
+          "centerX": 336.09375,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "enter",
+          "width": 54.015625,
+          "height": 48,
+          "centerX": 180.1015625,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrl",
+          "width": 48,
+          "height": 48,
+          "centerX": 32,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "alt",
+          "width": 48,
+          "height": 48,
+          "centerX": 88,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "history-live",
+          "width": 68.421875,
+          "height": 48,
+          "centerX": 234.3203125,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "keyboard",
+          "width": 75.609375,
+          "height": 48,
+          "centerX": 314.3359375,
+          "centerY": 768,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        }
+      ]
+    },
+    {
+      "profile": "mobile-360x800",
+      "surface": "modal",
+      "phase": "keyboard",
+      "geometry": {
+        "viewportWidth": 360,
+        "viewportHeight": 500,
+        "documentWidth": 360,
+        "documentHeight": 7105,
+        "scrollY": 0,
+        "barTop": 435,
+        "barBottom": 500,
+        "barVisible": true,
+        "surfaceViewportLocked": true,
+        "runningAnimations": 0
+      },
+      "focusedTerminalInput": true,
+      "hitTargets": [
+        {
+          "selector": "esc",
+          "width": 48,
+          "height": 48,
+          "centerX": 144,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "tab",
+          "width": 48,
+          "height": 48,
+          "centerX": 200,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "left",
+          "width": 48,
+          "height": 48,
+          "centerX": 256,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "up",
+          "width": 48,
+          "height": 48,
+          "centerX": 312,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "down",
+          "width": 48,
+          "height": 48,
+          "centerX": 336,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "right",
+          "width": 48,
+          "height": 48,
+          "centerX": 180,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "home",
+          "width": 48,
+          "height": 48,
+          "centerX": 236,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "end",
+          "width": 48,
+          "height": 48,
+          "centerX": 292,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageUp",
+          "width": 48,
+          "height": 48,
+          "centerX": 336,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageDown",
+          "width": 48,
+          "height": 48,
+          "centerX": 180,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlC",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 242.609375,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlD",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 311.828125,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlZ",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 329.046875,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlL",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 180.265625,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlR",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 249.484375,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "slash",
+          "width": 48,
+          "height": 48,
+          "centerX": 312.09375,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pipe",
+          "width": 48,
+          "height": 48,
+          "centerX": 336.09375,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "enter",
+          "width": 54.015625,
+          "height": 48,
+          "centerX": 180.1015625,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrl",
+          "width": 48,
+          "height": 48,
+          "centerX": 32,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "alt",
+          "width": 48,
+          "height": 48,
+          "centerX": 88,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "history-live",
+          "width": 68.421875,
+          "height": 48,
+          "centerX": 234.3203125,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "keyboard",
+          "width": 75.609375,
+          "height": 48,
+          "centerX": 314.3359375,
+          "centerY": 468,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        }
+      ]
+    },
+    {
+      "profile": "mobile-390x844",
+      "surface": "page",
+      "phase": "before-keyboard",
+      "geometry": {
+        "viewportWidth": 390,
+        "viewportHeight": 844,
+        "documentWidth": 390,
+        "documentHeight": 844,
+        "scrollY": 0,
+        "barTop": 766,
+        "barBottom": 831,
+        "barVisible": true,
+        "surfaceViewportLocked": true,
+        "runningAnimations": 0
+      },
+      "rafCount": 0,
+      "hitTargets": [
+        {
+          "selector": "esc",
+          "width": 48,
+          "height": 48,
+          "centerX": 261,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "tab",
+          "width": 48,
+          "height": 48,
+          "centerX": 317,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "left",
+          "width": 48,
+          "height": 48,
+          "centerX": 357,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "up",
+          "width": 48,
+          "height": 48,
+          "centerX": 249,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "down",
+          "width": 48,
+          "height": 48,
+          "centerX": 305,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "right",
+          "width": 48,
+          "height": 48,
+          "centerX": 357,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "home",
+          "width": 48,
+          "height": 48,
+          "centerX": 249,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "end",
+          "width": 48,
+          "height": 48,
+          "centerX": 305,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageUp",
+          "width": 48,
+          "height": 48,
+          "centerX": 357,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageDown",
+          "width": 48,
+          "height": 48,
+          "centerX": 249,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlC",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 311.609375,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlD",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 350.828125,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlZ",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 249.046875,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlL",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 318.265625,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlR",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 350.484375,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "slash",
+          "width": 48,
+          "height": 48,
+          "centerX": 249.09375,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pipe",
+          "width": 48,
+          "height": 48,
+          "centerX": 305.09375,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "enter",
+          "width": 54.015625,
+          "height": 48,
+          "centerX": 354.1015625,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrl",
+          "width": 48,
+          "height": 48,
+          "centerX": 149,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "alt",
+          "width": 48,
+          "height": 48,
+          "centerX": 205,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "history-live",
+          "width": 68.421875,
+          "height": 48,
+          "centerX": 255.3203125,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "keyboard",
+          "width": 75.609375,
+          "height": 48,
+          "centerX": 335.3359375,
+          "centerY": 799,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        }
+      ]
+    },
+    {
+      "profile": "mobile-390x844",
+      "surface": "page",
+      "phase": "keyboard",
+      "geometry": {
+        "viewportWidth": 390,
+        "viewportHeight": 544,
+        "documentWidth": 390,
+        "documentHeight": 544,
+        "scrollY": 0,
+        "barTop": 466,
+        "barBottom": 531,
+        "barVisible": true,
+        "surfaceViewportLocked": true,
+        "runningAnimations": 0
+      },
+      "focusedTerminalInput": true,
+      "hitTargets": [
+        {
+          "selector": "esc",
+          "width": 48,
+          "height": 48,
+          "centerX": 249,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "tab",
+          "width": 48,
+          "height": 48,
+          "centerX": 305,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "left",
+          "width": 48,
+          "height": 48,
+          "centerX": 357,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "up",
+          "width": 48,
+          "height": 48,
+          "centerX": 249,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "down",
+          "width": 48,
+          "height": 48,
+          "centerX": 305,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "right",
+          "width": 48,
+          "height": 48,
+          "centerX": 357,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "home",
+          "width": 48,
+          "height": 48,
+          "centerX": 249,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "end",
+          "width": 48,
+          "height": 48,
+          "centerX": 305,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageUp",
+          "width": 48,
+          "height": 48,
+          "centerX": 357,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageDown",
+          "width": 48,
+          "height": 48,
+          "centerX": 249,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlC",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 311.609375,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlD",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 350.828125,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlZ",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 249.046875,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlL",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 318.265625,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlR",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 350.484375,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "slash",
+          "width": 48,
+          "height": 48,
+          "centerX": 249.09375,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pipe",
+          "width": 48,
+          "height": 48,
+          "centerX": 305.09375,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "enter",
+          "width": 54.015625,
+          "height": 48,
+          "centerX": 354.1015625,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrl",
+          "width": 48,
+          "height": 48,
+          "centerX": 149,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "alt",
+          "width": 48,
+          "height": 48,
+          "centerX": 205,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "history-live",
+          "width": 68.421875,
+          "height": 48,
+          "centerX": 255.3203125,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "keyboard",
+          "width": 75.609375,
+          "height": 48,
+          "centerX": 335.3359375,
+          "centerY": 499,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        }
+      ]
+    },
+    {
+      "profile": "mobile-390x844",
+      "surface": "modal",
+      "phase": "before-keyboard",
+      "geometry": {
+        "viewportWidth": 390,
+        "viewportHeight": 844,
+        "documentWidth": 390,
+        "documentHeight": 6651,
+        "scrollY": 0,
+        "barTop": 779,
+        "barBottom": 844,
+        "barVisible": true,
+        "surfaceViewportLocked": true,
+        "runningAnimations": 0
+      },
+      "rafCount": 0,
+      "hitTargets": [
+        {
+          "selector": "esc",
+          "width": 48,
+          "height": 48,
+          "centerX": 144,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "tab",
+          "width": 48,
+          "height": 48,
+          "centerX": 200,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "left",
+          "width": 48,
+          "height": 48,
+          "centerX": 256,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "up",
+          "width": 48,
+          "height": 48,
+          "centerX": 312,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "down",
+          "width": 48,
+          "height": 48,
+          "centerX": 366,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "right",
+          "width": 48,
+          "height": 48,
+          "centerX": 195,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "home",
+          "width": 48,
+          "height": 48,
+          "centerX": 251,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "end",
+          "width": 48,
+          "height": 48,
+          "centerX": 307,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageUp",
+          "width": 48,
+          "height": 48,
+          "centerX": 363,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageDown",
+          "width": 48,
+          "height": 48,
+          "centerX": 195,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlC",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 257.609375,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlD",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 326.828125,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlZ",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 359.046875,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlL",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 195.265625,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlR",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 264.484375,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "slash",
+          "width": 48,
+          "height": 48,
+          "centerX": 327.09375,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pipe",
+          "width": 48,
+          "height": 48,
+          "centerX": 366.09375,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "enter",
+          "width": 54.015625,
+          "height": 48,
+          "centerX": 195.1015625,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrl",
+          "width": 48,
+          "height": 48,
+          "centerX": 32,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "alt",
+          "width": 48,
+          "height": 48,
+          "centerX": 88,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "history-live",
+          "width": 68.421875,
+          "height": 48,
+          "centerX": 264.3203125,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "keyboard",
+          "width": 75.609375,
+          "height": 48,
+          "centerX": 344.3359375,
+          "centerY": 812,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        }
+      ]
+    },
+    {
+      "profile": "mobile-390x844",
+      "surface": "modal",
+      "phase": "keyboard",
+      "geometry": {
+        "viewportWidth": 390,
+        "viewportHeight": 544,
+        "documentWidth": 390,
+        "documentHeight": 6470,
+        "scrollY": 0,
+        "barTop": 479,
+        "barBottom": 544,
+        "barVisible": true,
+        "surfaceViewportLocked": true,
+        "runningAnimations": 0
+      },
+      "focusedTerminalInput": true,
+      "hitTargets": [
+        {
+          "selector": "esc",
+          "width": 48,
+          "height": 48,
+          "centerX": 144,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "tab",
+          "width": 48,
+          "height": 48,
+          "centerX": 200,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "left",
+          "width": 48,
+          "height": 48,
+          "centerX": 256,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "up",
+          "width": 48,
+          "height": 48,
+          "centerX": 312,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "down",
+          "width": 48,
+          "height": 48,
+          "centerX": 366,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "right",
+          "width": 48,
+          "height": 48,
+          "centerX": 195,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "home",
+          "width": 48,
+          "height": 48,
+          "centerX": 251,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "end",
+          "width": 48,
+          "height": 48,
+          "centerX": 307,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageUp",
+          "width": 48,
+          "height": 48,
+          "centerX": 363,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageDown",
+          "width": 48,
+          "height": 48,
+          "centerX": 195,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlC",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 257.609375,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlD",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 326.828125,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlZ",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 359.046875,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlL",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 195.265625,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlR",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 264.484375,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "slash",
+          "width": 48,
+          "height": 48,
+          "centerX": 327.09375,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pipe",
+          "width": 48,
+          "height": 48,
+          "centerX": 366.09375,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "enter",
+          "width": 54.015625,
+          "height": 48,
+          "centerX": 195.1015625,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrl",
+          "width": 48,
+          "height": 48,
+          "centerX": 32,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "alt",
+          "width": 48,
+          "height": 48,
+          "centerX": 88,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "history-live",
+          "width": 68.421875,
+          "height": 48,
+          "centerX": 264.3203125,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "keyboard",
+          "width": 75.609375,
+          "height": 48,
+          "centerX": 344.3359375,
+          "centerY": 512,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        }
+      ]
+    },
+    {
+      "profile": "tablet-768x1024",
+      "surface": "page",
+      "phase": "before-keyboard",
+      "geometry": {
+        "viewportWidth": 768,
+        "viewportHeight": 1024,
+        "documentWidth": 768,
+        "documentHeight": 1024,
+        "scrollY": 0,
+        "barTop": 946,
+        "barBottom": 1011,
+        "barVisible": true,
+        "surfaceViewportLocked": true,
+        "runningAnimations": 0
+      },
+      "rafCount": 0,
+      "hitTargets": [
+        {
+          "selector": "esc",
+          "width": 48,
+          "height": 48,
+          "centerX": 389,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "tab",
+          "width": 48,
+          "height": 48,
+          "centerX": 445,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "left",
+          "width": 48,
+          "height": 48,
+          "centerX": 501,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "up",
+          "width": 48,
+          "height": 48,
+          "centerX": 557,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "down",
+          "width": 48,
+          "height": 48,
+          "centerX": 613,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "right",
+          "width": 48,
+          "height": 48,
+          "centerX": 669,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "home",
+          "width": 48,
+          "height": 48,
+          "centerX": 719,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "end",
+          "width": 48,
+          "height": 48,
+          "centerX": 494,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageUp",
+          "width": 48,
+          "height": 48,
+          "centerX": 550,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageDown",
+          "width": 48,
+          "height": 48,
+          "centerX": 606,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlC",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 668.609375,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlD",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 712.828125,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlZ",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 494.046875,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlL",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 563.265625,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlR",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 632.484375,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "slash",
+          "width": 48,
+          "height": 48,
+          "centerX": 695.09375,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pipe",
+          "width": 48,
+          "height": 48,
+          "centerX": 719.09375,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "enter",
+          "width": 54.015625,
+          "height": 48,
+          "centerX": 548.1015625,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrl",
+          "width": 48,
+          "height": 48,
+          "centerX": 277,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "alt",
+          "width": 48,
+          "height": 48,
+          "centerX": 333,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "history-live",
+          "width": 68.421875,
+          "height": 48,
+          "centerX": 617.3203125,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "keyboard",
+          "width": 75.609375,
+          "height": 48,
+          "centerX": 697.3359375,
+          "centerY": 979,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        }
+      ]
+    },
+    {
+      "profile": "tablet-768x1024",
+      "surface": "page",
+      "phase": "keyboard",
+      "geometry": {
+        "viewportWidth": 768,
+        "viewportHeight": 724,
+        "documentWidth": 768,
+        "documentHeight": 724,
+        "scrollY": 0,
+        "barTop": 646,
+        "barBottom": 711,
+        "barVisible": true,
+        "surfaceViewportLocked": true,
+        "runningAnimations": 0
+      },
+      "focusedTerminalInput": true,
+      "hitTargets": [
+        {
+          "selector": "esc",
+          "width": 48,
+          "height": 48,
+          "centerX": 389,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "tab",
+          "width": 48,
+          "height": 48,
+          "centerX": 445,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "left",
+          "width": 48,
+          "height": 48,
+          "centerX": 501,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "up",
+          "width": 48,
+          "height": 48,
+          "centerX": 557,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "down",
+          "width": 48,
+          "height": 48,
+          "centerX": 613,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "right",
+          "width": 48,
+          "height": 48,
+          "centerX": 669,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "home",
+          "width": 48,
+          "height": 48,
+          "centerX": 719,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "end",
+          "width": 48,
+          "height": 48,
+          "centerX": 494,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageUp",
+          "width": 48,
+          "height": 48,
+          "centerX": 550,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageDown",
+          "width": 48,
+          "height": 48,
+          "centerX": 606,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlC",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 668.609375,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlD",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 712.828125,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlZ",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 494.046875,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlL",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 563.265625,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlR",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 632.484375,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "slash",
+          "width": 48,
+          "height": 48,
+          "centerX": 695.09375,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pipe",
+          "width": 48,
+          "height": 48,
+          "centerX": 719.09375,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "enter",
+          "width": 54.015625,
+          "height": 48,
+          "centerX": 548.1015625,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrl",
+          "width": 48,
+          "height": 48,
+          "centerX": 277,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "alt",
+          "width": 48,
+          "height": 48,
+          "centerX": 333,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "history-live",
+          "width": 68.421875,
+          "height": 48,
+          "centerX": 617.3203125,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "keyboard",
+          "width": 75.609375,
+          "height": 48,
+          "centerX": 697.3359375,
+          "centerY": 679,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        }
+      ]
+    },
+    {
+      "profile": "tablet-768x1024",
+      "surface": "modal",
+      "phase": "before-keyboard",
+      "geometry": {
+        "viewportWidth": 768,
+        "viewportHeight": 1024,
+        "documentWidth": 768,
+        "documentHeight": 6557,
+        "scrollY": 0,
+        "barTop": 959,
+        "barBottom": 1024,
+        "barVisible": true,
+        "surfaceViewportLocked": true,
+        "runningAnimations": 0
+      },
+      "rafCount": 0,
+      "hitTargets": [
+        {
+          "selector": "esc",
+          "width": 48,
+          "height": 48,
+          "centerX": 144,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "tab",
+          "width": 48,
+          "height": 48,
+          "centerX": 200,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "left",
+          "width": 48,
+          "height": 48,
+          "centerX": 256,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "up",
+          "width": 48,
+          "height": 48,
+          "centerX": 312,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "down",
+          "width": 48,
+          "height": 48,
+          "centerX": 368,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "right",
+          "width": 48,
+          "height": 48,
+          "centerX": 424,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "home",
+          "width": 48,
+          "height": 48,
+          "centerX": 480,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "end",
+          "width": 48,
+          "height": 48,
+          "centerX": 536,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageUp",
+          "width": 48,
+          "height": 48,
+          "centerX": 592,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageDown",
+          "width": 48,
+          "height": 48,
+          "centerX": 648,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlC",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 710.609375,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlD",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 737.828125,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlZ",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 384.046875,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlL",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 453.265625,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlR",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 522.484375,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "slash",
+          "width": 48,
+          "height": 48,
+          "centerX": 585.09375,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pipe",
+          "width": 48,
+          "height": 48,
+          "centerX": 641.09375,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "enter",
+          "width": 54.015625,
+          "height": 48,
+          "centerX": 700.1015625,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrl",
+          "width": 48,
+          "height": 48,
+          "centerX": 32,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "alt",
+          "width": 48,
+          "height": 48,
+          "centerX": 88,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "history-live",
+          "width": 68.421875,
+          "height": 48,
+          "centerX": 642.3203125,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "keyboard",
+          "width": 75.609375,
+          "height": 48,
+          "centerX": 722.3359375,
+          "centerY": 992,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        }
+      ]
+    },
+    {
+      "profile": "tablet-768x1024",
+      "surface": "modal",
+      "phase": "keyboard",
+      "geometry": {
+        "viewportWidth": 768,
+        "viewportHeight": 724,
+        "documentWidth": 768,
+        "documentHeight": 6557,
+        "scrollY": 0,
+        "barTop": 659,
+        "barBottom": 724,
+        "barVisible": true,
+        "surfaceViewportLocked": true,
+        "runningAnimations": 0
+      },
+      "focusedTerminalInput": true,
+      "hitTargets": [
+        {
+          "selector": "esc",
+          "width": 48,
+          "height": 48,
+          "centerX": 144,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "tab",
+          "width": 48,
+          "height": 48,
+          "centerX": 200,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "left",
+          "width": 48,
+          "height": 48,
+          "centerX": 256,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "up",
+          "width": 48,
+          "height": 48,
+          "centerX": 312,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "down",
+          "width": 48,
+          "height": 48,
+          "centerX": 368,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "right",
+          "width": 48,
+          "height": 48,
+          "centerX": 424,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "home",
+          "width": 48,
+          "height": 48,
+          "centerX": 480,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "end",
+          "width": 48,
+          "height": 48,
+          "centerX": 536,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageUp",
+          "width": 48,
+          "height": 48,
+          "centerX": 592,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageDown",
+          "width": 48,
+          "height": 48,
+          "centerX": 648,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlC",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 710.609375,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlD",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 737.828125,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlZ",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 384.046875,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlL",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 453.265625,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlR",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 522.484375,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "slash",
+          "width": 48,
+          "height": 48,
+          "centerX": 585.09375,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pipe",
+          "width": 48,
+          "height": 48,
+          "centerX": 641.09375,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "enter",
+          "width": 54.015625,
+          "height": 48,
+          "centerX": 700.1015625,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrl",
+          "width": 48,
+          "height": 48,
+          "centerX": 32,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "alt",
+          "width": 48,
+          "height": 48,
+          "centerX": 88,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "history-live",
+          "width": 68.421875,
+          "height": 48,
+          "centerX": 642.3203125,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "keyboard",
+          "width": 75.609375,
+          "height": 48,
+          "centerX": 722.3359375,
+          "centerY": 692,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        }
+      ]
+    },
+    {
+      "profile": "landscape-844x390",
+      "surface": "page",
+      "phase": "before-keyboard",
+      "geometry": {
+        "viewportWidth": 844,
+        "viewportHeight": 390,
+        "documentWidth": 844,
+        "documentHeight": 390,
+        "scrollY": 0,
+        "barTop": 312,
+        "barBottom": 377,
+        "barVisible": true,
+        "surfaceViewportLocked": true,
+        "runningAnimations": 0
+      },
+      "rafCount": 0,
+      "hitTargets": [
+        {
+          "selector": "esc",
+          "width": 48,
+          "height": 48,
+          "centerX": 389,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "tab",
+          "width": 48,
+          "height": 48,
+          "centerX": 445,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "left",
+          "width": 48,
+          "height": 48,
+          "centerX": 501,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "up",
+          "width": 48,
+          "height": 48,
+          "centerX": 557,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "down",
+          "width": 48,
+          "height": 48,
+          "centerX": 613,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "right",
+          "width": 48,
+          "height": 48,
+          "centerX": 669,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "home",
+          "width": 48,
+          "height": 48,
+          "centerX": 725,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "end",
+          "width": 48,
+          "height": 48,
+          "centerX": 781,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageUp",
+          "width": 48,
+          "height": 48,
+          "centerX": 795,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageDown",
+          "width": 48,
+          "height": 48,
+          "centerX": 532,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlC",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 594.609375,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlD",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 663.828125,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlZ",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 733.046875,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlL",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 788.265625,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlR",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 532.484375,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "slash",
+          "width": 48,
+          "height": 48,
+          "centerX": 595.09375,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pipe",
+          "width": 48,
+          "height": 48,
+          "centerX": 651.09375,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "enter",
+          "width": 54.015625,
+          "height": 48,
+          "centerX": 710.1015625,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrl",
+          "width": 48,
+          "height": 48,
+          "centerX": 277,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "alt",
+          "width": 48,
+          "height": 48,
+          "centerX": 333,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "history-live",
+          "width": 68.421875,
+          "height": 48,
+          "centerX": 693.3203125,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "keyboard",
+          "width": 75.609375,
+          "height": 48,
+          "centerX": 773.3359375,
+          "centerY": 345,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        }
+      ]
+    },
+    {
+      "profile": "landscape-844x390",
+      "surface": "page",
+      "phase": "keyboard",
+      "geometry": {
+        "viewportWidth": 844,
+        "viewportHeight": 300,
+        "documentWidth": 844,
+        "documentHeight": 300,
+        "scrollY": 0,
+        "barTop": 222,
+        "barBottom": 287,
+        "barVisible": true,
+        "surfaceViewportLocked": true,
+        "runningAnimations": 0
+      },
+      "focusedTerminalInput": true,
+      "hitTargets": [
+        {
+          "selector": "esc",
+          "width": 48,
+          "height": 48,
+          "centerX": 389,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "tab",
+          "width": 48,
+          "height": 48,
+          "centerX": 445,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "left",
+          "width": 48,
+          "height": 48,
+          "centerX": 501,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "up",
+          "width": 48,
+          "height": 48,
+          "centerX": 557,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "down",
+          "width": 48,
+          "height": 48,
+          "centerX": 613,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "right",
+          "width": 48,
+          "height": 48,
+          "centerX": 669,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "home",
+          "width": 48,
+          "height": 48,
+          "centerX": 725,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "end",
+          "width": 48,
+          "height": 48,
+          "centerX": 781,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageUp",
+          "width": 48,
+          "height": 48,
+          "centerX": 795,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageDown",
+          "width": 48,
+          "height": 48,
+          "centerX": 532,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlC",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 594.609375,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlD",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 663.828125,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlZ",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 733.046875,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlL",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 788.265625,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlR",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 532.484375,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "slash",
+          "width": 48,
+          "height": 48,
+          "centerX": 595.09375,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pipe",
+          "width": 48,
+          "height": 48,
+          "centerX": 651.09375,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "enter",
+          "width": 54.015625,
+          "height": 48,
+          "centerX": 710.1015625,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrl",
+          "width": 48,
+          "height": 48,
+          "centerX": 277,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "alt",
+          "width": 48,
+          "height": 48,
+          "centerX": 333,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "history-live",
+          "width": 68.421875,
+          "height": 48,
+          "centerX": 693.3203125,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "keyboard",
+          "width": 75.609375,
+          "height": 48,
+          "centerX": 773.3359375,
+          "centerY": 255,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        }
+      ]
+    },
+    {
+      "profile": "landscape-844x390",
+      "surface": "modal",
+      "phase": "before-keyboard",
+      "geometry": {
+        "viewportWidth": 844,
+        "viewportHeight": 390,
+        "documentWidth": 844,
+        "documentHeight": 6524,
+        "scrollY": 0,
+        "barTop": 325,
+        "barBottom": 390,
+        "barVisible": true,
+        "surfaceViewportLocked": true,
+        "runningAnimations": 0
+      },
+      "rafCount": 0,
+      "hitTargets": [
+        {
+          "selector": "esc",
+          "width": 48,
+          "height": 48,
+          "centerX": 144,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "tab",
+          "width": 48,
+          "height": 48,
+          "centerX": 200,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "left",
+          "width": 48,
+          "height": 48,
+          "centerX": 256,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "up",
+          "width": 48,
+          "height": 48,
+          "centerX": 312,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "down",
+          "width": 48,
+          "height": 48,
+          "centerX": 368,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "right",
+          "width": 48,
+          "height": 48,
+          "centerX": 424,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "home",
+          "width": 48,
+          "height": 48,
+          "centerX": 480,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "end",
+          "width": 48,
+          "height": 48,
+          "centerX": 536,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageUp",
+          "width": 48,
+          "height": 48,
+          "centerX": 592,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageDown",
+          "width": 48,
+          "height": 48,
+          "centerX": 648,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlC",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 710.609375,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlD",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 779.828125,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlZ",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 813.046875,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlL",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 422.265625,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlR",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 491.484375,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "slash",
+          "width": 48,
+          "height": 48,
+          "centerX": 554.09375,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pipe",
+          "width": 48,
+          "height": 48,
+          "centerX": 610.09375,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "enter",
+          "width": 54.015625,
+          "height": 48,
+          "centerX": 669.1015625,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrl",
+          "width": 48,
+          "height": 48,
+          "centerX": 32,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "alt",
+          "width": 48,
+          "height": 48,
+          "centerX": 88,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "history-live",
+          "width": 68.421875,
+          "height": 48,
+          "centerX": 718.3203125,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "keyboard",
+          "width": 75.609375,
+          "height": 48,
+          "centerX": 798.3359375,
+          "centerY": 358,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        }
+      ]
+    },
+    {
+      "profile": "landscape-844x390",
+      "surface": "modal",
+      "phase": "keyboard",
+      "geometry": {
+        "viewportWidth": 844,
+        "viewportHeight": 300,
+        "documentWidth": 844,
+        "documentHeight": 6524,
+        "scrollY": 0,
+        "barTop": 235,
+        "barBottom": 300,
+        "barVisible": true,
+        "surfaceViewportLocked": true,
+        "runningAnimations": 0
+      },
+      "focusedTerminalInput": true,
+      "hitTargets": [
+        {
+          "selector": "esc",
+          "width": 48,
+          "height": 48,
+          "centerX": 144,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "tab",
+          "width": 48,
+          "height": 48,
+          "centerX": 200,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "left",
+          "width": 48,
+          "height": 48,
+          "centerX": 256,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "up",
+          "width": 48,
+          "height": 48,
+          "centerX": 312,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "down",
+          "width": 48,
+          "height": 48,
+          "centerX": 368,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "right",
+          "width": 48,
+          "height": 48,
+          "centerX": 424,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "home",
+          "width": 48,
+          "height": 48,
+          "centerX": 480,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "end",
+          "width": 48,
+          "height": 48,
+          "centerX": 536,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageUp",
+          "width": 48,
+          "height": 48,
+          "centerX": 592,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pageDown",
+          "width": 48,
+          "height": 48,
+          "centerX": 648,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlC",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 710.609375,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlD",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 779.828125,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlZ",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 813.046875,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlL",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 422.265625,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrlR",
+          "width": 61.21875,
+          "height": 48,
+          "centerX": 491.484375,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "slash",
+          "width": 48,
+          "height": 48,
+          "centerX": 554.09375,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "pipe",
+          "width": 48,
+          "height": 48,
+          "centerX": 610.09375,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "enter",
+          "width": 54.015625,
+          "height": 48,
+          "centerX": 669.1015625,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "ctrl",
+          "width": 48,
+          "height": 48,
+          "centerX": 32,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "alt",
+          "width": 48,
+          "height": 48,
+          "centerX": 88,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "history-live",
+          "width": 68.421875,
+          "height": 48,
+          "centerX": 718.3203125,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        },
+        {
+          "selector": "keyboard",
+          "width": 75.609375,
+          "height": 48,
+          "centerX": 798.3359375,
+          "centerY": 268,
+          "inViewport": true,
+          "selfHit": true,
+          "hitTag": "BUTTON"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "profiles": 4,
+    "surfaces": 2,
+    "phases": 2,
+    "states": 16,
+    "centersTested": 352,
+    "centerHitsPassed": 352,
+    "minimumTargetPassed": 352,
+    "barsVisible": 16,
+    "noHorizontalOverflow": 16,
+    "viewportLocked": 16,
+    "keyboardFocusPassed": 16,
+    "staticIdleRafPassed": 16,
+    "staticAnimationsPassed": 16
+  },
+  "workflows": [
+    {
+      "profile": "mobile-360x800",
+      "typing": true,
+      "ctrlC": true,
+      "historyRecall": true,
+      "tabCompletion": true
+    },
+    {
+      "profile": "mobile-390x844",
+      "typing": true,
+      "ctrlC": true,
+      "historyRecall": true,
+      "tabCompletion": true
+    },
+    {
+      "profile": "tablet-768x1024",
+      "typing": true,
+      "ctrlC": true,
+      "historyRecall": true,
+      "tabCompletion": true
+    },
+    {
+      "profile": "landscape-844x390",
+      "typing": true,
+      "ctrlC": true,
+      "historyRecall": true,
+      "tabCompletion": true
+    }
+  ],
+  "passed": true
+}

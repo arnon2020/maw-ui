@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef, memo } from "react";
+import { useEffect, useRef, memo } from "react";
 import { ansiToHtml, processCapture } from "../lib/ansi";
-import { apiUrl } from "../lib/api";
+import { refreshCapture, useCaptureContent } from "../lib/captureStore";
 
 interface MiniPreviewProps {
   agent: { target: string; name: string; status: string };
@@ -16,18 +16,13 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export const MiniPreview = memo(function MiniPreview({ agent, accent, roomLabel }: MiniPreviewProps) {
-  const [content, setContent] = useState("");
+  const content = useCaptureContent(agent.target);
   const termRef = useRef<HTMLDivElement>(null);
   const displayName = agent.name.replace(/-oracle$/, "").replace(/-/g, " ");
   const statusColor = STATUS_COLORS[agent.status] || "#666";
 
   useEffect(() => {
-    let active = true;
-    fetch(apiUrl(`/api/capture?target=${encodeURIComponent(agent.target)}`))
-      .then(r => r.json())
-      .then(d => { if (active) setContent(d.content || ""); })
-      .catch(() => {});
-    return () => { active = false; };
+    void refreshCapture(agent.target);
   }, [agent.target]);
 
   // Scroll to bottom when content loads
@@ -52,6 +47,18 @@ export const MiniPreview = memo(function MiniPreview({ agent, accent, roomLabel 
           </span>
         </span>
         <span className="text-[9px] text-white/25 font-mono">{roomLabel}</span>
+        <button
+          type="button"
+          className="min-w-12 min-h-12 -my-2 -mr-2 flex items-center justify-center text-white/30 hover:text-white/70"
+          aria-label={`Refresh ${displayName} preview`}
+          title="Refresh preview"
+          onClick={(event) => {
+            event.stopPropagation();
+            void refreshCapture(agent.target);
+          }}
+        >
+          ↻
+        </button>
       </div>
 
       {/* Terminal snippet — 8 lines max */}

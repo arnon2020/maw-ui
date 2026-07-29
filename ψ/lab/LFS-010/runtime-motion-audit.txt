@@ -1,0 +1,44 @@
+talk.html:285:requestAnimationFrame(() => fitAddon.fit());
+talk.html:370:  requestAnimationFrame(() => {
+talk.html:387:  requestAnimationFrame(() => fitAddon.fit());
+shrine.html:346:setInterval(() => {
+arena.html:770:  if (!staticMode) animationFrame = requestAnimationFrame(animate);
+src/hooks/useSessions.ts:126:    const interval = setInterval(() => {
+src/hooks/useFederationList.ts:33:  // re-creating the callback (which would re-arm the setInterval).
+src/hooks/useFederationList.ts:97:    const id = setInterval(fetchStatus, POLL_INTERVAL);
+src/hooks/useFederationData.ts:213:    const iv = setInterval(load, 60_000);
+src/components/HoverPreviewCard.tsx:157:        const res = await fetch(apiUrl(`/api/capture?target=${encodeURIComponent(agent.target)}`));
+src/components/HoverPreviewCard.tsx:164:      if (active && !staticMode) setTimeout(poll, 2000);
+src/components/JarvisView.tsx:90:    const i1 = setInterval(fetchData, 10000);
+src/components/JarvisView.tsx:91:    const i2 = setInterval(fetchAnalytics, 30000);
+src/components/MiniMonitor.tsx:65:        const res = await fetch(apiUrl(`/api/capture?target=${encodeURIComponent(target)}`));
+src/components/MiniMonitor.tsx:86:      if (active) setTimeout(poll, pollInterval);
+src/components/MiniMonitor.tsx:97:    fetch(apiUrl(`/api/capture?target=${encodeURIComponent(target)}`))
+src/components/DashboardView.tsx:245:    const iv = setInterval(fetchTokens, 30_000);
+src/components/StatusBar.tsx:111:    const iv = setInterval(fetch_, 30000);
+src/components/UniverseBg.tsx:107:      frame = requestAnimationFrame(animate);
+src/components/UniverseBg.tsx:115:      frame = requestAnimationFrame(animate);
+src/components/iPadDashboard.tsx:132:              requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; });
+src/components/iPadDashboard.tsx:137:      if (active && !staticMode) timer = setTimeout(poll, 1500);
+src/components/iPadDashboard.tsx:402:    const t = setInterval(() => fetch("/api/loops").then(r => r.json()).then(d => setLoops(d.loops || [])).catch(() => {}), 30000);
+src/components/OverviewGrid.tsx:70:        const res = await fetch(apiUrl(`/api/capture?target=${encodeURIComponent(agent.target)}`));
+src/components/OverviewGrid.tsx:74:      if (activeRef.current && !staticMode) timer = setTimeout(poll, 2000);
+src/components/LoopsView.tsx:98:    const interval = setInterval(() => { fetchLoops(); fetchHistory(selectedLoop || undefined); }, 30_000);
+src/components/Joystick.tsx:33:      frameRef.current = requestAnimationFrame(tick);
+src/components/Joystick.tsx:35:    frameRef.current = requestAnimationFrame(tick);
+src/components/MiniPreview.tsx:26:    fetch(apiUrl(`/api/capture?target=${encodeURIComponent(agent.target)}`))
+src/components/AgentRow.tsx:33:    const id = setInterval(() => setNow(Date.now()), 1000);
+src/components/useMissionControl.ts:286:      requestAnimationFrame(() => {
+src/components/useMissionControl.ts:287:        requestAnimationFrame(() => {
+src/components/chat/useChatLog.ts:98:      requestAnimationFrame(() => {
+src/components/DashboardPro.tsx:100:    const iv = setInterval(refresh, 30_000);
+src/components/VSAgentPanel.tsx:31:        const res = await fetch(apiUrl(`/api/capture?target=${encodeURIComponent(agent.target)}`));
+src/components/VSAgentPanel.tsx:38:    const poll = setInterval(refresh, 300);
+src/components/FpsCounter.tsx:23:      id = requestAnimationFrame(tick);
+src/components/FpsCounter.tsx:25:    id = requestAnimationFrame(tick);
+src/apps/workspace.tsx:91:    const iv = setInterval(() => {
+src/components/federation/Canvas2D.tsx:124:      if (!staticMode) animId = requestAnimationFrame(draw);
+src/components/federation/Canvas2D.tsx:132:    else animId = requestAnimationFrame(draw);
+src/apps/federation.tsx:567:      if (!staticMode) frame = requestAnimationFrame(animate);
+src/apps/federation.tsx:1018:    const iv = setInterval(load, 60_000);
+src/lib/sounds.ts:75:      const fade = setInterval(() => {

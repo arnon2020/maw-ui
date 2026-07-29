@@ -221,7 +221,7 @@ function InboxContent({ ctx }: { ctx: AppContext }) {
   const recent = asks.filter((a) => a.dismissed).slice(0, 10);
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="flex-1 min-h-0 w-full max-w-2xl mx-auto px-4 py-8 overflow-y-auto">
       <h1 className="text-lg font-bold tracking-wider text-cyan-400 uppercase mb-6">
         Inbox {pending.length > 0 && <span className="text-red-400">({pending.length})</span>}
       </h1>
@@ -274,7 +274,7 @@ function InboxContent({ ctx }: { ctx: AppContext }) {
 }
 
 mount(() => (
-  <AppShell view="inbox">
+  <AppShell view="inbox" fullHeight>
     {(ctx) => <InboxContent ctx={ctx} />}
   </AppShell>
 ));

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { wsUrl } from "../lib/api";
+import { requestCaptureRefresh } from "../lib/captureStore";
 
 type MessageHandler = (data: any) => void;
 
@@ -55,6 +56,8 @@ export function useWebSocket(onMessage: MessageHandler) {
     const ws = wsRef.current;
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify(msg));
+      const input = msg as { type?: string; target?: string };
+      if (input.type === "send" && input.target) requestCaptureRefresh(input.target);
     }
   }, []);
 

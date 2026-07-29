@@ -1,10 +1,45 @@
 @import "tailwindcss";
 
+html, body, #root {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+html {
+  overflow-x: hidden;
+}
+
 body {
   background: #020208;
   color: #e0e0e0;
   font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans Thai', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
   overflow-x: hidden;
+  min-height: 100dvh;
+}
+
+#root {
+  min-height: 100dvh;
+  box-sizing: border-box;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@supports (height: 100dvh) {
+  .h-screen { height: 100dvh !important; }
+  .min-h-screen { min-height: 100dvh !important; }
+}
+
+@media (max-width: 640px) {
+  header, nav {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  header::-webkit-scrollbar, nav::-webkit-scrollbar { display: none; }
+  input, textarea, select { font-size: 16px !important; }
 }
 
 /* All clickable elements show hand cursor */

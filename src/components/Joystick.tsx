@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect, memo } from "react";
+import { useStaticMode } from "../lib/staticMode";
 
 interface JoystickProps {
   onPan: (dx: number, dy: number) => void;
@@ -8,6 +9,7 @@ const RADIUS = 24;
 const KNOB_R = 8;
 
 export const Joystick = memo(function Joystick({ onPan }: JoystickProps) {
+  const staticMode = useStaticMode();
   const [knob, setKnob] = useState({ x: 0, y: 0 });
   const dragging = useRef(false);
   const center = useRef({ x: 0, y: 0 });
@@ -22,6 +24,7 @@ export const Joystick = memo(function Joystick({ onPan }: JoystickProps) {
   };
 
   useEffect(() => {
+    if (staticMode) return;
     let active = true;
     const tick = () => {
       if (!active) return;
@@ -31,7 +34,7 @@ export const Joystick = memo(function Joystick({ onPan }: JoystickProps) {
     };
     frameRef.current = requestAnimationFrame(tick);
     return () => { active = false; cancelAnimationFrame(frameRef.current); };
-  }, [onPan]);
+  }, [onPan, staticMode]);
 
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     e.preventDefault();
@@ -47,7 +50,8 @@ export const Joystick = memo(function Joystick({ onPan }: JoystickProps) {
     const pos = clamp(e.clientX - center.current.x, e.clientY - center.current.y);
     setKnob(pos);
     knobRef.current = pos;
-  }, []);
+    if (staticMode) onPan(pos.x * 0.15, pos.y * 0.15);
+  }, [onPan, staticMode]);
 
   const onPointerUp = useCallback(() => {
     dragging.current = false;

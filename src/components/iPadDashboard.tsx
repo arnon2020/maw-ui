@@ -6,10 +6,10 @@ import { agentColor } from "../lib/constants";
 import { ChibiPortrait } from "./ChibiPortrait";
 import { useFileAttach, FileInput, AttachmentChips } from "../hooks/useFileAttach";
 import { useDevice } from "../hooks/useDevice";
+import { useStaticMode } from "../lib/staticMode";
+import { refreshCapture, useCaptureContent } from "../lib/captureStore";
 import { FULL_COMMANDS } from "../quickCommands";
 import type { AgentState, PaneStatus } from "../lib/types";
-
-const TERMINAL_CAPTURE_LINES = 200;
 
 // --- Status colors ---
 const STATUS: Record<PaneStatus, { color: string; bg: string; label: string }> = {
@@ -103,9 +103,10 @@ function FleetSidebar({ agents, selectedAgent, onSelectAgent, collapsed }: {
 
 // --- Terminal Panel (touch-optimized) ---
 function TerminalPanel({ agent, send }: { agent: AgentState; send: (msg: object) => void }) {
+  const staticMode = useStaticMode();
+  const content = useCaptureContent(agent.target);
   const inputRef = useRef<HTMLInputElement>(null);
   const termRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef("");
   const followTailRef = useRef(true);
   const color = agentColor(agent.name);
   const name = agent.name.replace(/-oracle$/i, "");
@@ -116,27 +117,21 @@ function TerminalPanel({ agent, send }: { agent: AgentState; send: (msg: object)
     let active = true;
     let timer: ReturnType<typeof setTimeout>;
     async function poll() {
-      try {
-        const params = new URLSearchParams({ target: agent.target, lines: String(TERMINAL_CAPTURE_LINES) });
-        const res = await fetch(`/api/capture?${params.toString()}`);
-        const data = await res.json();
-        if (active && data.content !== contentRef.current) {
-          contentRef.current = data.content || "";
-          const el = termRef.current;
-          if (el) {
-            // Simple ANSI strip for display
-            el.textContent = contentRef.current.replace(/\x1b\[[0-9;]*m/g, "");
-            if (followTailRef.current) {
-              requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; });
-            }
-          }
-        }
-      } catch {}
-      if (active) timer = setTimeout(poll, 1500);
+      await refreshCapture(agent.target);
+      if (active && !staticMode) timer = setTimeout(poll, 1500);
     }
     poll();
     return () => { active = false; clearTimeout(timer); };
-  }, [agent.target]);
+  }, [agent.target, staticMode]);
+
+  useEffect(() => {
+    const el = termRef.current;
+    if (!el) return;
+    el.textContent = content.replace(/\x1b\[[0-9;]*m/g, "");
+    if (followTailRef.current) {
+      requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; });
+    }
+  }, [content]);
 
   useEffect(() => {
     const el = termRef.current;
@@ -176,6 +171,15 @@ function TerminalPanel({ agent, send }: { agent: AgentState; send: (msg: object)
           <div className="w-2 h-2 rounded-full" style={{ background: STATUS[agent.status]?.color }} />
           <span className="text-[10px] font-bold">{STATUS[agent.status]?.label}</span>
         </div>
+        <button
+          type="button"
+          className="min-w-12 min-h-12 flex items-center justify-center text-white/30 hover:text-white/70"
+          aria-label={`Refresh ${name} preview`}
+          title="Refresh preview"
+          onClick={() => void refreshCapture(agent.target)}
+        >
+          ↻
+        </button>
       </div>
 
       {/* Terminal output */}

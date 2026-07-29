@@ -1,0 +1,137 @@
+{
+  "generatedAt": "2026-07-29T02:58:39.462Z",
+  "base": "http://127.0.0.1:5177",
+  "liveTerminal": {
+    "outputVisible": true,
+    "latencyMs": 69,
+    "finiteEventCaptureRequests": 2,
+    "idleCaptureRequests": 0,
+    "paneContainsMarker": true
+  },
+  "previewRefresh": {
+    "outputVisible": true,
+    "latencyMs": 71,
+    "finiteEventCaptureRequests": 1,
+    "manualRefreshRequests": 1,
+    "idleCaptureRequests": 0,
+    "paneContainsMarker": true
+  },
+  "fleet": {
+    "profiles": [
+      {
+        "profile": "mobile-360x800",
+        "initial": {
+          "controlsTop": 276,
+          "controlsBottom": 326,
+          "firstGroupTop": 343,
+          "firstGroupBottom": 440,
+          "firstGroupInViewport": true,
+          "fleetKeyCount": 0,
+          "fleetKeyBarCount": 0,
+          "computedOrder": {
+            "directory": 1,
+            "stage": 2,
+            "controls": 1,
+            "firstGroup": 2,
+            "recent": 3
+          },
+          "stageExpanded": "false",
+          "recentExpanded": "false"
+        }
+      },
+      {
+        "profile": "mobile-390x844",
+        "initial": {
+          "controlsTop": 239,
+          "controlsBottom": 289,
+          "firstGroupTop": 306,
+          "firstGroupBottom": 403,
+          "firstGroupInViewport": true,
+          "fleetKeyCount": 0,
+          "fleetKeyBarCount": 0,
+          "computedOrder": {
+            "directory": 1,
+            "stage": 2,
+            "controls": 1,
+            "firstGroup": 2,
+            "recent": 3
+          },
+          "stageExpanded": "false",
+          "recentExpanded": "false"
+        }
+      },
+      {
+        "profile": "tablet-768x1024",
+        "initial": {
+          "controlsTop": 187,
+          "controlsBottom": 237,
+          "firstGroupTop": 254,
+          "firstGroupBottom": 327,
+          "firstGroupInViewport": true,
+          "fleetKeyCount": 0,
+          "fleetKeyBarCount": 0,
+          "computedOrder": {
+            "directory": 1,
+            "stage": 2,
+            "controls": 1,
+            "firstGroup": 2,
+            "recent": 3
+          },
+          "stageExpanded": "false",
+          "recentExpanded": "false"
+        }
+      },
+      {
+        "profile": "tablet-820x1180",
+        "initial": {
+          "controlsTop": 154,
+          "controlsBottom": 204,
+          "firstGroupTop": 221,
+          "firstGroupBottom": 294,
+          "firstGroupInViewport": true,
+          "fleetKeyCount": 0,
+          "fleetKeyBarCount": 0,
+          "computedOrder": {
+            "directory": 1,
+            "stage": 2,
+            "controls": 1,
+            "firstGroup": 2,
+            "recent": 3
+          },
+          "stageExpanded": "false",
+          "recentExpanded": "false"
+        }
+      },
+      {
+        "profile": "landscape-844x390",
+        "initial": {
+          "controlsTop": 154,
+          "controlsBottom": 204,
+          "firstGroupTop": 221,
+          "firstGroupBottom": 294,
+          "firstGroupInViewport": true,
+          "fleetKeyCount": 0,
+          "fleetKeyBarCount": 0,
+          "computedOrder": {
+            "directory": 1,
+            "stage": 2,
+            "controls": 1,
+            "firstGroup": 2,
+            "recent": 3
+          },
+          "stageExpanded": "false",
+          "recentExpanded": "false"
+        }
+      }
+    ]
+  },
+  "summary": {
+    "liveTerminalPassed": true,
+    "previewRefreshPassed": true,
+    "fleetProfilesWithoutKeys": 5,
+    "compactFirstGroupPassed": true,
+    "compactOrderPassed": true,
+    "compactDefaultsCollapsed": true
+  },
+  "passed": true
+}

@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef, useCallback, memo } from "react";
 import { ansiToHtml, processCapture } from "../lib/ansi";
 import { agentColor, PREVIEW_CARD } from "../lib/constants";
-import { apiUrl } from "../lib/api";
+import { refreshCapture, useCaptureContent } from "../lib/captureStore";
 import { useAgentPreview } from "../lib/previewStore";
+import { useStaticMode } from "../lib/staticMode";
 import type { AgentState, AgentEvent } from "../lib/types";
 
 interface HoverPreviewCardProps {
@@ -50,7 +51,8 @@ export const HoverPreviewCard = memo(function HoverPreviewCard({
   externalInputBuf,
   onInputBufChange,
 }: HoverPreviewCardProps) {
-  const [content, setContent] = useState("");
+  const staticMode = useStaticMode();
+  const content = useCaptureContent(agent.target);
   const [localInputBuf, setLocalInputBuf] = useState("");
   const inputBuf = externalInputBuf ?? localInputBuf;
   const setInputBuf = useCallback((val: string) => {
@@ -102,6 +104,7 @@ export const HoverPreviewCard = memo(function HoverPreviewCard({
       } else if (inputBuf && send) {
         addEvent?.(agent.target, "command", inputBuf);
         send({ type: "send", target: agent.target, text: inputBuf });
+        setTimeout(() => send({ type: "send", target: agent.target, text: "\r" }), 50);
       }
       setInputBuf("");
       prevInputRef.current = "";
@@ -152,18 +155,13 @@ export const HoverPreviewCard = memo(function HoverPreviewCard({
     let active = true;
     async function poll() {
       try {
-        const res = await fetch(apiUrl(`/api/capture?target=${encodeURIComponent(agent.target)}`));
-        const data = await res.json();
-        if (active) setContent(prev => {
-          const next = data.content || "";
-          return next === prev ? prev : next;
-        });
+        await refreshCapture(agent.target);
       } catch {}
-      if (active) setTimeout(poll, 2000);
+      if (active && !staticMode) setTimeout(poll, 2000);
     }
     poll();
     return () => { active = false; };
-  }, [agent.target]);
+  }, [agent.target, staticMode]);
 
   // Track near-bottom in BOTH pinned and hover modes — previously the scroll
   // listener was gated on `pinned`, so hover mode had no user-intent signal
@@ -199,7 +197,8 @@ export const HoverPreviewCard = memo(function HoverPreviewCard({
       style={{
         background: "#0a0a0f",
         width: compact ? "100%" : PREVIEW_CARD.width,
-        height: compact ? "100%" : "calc(100vh - 120px)",
+        maxWidth: compact ? "100%" : "calc(100vw - 16px)",
+        height: compact ? "100%" : "calc(100dvh - 120px)",
         maxHeight: compact ? "100%" : PREVIEW_CARD.maxHeight,
       }}
       onMouseDown={(e) => {
@@ -437,6 +436,18 @@ export const HoverPreviewCard = memo(function HoverPreviewCard({
             animation: "agent-pulse 2s ease-in-out infinite",
           }}
         />
+        <button
+          type="button"
+          className="min-w-12 min-h-12 -my-2 flex items-center justify-center text-white/30 hover:text-white/80"
+          aria-label={`Refresh ${displayName} preview`}
+          title="Refresh preview"
+          onClick={(event) => {
+            event.stopPropagation();
+            void refreshCapture(agent.target);
+          }}
+        >
+          ↻
+        </button>
         {pinned && onFullscreen && (
           <button
             onClick={onFullscreen}
@@ -539,6 +550,7 @@ export const HoverPreviewCard = memo(function HoverPreviewCard({
               } else if (inputBuf) {
                 addEvent?.(agent.target, "command", inputBuf);
                 send({ type: "send", target: agent.target, text: inputBuf });
+                setTimeout(() => send({ type: "send", target: agent.target, text: "\r" }), 50);
               } else {
                 send({ type: "send", target: agent.target, text: "\r" });
               }

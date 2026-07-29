@@ -1,10 +1,11 @@
 import { memo, useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { ansiToHtml, processCapture } from "../lib/ansi";
 import { roomStyle } from "../lib/constants";
-import { apiUrl } from "../lib/api";
+import { refreshCapture, useCaptureContent } from "../lib/captureStore";
 import { canonicalOracleName, fetchOracleRegistry } from "../lib/oracleRegistry";
 import { useFps } from "./FpsCounter";
 import { useFleetStore } from "../lib/store";
+import { useStaticMode } from "../lib/staticMode";
 import { SummonPanel } from "./SummonPanel";
 import type { AgentState, Session } from "../lib/types";
 
@@ -23,7 +24,7 @@ interface OverviewGridProps {
   onSelectAgent: (agent: AgentState) => void;
 }
 
-/** Single terminal tile — polls /api/capture for live content */
+/** Single terminal tile — motion polls; Static Mode refreshes only on events/actions. */
 const OverviewTile = memo(function OverviewTile({
   agent,
   accent,
@@ -35,7 +36,8 @@ const OverviewTile = memo(function OverviewTile({
   shortcutKey?: number;
   onClick: () => void;
 }) {
-  const [content, setContent] = useState("");
+  const staticMode = useStaticMode();
+  const content = useCaptureContent(agent.target);
   const tileRef = useRef<HTMLDivElement>(null);
   const termRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(true);
@@ -65,15 +67,13 @@ const OverviewTile = memo(function OverviewTile({
     async function poll() {
       if (!activeRef.current) return;
       try {
-        const res = await fetch(apiUrl(`/api/capture?target=${encodeURIComponent(agent.target)}`));
-        const data = await res.json();
-        if (activeRef.current) setContent(data.content || "");
+        await refreshCapture(agent.target);
       } catch {}
-      if (activeRef.current) timer = setTimeout(poll, 2000);
+      if (activeRef.current && !staticMode) timer = setTimeout(poll, 2000);
     }
     poll();
     return () => { activeRef.current = false; clearTimeout(timer); };
-  }, [agent.target, visible]);
+  }, [agent.target, visible, staticMode]);
 
   const trimmed = useMemo(() => processCapture(content), [content]);
 
@@ -127,6 +127,18 @@ const OverviewTile = memo(function OverviewTile({
         >
           {agent.status}
         </span>
+        <button
+          type="button"
+          className="min-w-12 min-h-12 -my-2 -mr-2 flex items-center justify-center text-white/30 hover:text-white"
+          aria-label={`Refresh ${displayName} preview`}
+          title="Refresh preview"
+          onClick={(event) => {
+            event.stopPropagation();
+            void refreshCapture(agent.target);
+          }}
+        >
+          ↻
+        </button>
       </div>
 
       {/* Terminal content */}

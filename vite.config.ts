@@ -6,6 +6,11 @@ import pkg from "./package.json";
 
 const MAW_HTTP = process.env.VITE_MAW_URL ?? "http://localhost:3456";
 const MAW_WS = MAW_HTTP.replace(/^http/, "ws");
+const proxy = {
+  "/api": MAW_HTTP,
+  "/ws/pty": { target: MAW_WS, ws: true },
+  "/ws": { target: MAW_WS, ws: true },
+};
 
 export default defineConfig({
   plugins: [tailwindcss(), react()],
@@ -48,10 +53,11 @@ export default defineConfig({
     watch: {
       ignored: ["**/.playwright-mcp/**", "**/.codex-home/**"],
     },
-    proxy: {
-      "/api": MAW_HTTP,
-      "/ws/pty": { target: MAW_WS, ws: true },
-      "/ws": { target: MAW_WS, ws: true },
-    },
+    proxy,
+  },
+  preview: {
+    host: true,
+    allowedHosts: true,
+    proxy,
   },
 });

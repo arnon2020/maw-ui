@@ -135,7 +135,7 @@ export function useMissionControl({ sessions, agents, send, onSelectAgent, addEv
     const containerRect = containerRef.current?.getBoundingClientRect();
     if (!containerRect) return { x: 0, y: 0 };
     const screen = svgToScreen(svgX, svgY);
-    const cardW = PREVIEW_CARD.width;
+    const cardW = Math.min(PREVIEW_CARD.width, Math.max(280, containerRect.width - 16));
     const cardH = 500;
     const rightX = screen.x + 60;
     const leftX = screen.x - cardW - 40;
@@ -286,7 +286,8 @@ export function useMissionControl({ sessions, agents, send, onSelectAgent, addEv
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           const containerW = containerRef.current?.getBoundingClientRect().width || 800;
-          setPinnedAnimPos({ left: (containerW - PREVIEW_CARD.width) / 2, top: 20 });
+          const cardW = Math.min(PREVIEW_CARD.width, Math.max(280, containerW - 16));
+          setPinnedAnimPos({ left: Math.max(8, (containerW - cardW) / 2), top: 20 });
         });
       });
     } else {

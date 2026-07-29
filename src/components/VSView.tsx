@@ -152,7 +152,7 @@ export const VSView = memo(function VSView({ agents, send }: VSViewProps) {
   }, [picking]);
 
   return (
-    <div className="flex flex-col sm:flex-row" style={{ height: "calc(100vh - 72px)" }}>
+    <div className="flex flex-col sm:flex-row flex-1 min-h-0 overflow-hidden">
       {/* Left panel */}
       <VSAgentPanel
         agent={left}

@@ -1,9 +1,13 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import "@xterm/xterm/css/xterm.css";
 import { wsUrl } from "../lib/api";
+import { TERMINAL_KEY_EVENT, TERMINAL_KEY_SEQUENCES, tmuxMouseWheelSequence, type TerminalKey } from "../lib/terminalInput";
+import { useStaticMode } from "../lib/staticMode";
+import { requestCaptureRefresh } from "../lib/captureStore";
 import type { AgentState } from "../lib/types";
+import { TerminalKeyBar } from "./TerminalKeyBar";
 
 interface XTerminalProps {
   target: string;
@@ -12,6 +16,9 @@ interface XTerminalProps {
   siblings: AgentState[];
   onSelectSibling: (agent: AgentState) => void;
   readOnly?: boolean;
+  inputAccessory?: ReactNode;
+  onHistoryActiveChange?: (active: boolean) => void;
+  onConnectedChange?: (connected: boolean) => void;
 }
 
 // Catppuccin Mocha palette (matches AC array in ansi.ts)
@@ -117,36 +124,56 @@ function attachedSizeFromMessage(msg: { cols?: unknown; rows?: unknown }) {
 }
 
 const WIDE_TERMINAL_MIN_COLS = 100;
-const WIDE_TERMINAL_MIN_ROWS = 40;
 const TERMINAL_FONT_SIZE = 12;
 const TERMINAL_LINE_HEIGHT = 1.2;
-const TERMINAL_KEY_EVENT = "maw:xterminal-key";
 const PTY_WS_BASE_DELAY = 1000;
 const PTY_WS_MAX_DELAY = 15000;
 
 function requestedTerminalSize(term: Terminal) {
   return {
     cols: Math.max(term.cols, WIDE_TERMINAL_MIN_COLS),
-    rows: Math.max(term.rows, WIDE_TERMINAL_MIN_ROWS),
+    rows: Math.max(term.rows, 1),
   };
 }
 
-export function XTerminal({ target, onClose, onNavigate, siblings, onSelectSibling, readOnly = false }: XTerminalProps) {
+export function XTerminal({
+  target,
+  onClose,
+  onNavigate,
+  siblings,
+  onSelectSibling,
+  readOnly = false,
+  inputAccessory,
+  onHistoryActiveChange,
+  onConnectedChange,
+}: XTerminalProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [historyActive, setHistoryActive] = useState(false);
+  const staticMode = useStaticMode();
 
   // Keep callbacks in refs so terminal effect doesn't re-run on every render
   const onCloseRef = useRef(onClose);
   const onNavigateRef = useRef(onNavigate);
   const siblingsRef = useRef(siblings);
   const onSelectSiblingRef = useRef(onSelectSibling);
+  const onHistoryActiveChangeRef = useRef(onHistoryActiveChange);
+  const onConnectedChangeRef = useRef(onConnectedChange);
   useEffect(() => { onCloseRef.current = onClose; }, [onClose]);
   useEffect(() => { onNavigateRef.current = onNavigate; }, [onNavigate]);
   useEffect(() => { siblingsRef.current = siblings; }, [siblings]);
   useEffect(() => { onSelectSiblingRef.current = onSelectSibling; }, [onSelectSibling]);
+  useEffect(() => { onHistoryActiveChangeRef.current = onHistoryActiveChange; }, [onHistoryActiveChange]);
+  useEffect(() => { onConnectedChangeRef.current = onConnectedChange; }, [onConnectedChange]);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+    const updateHistoryActive = (active: boolean) => {
+      setHistoryActive(active);
+      onHistoryActiveChangeRef.current?.(active);
+    };
+    updateHistoryActive(false);
+    onConnectedChangeRef.current?.(false);
 
     const term = new Terminal({
       theme: THEME,
@@ -154,7 +181,7 @@ export function XTerminal({ target, onClose, onNavigate, siblings, onSelectSibli
       fontSize: TERMINAL_FONT_SIZE,
       lineHeight: TERMINAL_LINE_HEIGHT,
       letterSpacing: 0,
-      cursorBlink: !readOnly,
+      cursorBlink: !readOnly && !staticMode,
       cursorStyle: readOnly ? "underline" : "bar",
       disableStdin: readOnly,
     });
@@ -169,6 +196,8 @@ export function XTerminal({ target, onClose, onNavigate, siblings, onSelectSibli
     let resizeObserver: ResizeObserver | null = null;
     let copyKeyHandler: ((e: KeyboardEvent) => void) | null = null;
     let terminalKeyHandler: ((event: Event) => void) | null = null;
+    let touchStartHandler: ((event: TouchEvent) => void) | null = null;
+    let touchEndHandler: ((event: TouchEvent) => void) | null = null;
     let attachedSize: { cols: number; rows: number } | null = null;
     let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
     let reconnectAttempt = 0;
@@ -247,6 +276,7 @@ export function XTerminal({ target, onClose, onNavigate, siblings, onSelectSibli
             try {
               const msg = JSON.parse(e.data);
               if (msg.type === "attached") {
+                onConnectedChangeRef.current?.(true);
                 const size = attachedSizeFromMessage(msg);
                 try {
                   if (size) applyAttachedSize(size);
@@ -254,6 +284,7 @@ export function XTerminal({ target, onClose, onNavigate, siblings, onSelectSibli
                 } catch {}
               }
               if (msg.type === "detached") {
+                onConnectedChangeRef.current?.(false);
                 term.write("\r\n\x1b[33m[session detached - reconnecting]\x1b[0m\r\n");
                 scheduleReconnect(1000);
                 try { ws?.close(); } catch {}
@@ -266,6 +297,7 @@ export function XTerminal({ target, onClose, onNavigate, siblings, onSelectSibli
         };
 
         ws.onclose = () => {
+          onConnectedChangeRef.current?.(false);
           if (!alive) return;
           term.write("\r\n\x1b[33m[connection closed - reconnecting]\x1b[0m\r\n");
           scheduleReconnect();
@@ -274,16 +306,55 @@ export function XTerminal({ target, onClose, onNavigate, siblings, onSelectSibli
         ws.onerror = () => ws?.close();
       };
 
+      const sendSequence = (sequence: string) => {
+        if (!ws || ws.readyState !== WebSocket.OPEN) return;
+        ws.send(encoder.encode(sequence));
+        requestCaptureRefresh(target);
+        term.focus();
+      };
+      const scrollTmuxHistory = (direction: "up" | "down", steps: number) => {
+        sendSequence(tmuxMouseWheelSequence(direction, steps, term.cols, term.rows));
+        if (direction === "up") updateHistoryActive(true);
+      };
+
       terminalKeyHandler = (event: Event) => {
         if (readOnly) return;
-        const detail = (event as CustomEvent<{ target?: string; sequence?: string }>).detail;
-        if (!detail || detail.target !== target || typeof detail.sequence !== "string") return;
-        if (ws && ws.readyState === WebSocket.OPEN) {
-          ws.send(encoder.encode(detail.sequence));
+        const detail = (event as CustomEvent<{
+          target?: string;
+          sequence?: string;
+          action?: "history" | "live" | "focus";
+        }>).detail;
+        if (!detail || detail.target !== target) return;
+        if (detail.action === "history") {
+          scrollTmuxHistory("up", 120);
+        } else if (detail.action === "live") {
+          sendSequence(TERMINAL_KEY_SEQUENCES.esc);
+          term.scrollToBottom();
+          updateHistoryActive(false);
+        } else if (detail.action === "focus") {
           term.focus();
+        } else if (typeof detail.sequence === "string") {
+          sendSequence(detail.sequence);
+          if (detail.sequence === TERMINAL_KEY_SEQUENCES.esc) updateHistoryActive(false);
         }
       };
       window.addEventListener(TERMINAL_KEY_EVENT, terminalKeyHandler);
+
+      let touchStartY: number | null = null;
+      touchStartHandler = (event: TouchEvent) => {
+        touchStartY = event.touches[0]?.clientY ?? null;
+      };
+      touchEndHandler = (event: TouchEvent) => {
+        const endY = event.changedTouches[0]?.clientY;
+        if (touchStartY !== null && endY !== undefined) {
+          const distance = endY - touchStartY;
+          if (distance > 28) scrollTmuxHistory("up", 120);
+          else if (distance < -28) scrollTmuxHistory("down", 40);
+        }
+        touchStartY = null;
+      };
+      container.addEventListener("touchstart", touchStartHandler, { capture: true, passive: true });
+      container.addEventListener("touchend", touchEndHandler, { capture: true, passive: true });
 
       const reconnectNow = () => {
         if (!alive || ws?.readyState === WebSocket.OPEN) return;
@@ -343,13 +414,10 @@ export function XTerminal({ target, onClose, onNavigate, siblings, onSelectSibli
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
           try {
-            if (attachedSize) term.resize(attachedSize.cols, attachedSize.rows);
-            else {
-              fit.fit();
-              const requestedSize = requestedTerminalSize(term);
-              if (term.cols !== requestedSize.cols || term.rows !== requestedSize.rows) {
-                term.resize(requestedSize.cols, requestedSize.rows);
-              }
+            fit.fit();
+            const requestedSize = requestedTerminalSize(term);
+            if (term.cols !== requestedSize.cols || term.rows !== requestedSize.rows) {
+              term.resize(requestedSize.cols, requestedSize.rows);
             }
             if (ws && ws.readyState === WebSocket.OPEN) {
               ws.send(JSON.stringify({ type: "resize", cols: term.cols, rows: term.rows }));
@@ -367,8 +435,11 @@ export function XTerminal({ target, onClose, onNavigate, siblings, onSelectSibli
 
     return () => {
       alive = false;
+      onConnectedChangeRef.current?.(false);
       if (copyKeyHandler) container.removeEventListener("keydown", copyKeyHandler, true);
       if (terminalKeyHandler) window.removeEventListener(TERMINAL_KEY_EVENT, terminalKeyHandler);
+      if (touchStartHandler) container.removeEventListener("touchstart", touchStartHandler, true);
+      if (touchEndHandler) container.removeEventListener("touchend", touchEndHandler, true);
       clearTimeout(openTimer);
       clearTimeout(resizeTimer);
       if (reconnectTimer) clearTimeout(reconnectTimer);
@@ -379,11 +450,32 @@ export function XTerminal({ target, onClose, onNavigate, siblings, onSelectSibli
       ws?.close();
       term.dispose();
     };
-  }, [target]);
+  }, [target, readOnly, staticMode]);
+
+  const dispatchTerminalInput = (detail: { sequence?: string; action?: "history" | "live" | "focus" }) => {
+    window.dispatchEvent(new CustomEvent(TERMINAL_KEY_EVENT, { detail: { target, ...detail } }));
+  };
+
+  const handleVirtualKey = (_key: TerminalKey, sequence: string) => {
+    dispatchTerminalInput({ sequence });
+  };
 
   return (
-    <div className="terminal-shell relative w-full h-full">
-      <div ref={containerRef} className="h-full w-full overflow-auto" />
+    <div className="terminal-shell relative w-full h-full min-h-0 flex flex-col">
+      <div
+        ref={containerRef}
+        className="flex-1 min-h-0 w-full overflow-auto overscroll-contain"
+        data-terminal-touch-surface
+      />
+      {!readOnly && inputAccessory}
+      {!readOnly && (
+        <TerminalKeyBar
+          historyActive={historyActive}
+          onKey={handleVirtualKey}
+          onHistoryToggle={() => dispatchTerminalInput({ action: historyActive ? "live" : "history" })}
+          onKeyboard={() => dispatchTerminalInput({ action: "focus" })}
+        />
+      )}
     </div>
   );
 }

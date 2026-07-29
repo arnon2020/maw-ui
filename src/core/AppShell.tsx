@@ -16,7 +16,7 @@ import type { AgentState } from "../lib/types";
 interface AppShellProps {
   /** Current view name for StatusBar highlight */
   view: string;
-  /** Full-height layout (terminal, config) */
+  /** Viewport-locked layout for views with internal scrolling or bottom-edge input */
   fullHeight?: boolean;
   /** Render function — receives session data + send function */
   children: (ctx: AppContext) => ReactNode;
@@ -84,7 +84,7 @@ export function AppShell({ view, fullHeight, children }: AppShellProps) {
     <ErrorBoundary>
       <PinLock>
         <div className={wrapperClass} style={{ background: "#020208" }}>
-          <div className={`relative z-10${fullHeight ? " flex-shrink-0" : ""}`}>
+          <div className={`sticky top-0 z-20${fullHeight ? " flex-shrink-0" : ""}`}>
             <StatusBar
               connected={connected}
               agentCount={agents.length}

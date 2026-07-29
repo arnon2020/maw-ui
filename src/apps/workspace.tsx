@@ -262,7 +262,7 @@ function App() {
       <div className="flex flex-1 overflow-hidden">
 
         {/* LEFT: Nodes + Agents */}
-        <div className="w-[340px] flex-shrink-0 border-r overflow-y-auto p-4 space-y-4" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+        <div className="w-[34vw] sm:w-[340px] min-w-[112px] flex-shrink-0 border-r overflow-y-auto p-2 sm:p-4 space-y-4" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
 
           {nodeList.length === 0 && (
             <div className="text-center py-12">
@@ -328,7 +328,7 @@ function App() {
         </div>
 
         {/* CENTER: Feed */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
           {/* Feed header */}
           <div className="flex items-center gap-2 px-3 py-1.5 border-b" style={{ borderColor: "rgba(255,255,255,0.04)" }}>
             <span className="text-[9px] font-mono text-white/20">{filteredFeed.length} events</span>
@@ -360,10 +360,10 @@ function App() {
           </div>
 
           {/* Send bar */}
-          <div className="flex items-center gap-2 px-4 py-3 border-t" style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.02)" }}>
+          <div className="flex flex-col xl:flex-row items-stretch xl:items-center gap-2 px-2 sm:px-4 py-3 border-t" style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.02)" }}>
             <select
               value={sendTarget} onChange={e => setSendTarget(e.target.value)}
-              className="text-[11px] font-mono px-2 py-1.5 rounded-lg outline-none w-[180px]"
+              className="text-[11px] font-mono px-2 py-1.5 rounded-lg outline-none w-full xl:w-[180px]"
               style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", color: "#e0e0e0" }}>
               <option value="">select agent...</option>
               {allAgents.map(a => (
@@ -377,12 +377,12 @@ function App() {
               onChange={e => setSendText(e.target.value)}
               onKeyDown={e => { if (e.key === "Enter") handleSend(); }}
               placeholder="message..."
-              className="flex-1 text-[11px] font-mono px-3 py-1.5 rounded-lg outline-none [&::-webkit-search-cancel-button]:hidden [&::-webkit-clear-button]:hidden"
+              className="w-full xl:flex-1 text-[11px] font-mono px-3 py-1.5 rounded-lg outline-none [&::-webkit-search-cancel-button]:hidden [&::-webkit-clear-button]:hidden"
               style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", color: "#e0e0e0", WebkitAppearance: "none" as const }}
               enterKeyHint="send"
             />
             <button onClick={handleSend}
-              className="px-4 py-1.5 rounded-lg text-[11px] font-bold active:scale-95 transition-all"
+              className="w-full xl:w-auto px-4 py-1.5 rounded-lg text-[11px] font-bold active:scale-95 transition-all"
               style={{ background: sendResult === "sent" ? "rgba(34,197,94,0.2)" : "rgba(168,85,247,0.2)", color: sendResult === "sent" ? "#22c55e" : "#a78bfa" }}>
               {sendResult === "sent" ? "Sent!" : "Send"}
             </button>
@@ -390,7 +390,7 @@ function App() {
         </div>
 
         {/* RIGHT: Stats */}
-        <div className="w-[200px] flex-shrink-0 border-l overflow-y-auto p-3 space-y-4" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+        <div className="w-[28vw] sm:w-[200px] min-w-[92px] flex-shrink-0 border-l overflow-y-auto p-2 sm:p-3 space-y-4" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
 
           <StatSection title="By Node" color="#a78bfa">
             {nodeList.map(n => {
