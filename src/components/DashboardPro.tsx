@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { apiUrl, isRemote } from "../lib/api";
 import { useWebSocket } from "../hooks/useWebSocket";
+import { fetchWithRetry } from "../lib/fetchWithRetry";
 
 // Read-only mode: hide mutation controls when viewing remotely (hosted HTTPS).
 // Local users (same-origin) get full control. Remote viewers see data only.
@@ -83,7 +84,7 @@ function useDashboardData() {
     const [fedRes, plugRes, sessRes] = await Promise.allSettled([
       fetch(apiUrl("/api/federation/status")).then((r) => (r.ok ? r.json() : null)),
       fetch(apiUrl("/api/plugins")).then((r) => (r.ok ? r.json() : null)),
-      fetch(apiUrl("/api/sessions")).then((r) => (r.ok ? r.json() : null)),
+      fetchWithRetry(apiUrl("/api/sessions")).then((r) => (r.ok ? r.json() : null)),
     ]);
     if (fedRes.status === "fulfilled" && fedRes.value) setFed(fedRes.value);
     if (plugRes.status === "fulfilled" && plugRes.value) setPlugins(plugRes.value);

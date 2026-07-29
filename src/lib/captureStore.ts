@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { apiUrl } from "./api";
+import { fetchWithRetry } from "./fetchWithRetry";
 
 interface CaptureStore {
   captures: Record<string, string>;
@@ -34,7 +35,9 @@ export function refreshCapture(target: string): Promise<string> {
   if (!target) return Promise.resolve("");
   const existing = inFlight.get(target);
   if (existing) return existing;
-  const request = fetch(apiUrl(`/api/capture?target=${encodeURIComponent(target)}`))
+  const request = fetchWithRetry(apiUrl(`/api/capture?target=${encodeURIComponent(target)}`), {
+    retryDelays: [250, 750],
+  })
     .then((response) => response.json())
     .then((data) => {
       const content = data.content || "";

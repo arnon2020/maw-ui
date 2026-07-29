@@ -1,6 +1,7 @@
 import { memo, useState, useEffect, useRef, type ReactNode } from "react";
 import { apiUrl, isRemote, activeHost } from "../lib/api";
 import { SOUND_PROFILES, getSoundProfile, setSoundProfile, previewSound, type SoundProfile } from "../lib/sounds";
+import { useNetworkStatusStore } from "../lib/networkStatus";
 
 function SoundButton({ muted, onToggleMute }: { muted: boolean; onToggleMute: () => void }) {
   const [open, setOpen] = useState(false);
@@ -116,6 +117,7 @@ function useFleetTotal() {
 
 export const StatusBar = memo(function StatusBar({ connected, agentCount, sessionCount, tabCount = 0, activeView = "office", askCount = 0, onInbox, onJump, muted, onToggleMute, children }: StatusBarProps) {
   const { total } = useFleetTotal();
+  const networkStatus = useNetworkStatusStore((state) => state.status);
   return (
     <header className="sticky top-0 z-20 flex flex-wrap items-center gap-x-3 gap-y-2 mx-4 sm:mx-6 mt-3 px-4 sm:px-6 py-2.5 rounded-2xl bg-black/50 backdrop-blur-xl border border-white/[0.06] shadow-[0_4px_30px_rgba(0,0,0,0.4)]">
       <a href="#office" className="text-base sm:text-lg font-bold tracking-[4px] sm:tracking-[6px] text-cyan-400 uppercase whitespace-nowrap hover:text-cyan-300 transition-colors">
@@ -126,6 +128,20 @@ export const StatusBar = memo(function StatusBar({ connected, agentCount, sessio
         <span className={`w-2 h-2 rounded-full flex-shrink-0 ${connected ? "bg-emerald-400 shadow-[0_0_6px_#4caf50]" : "bg-red-400 animate-pulse"}`} />
         {connected ? "LIVE" : "..."}
       </span>
+      {networkStatus !== "online" && (
+        <span
+          className="text-[10px] font-mono px-2 py-0.5 rounded-md whitespace-nowrap"
+          style={{
+            color: networkStatus === "offline" ? "#fca5a5" : "#fbbf24",
+            background: networkStatus === "offline" ? "rgba(239,68,68,0.1)" : "rgba(251,191,36,0.08)",
+            border: `1px solid ${networkStatus === "offline" ? "rgba(239,68,68,0.18)" : "rgba(251,191,36,0.14)"}`,
+          }}
+          data-network-status={networkStatus}
+          role="status"
+        >
+          {networkStatus === "offline" ? "offline" : "syncing…"}
+        </span>
+      )}
 
       {isRemote && activeHost && (
         <a href="#config" className="text-[10px] font-mono px-2 py-0.5 rounded-md whitespace-nowrap no-underline hover:brightness-125 transition-all" style={{ background: "rgba(168,85,247,0.12)", color: "#c084fc", border: "1px solid rgba(168,85,247,0.2)" }}>

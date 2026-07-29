@@ -12,6 +12,7 @@ import { detectAskFromPane } from "../lib/askDetect";
 import { activeOracles, type FeedEvent, type FeedEventType } from "../lib/feed";
 import { requestCaptureRefresh, setCaptureContent } from "../lib/captureStore";
 import type { AskType } from "../lib/types";
+import { fetchWithRetry } from "../lib/fetchWithRetry";
 
 const BUSY_TIMEOUT = 15_000; // 15s without feed → ready
 const IDLE_TIMEOUT = 60_000; // 60s without feed → idle
@@ -51,7 +52,7 @@ export function useSessions() {
   // doesn't deliver them (race on first connect, server restart, etc.).
   // Ported from c664f95 (Casa Oracle, PR #6).
   useEffect(() => {
-    fetch(apiUrl("/api/teams"))
+    fetchWithRetry(apiUrl("/api/teams"))
       .then(r => r.json())
       .then(data => setTeams(data.teams || []))
       .catch(() => {});
