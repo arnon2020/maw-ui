@@ -4,7 +4,7 @@
  * message instead of letting the user stare at a mysterious fetch failure.
  *
  * PROTOTYPE — iteration 8 of the federation-join-easy /loop. Drafted on the
- * `feat/wormhole-client-draft` branch alongside the rest of the maw-ui
+ * `feat/wormhole-client-draft` branch alongside the rest of maw-ui-lite
  * federation bundle. See
  * `mawui-oracle/ψ/writing/federation-join-easy.md` for context.
  *
@@ -103,7 +103,7 @@ export function getPeerConnectionBanner(pc: PeerConnection): PeerConnectionBanne
           `(this isn't a CORS issue and can't be fixed with a header).`,
         actions: [
           {
-            label: "Run maw-ui locally",
+            label: "Run maw-ui-lite locally",
             description:
               "Use `maw ui --from-ci` to serve the lens from http://localhost. " +
               "Same-origin fetches to your local backend work without browser blocks.",

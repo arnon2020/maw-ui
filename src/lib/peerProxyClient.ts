@@ -44,7 +44,7 @@
  *
  * ## Status
  *
- * - Iteration 7 prototype, on `feat/wormhole-client-draft` (the maw-ui
+ * - Iteration 7 prototype, on `feat/wormhole-client-draft` (the maw-ui-lite
  *   federation bundle branch). PR-time decision: split into separate PRs
  *   for peerConnection / PeerExecClient / PeerProxyClient, or ship as one.
  * - Companion server endpoint `POST /api/proxy` lives on the SEPARATE

@@ -45,7 +45,7 @@
  *
  * When mixed-content blocks a direct fetch, the caller has three options:
  *
- *   1. **Run maw-ui locally** (the "pro path") — serve the lens from
+ *   1. **Run maw-ui-lite locally** (the "pro path") — serve the lens from
  *      http://localhost:5173 or via `maw ui --from-ci`. Same-origin
  *      fetches work natively, no wormhole needed.
  *   2. **Use a future `POST /api/proxy/*` endpoint** — not yet built.
@@ -84,7 +84,7 @@ export type PeerConnection =
       /**
        * HTTPS origin trying to reach an HTTP peer — browser blocks via
        * mixed-content rule. Caller MUST use one of:
-       *   - Run maw-ui locally (same-origin to a local backend)
+       *   - Run maw-ui-lite locally (same-origin to a local backend)
        *   - Future `POST /api/proxy/*` endpoint (not yet built)
        *   - `/wormhole` for command execution (NOT for REST reads)
        */
