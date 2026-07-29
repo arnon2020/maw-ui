@@ -72,4 +72,4 @@ Status: implementation is substantially complete; final cross-profile and event-
 
 branch: lfs-012-virtual-keys
 checkpoint base: aa9dc985
-checkpoint status: WIP commit pending immediately after this file is added
+checkpoint status: pushed as WIP commit eb817d2

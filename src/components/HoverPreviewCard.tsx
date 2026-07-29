@@ -104,6 +104,7 @@ export const HoverPreviewCard = memo(function HoverPreviewCard({
       } else if (inputBuf && send) {
         addEvent?.(agent.target, "command", inputBuf);
         send({ type: "send", target: agent.target, text: inputBuf });
+        setTimeout(() => send({ type: "send", target: agent.target, text: "\r" }), 50);
       }
       setInputBuf("");
       prevInputRef.current = "";
@@ -549,6 +550,7 @@ export const HoverPreviewCard = memo(function HoverPreviewCard({
               } else if (inputBuf) {
                 addEvent?.(agent.target, "command", inputBuf);
                 send({ type: "send", target: agent.target, text: inputBuf });
+                setTimeout(() => send({ type: "send", target: agent.target, text: "\r" }), 50);
               } else {
                 send({ type: "send", target: agent.target, text: "\r" });
               }

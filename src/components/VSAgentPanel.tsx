@@ -55,6 +55,7 @@ export const VSAgentPanel = memo(function VSAgentPanel({ agent, send, onPickAgen
       e.preventDefault();
       if (inputBuf && agent) {
         send({ type: "send", target: agent.target, text: inputBuf });
+        setTimeout(() => send({ type: "send", target: agent.target, text: "\r" }), 50);
         setInputBuf("");
       }
     } else if (e.key === "c" && e.ctrlKey) {

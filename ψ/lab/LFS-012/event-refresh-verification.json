@@ -1,0 +1,268 @@
+{
+  "generatedAt": "2026-07-29T01:56:58.323Z",
+  "base": "http://127.0.0.1:5177",
+  "liveTerminal": {
+    "outputVisible": true,
+    "latencyMs": 65,
+    "finiteEventCaptureRequests": 4,
+    "idleCaptureRequests": 0,
+    "paneContainsMarker": true
+  },
+  "previewRefresh": {
+    "outputVisible": true,
+    "latencyMs": 167,
+    "finiteEventCaptureRequests": 2,
+    "manualRefreshRequests": 1,
+    "idleCaptureRequests": 0,
+    "paneContainsMarker": true
+  },
+  "fleet": {
+    "profiles": [
+      {
+        "profile": "mobile-360x800",
+        "initial": {
+          "controlsTop": 276,
+          "controlsBottom": 326,
+          "firstGroupTop": 343,
+          "firstGroupBottom": 440,
+          "firstGroupInViewport": true
+        },
+        "keys": [
+          {
+            "key": "esc",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "left",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "up",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "down",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "right",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "enter",
+            "width": 54.015625,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          }
+        ]
+      },
+      {
+        "profile": "mobile-390x844",
+        "initial": {
+          "controlsTop": 239,
+          "controlsBottom": 289,
+          "firstGroupTop": 306,
+          "firstGroupBottom": 403,
+          "firstGroupInViewport": true
+        },
+        "keys": [
+          {
+            "key": "esc",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "left",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "up",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "down",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "right",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "enter",
+            "width": 54.015625,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          }
+        ]
+      },
+      {
+        "profile": "tablet-768x1024",
+        "initial": {
+          "controlsTop": 775,
+          "controlsBottom": 825,
+          "firstGroupTop": 842,
+          "firstGroupBottom": 915,
+          "firstGroupInViewport": true
+        },
+        "keys": [
+          {
+            "key": "esc",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "left",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "up",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "down",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "right",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "enter",
+            "width": 54.015625,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          }
+        ]
+      },
+      {
+        "profile": "landscape-844x390",
+        "initial": {
+          "controlsTop": 742,
+          "controlsBottom": 792,
+          "firstGroupTop": 809,
+          "firstGroupBottom": 882,
+          "firstGroupInViewport": false
+        },
+        "keys": [
+          {
+            "key": "esc",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "left",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "up",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "down",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "right",
+            "width": 48,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          },
+          {
+            "key": "enter",
+            "width": 54.015625,
+            "height": 48,
+            "inViewport": true,
+            "selfHit": true
+          }
+        ]
+      }
+    ],
+    "byteProof": {
+      "note": "Exact WebSocket input frames from UI; backend rejection of disposable non-Claude pane is expected.",
+      "expectedSequences": [
+        "\u001b",
+        "\u001b[D",
+        "\u001b[A",
+        "\u001b[B",
+        "\u001b[C",
+        "\r"
+      ],
+      "actualSequences": [
+        "\u001b",
+        "\u001b[D",
+        "\u001b[A",
+        "\u001b[B",
+        "\u001b[C",
+        "\r"
+      ],
+      "passed": true
+    }
+  },
+  "summary": {
+    "liveTerminalPassed": true,
+    "previewRefreshPassed": true,
+    "fleetCentersPassed": 24,
+    "fleetCentersTested": 24,
+    "mobileFirstGroupPassed": true,
+    "fleetByteProofPassed": true
+  },
+  "passed": true
+}

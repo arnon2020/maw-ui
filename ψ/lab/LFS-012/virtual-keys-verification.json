@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-29T01:35:26.225Z",
+  "generatedAt": "2026-07-29T01:55:30.663Z",
   "base": "http://127.0.0.1:5177",
   "disposableTarget": "lfs012-vkeys:0",
   "keyBytes": {
@@ -44,11 +44,11 @@
     "capture": "bash-5.2$ stty raw -echo; od -An -tx1 -v -w1\n 1b\n    09\n       1b\n          5b\n             44\n                1b\n                   5b\n                      41\n                         1b\n                            5b\n                               42\n                                  1b\n                                     5b\n                                        43\n                                           03\n                                              0d"
   },
   "history": {
-    "historyMode": false,
-    "historyShowsEarlyOutput": false,
+    "historyMode": true,
+    "historyShowsEarlyOutput": true,
     "liveMode": true,
-    "liveShowsTail": false,
-    "swipeMode": false,
+    "liveShowsTail": true,
+    "swipeMode": true,
     "escapeMode": true
   },
   "states": [
@@ -65,6 +65,7 @@
         "barTop": 722,
         "barBottom": 787,
         "barVisible": true,
+        "surfaceViewportLocked": true,
         "runningAnimations": 0
       },
       "rafCount": 0,
@@ -184,6 +185,7 @@
         "barTop": 422,
         "barBottom": 487,
         "barVisible": true,
+        "surfaceViewportLocked": true,
         "runningAnimations": 0
       },
       "focusedTerminalInput": true,
@@ -298,11 +300,12 @@
         "viewportWidth": 360,
         "viewportHeight": 800,
         "documentWidth": 360,
-        "documentHeight": 7534,
-        "scrollY": 6692,
+        "documentHeight": 8116,
+        "scrollY": 0,
         "barTop": 735,
         "barBottom": 800,
         "barVisible": true,
+        "surfaceViewportLocked": true,
         "runningAnimations": 0
       },
       "rafCount": 0,
@@ -417,11 +420,12 @@
         "viewportWidth": 360,
         "viewportHeight": 500,
         "documentWidth": 360,
-        "documentHeight": 7534,
-        "scrollY": 6692,
+        "documentHeight": 8101,
+        "scrollY": 0,
         "barTop": 435,
         "barBottom": 500,
         "barVisible": true,
+        "surfaceViewportLocked": true,
         "runningAnimations": 0
       },
       "focusedTerminalInput": true,
@@ -541,6 +545,7 @@
         "barTop": 766,
         "barBottom": 831,
         "barVisible": true,
+        "surfaceViewportLocked": true,
         "runningAnimations": 0
       },
       "rafCount": 0,
@@ -660,6 +665,7 @@
         "barTop": 466,
         "barBottom": 531,
         "barVisible": true,
+        "surfaceViewportLocked": true,
         "runningAnimations": 0
       },
       "focusedTerminalInput": true,
@@ -774,11 +780,12 @@
         "viewportWidth": 390,
         "viewportHeight": 844,
         "documentWidth": 390,
-        "documentHeight": 7232,
-        "scrollY": 6342,
+        "documentHeight": 7649,
+        "scrollY": 0,
         "barTop": 779,
         "barBottom": 844,
         "barVisible": true,
+        "surfaceViewportLocked": true,
         "runningAnimations": 0
       },
       "rafCount": 0,
@@ -893,11 +900,12 @@
         "viewportWidth": 390,
         "viewportHeight": 544,
         "documentWidth": 390,
-        "documentHeight": 7232,
-        "scrollY": 6342,
+        "documentHeight": 7649,
+        "scrollY": 0,
         "barTop": 479,
         "barBottom": 544,
         "barVisible": true,
+        "surfaceViewportLocked": true,
         "runningAnimations": 0
       },
       "focusedTerminalInput": true,
@@ -1017,6 +1025,7 @@
         "barTop": 946,
         "barBottom": 1011,
         "barVisible": true,
+        "surfaceViewportLocked": true,
         "runningAnimations": 0
       },
       "rafCount": 0,
@@ -1136,6 +1145,7 @@
         "barTop": 646,
         "barBottom": 711,
         "barVisible": true,
+        "surfaceViewportLocked": true,
         "runningAnimations": 0
       },
       "focusedTerminalInput": true,
@@ -1250,11 +1260,12 @@
         "viewportWidth": 768,
         "viewportHeight": 1024,
         "documentWidth": 768,
-        "documentHeight": 5871,
-        "scrollY": 4847,
+        "documentHeight": 6780,
+        "scrollY": 0,
         "barTop": 959,
         "barBottom": 1024,
         "barVisible": true,
+        "surfaceViewportLocked": true,
         "runningAnimations": 0
       },
       "rafCount": 0,
@@ -1369,11 +1380,12 @@
         "viewportWidth": 768,
         "viewportHeight": 724,
         "documentWidth": 768,
-        "documentHeight": 5871,
-        "scrollY": 4847,
+        "documentHeight": 6780,
+        "scrollY": 0,
         "barTop": 659,
         "barBottom": 724,
         "barVisible": true,
+        "surfaceViewportLocked": true,
         "runningAnimations": 0
       },
       "focusedTerminalInput": true,
@@ -1493,6 +1505,7 @@
         "barTop": 312,
         "barBottom": 377,
         "barVisible": true,
+        "surfaceViewportLocked": true,
         "runningAnimations": 0
       },
       "rafCount": 0,
@@ -1612,6 +1625,7 @@
         "barTop": 222,
         "barBottom": 287,
         "barVisible": true,
+        "surfaceViewportLocked": true,
         "runningAnimations": 0
       },
       "focusedTerminalInput": true,
@@ -1726,11 +1740,12 @@
         "viewportWidth": 844,
         "viewportHeight": 390,
         "documentWidth": 844,
-        "documentHeight": 5828,
-        "scrollY": 5438,
+        "documentHeight": 6740,
+        "scrollY": 0,
         "barTop": 325,
         "barBottom": 390,
         "barVisible": true,
+        "surfaceViewportLocked": true,
         "runningAnimations": 0
       },
       "rafCount": 0,
@@ -1845,11 +1860,12 @@
         "viewportWidth": 844,
         "viewportHeight": 300,
         "documentWidth": 844,
-        "documentHeight": 5828,
-        "scrollY": 5438,
+        "documentHeight": 6740,
+        "scrollY": 0,
         "barTop": 235,
         "barBottom": 300,
         "barVisible": true,
+        "surfaceViewportLocked": true,
         "runningAnimations": 0
       },
       "focusedTerminalInput": true,
@@ -1967,10 +1983,10 @@
     "minimumTargetPassed": 160,
     "barsVisible": 16,
     "noHorizontalOverflow": 16,
-    "viewportLocked": 8,
+    "viewportLocked": 16,
     "keyboardFocusPassed": 16,
     "staticIdleRafPassed": 16,
     "staticAnimationsPassed": 16
   },
-  "passed": false
+  "passed": true
 }

@@ -56,10 +56,16 @@ async function openSurface(page, surface) {
     await page.goto(`${base}/?static=1#fleet`, { waitUntil: "domcontentloaded" });
     const row = page.locator(`[data-target="${target}"] [role="button"]`).first();
     await row.waitFor({ state: "visible" });
-    await row.click();
+    // On mobile the directory row can start several screens below the fold.
+    // A DOM click follows the same React handler without Playwright's
+    // scroll-then-layout race against the responsive Fleet reordering.
+    await row.evaluate((element) => element.click());
     const fullscreen = page.locator('[title^="Fullscreen"]').first();
-    await fullscreen.waitFor({ state: "visible" });
-    await fullscreen.click();
+    // The pinned preview can extend below a short landscape viewport. The
+    // control is still the real UI path into the modal, so click it while
+    // attached and reserve viewport/hit-testing assertions for the modal.
+    await fullscreen.waitFor({ state: "attached" });
+    await fullscreen.click({ force: true });
   }
   await page.waitForFunction(() => {
     const button = document.querySelector("[data-terminal-history-toggle]");
@@ -214,8 +220,11 @@ try {
         });
       });
       await openSurface(page, surfaceName);
+      // Allow the finite mount/fit work to settle, then measure a fresh idle
+      // window. Static acceptance forbids recurring work, not initial layout.
+      await page.waitForTimeout(1000);
       await page.evaluate(() => { window.__lfs012RafCount = 0; });
-      await page.waitForTimeout(350);
+      await page.waitForTimeout(500);
       const before = {
         profile: profile.name,
         surface: surfaceName,
