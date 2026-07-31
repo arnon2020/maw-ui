@@ -418,15 +418,18 @@ export function XTerminal({
         return true;
       });
 
-      // Auto-resize with debounce
+      // Auto-resize with debounce — cols are locked to backend's PINNED_COLS
+      // (reported via the "attached" message). Only rows float with the viewport.
       resizeObserver = new ResizeObserver(() => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
           try {
             fit.fit();
             const requestedSize = requestedTerminalSize(term);
-            if (term.cols !== requestedSize.cols || term.rows !== requestedSize.rows) {
-              term.resize(requestedSize.cols, requestedSize.rows);
+            const cols = attachedSize ? attachedSize.cols : requestedSize.cols;
+            const rows = requestedSize.rows;
+            if (term.cols !== cols || term.rows !== rows) {
+              term.resize(cols, rows);
             }
             if (ws && ws.readyState === WebSocket.OPEN) {
               ws.send(JSON.stringify({ type: "resize", cols: term.cols, rows: term.rows }));
