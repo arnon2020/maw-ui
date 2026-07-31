@@ -11,6 +11,8 @@ interface TerminalKeyBarProps {
   onKey: (key: TerminalKey, sequence: string) => void;
   onHistoryToggle: () => void;
   onKeyboard: () => void;
+  onScrollUp: () => void;
+  onScrollDown: () => void;
 }
 
 const KEYS: { key: TerminalKey; label: string; ariaLabel: string; group: string }[] = [
@@ -42,6 +44,8 @@ export function TerminalKeyBar({
   onKey,
   onHistoryToggle,
   onKeyboard,
+  onScrollUp,
+  onScrollDown,
 }: TerminalKeyBarProps) {
   const [modifiers, setModifiers] = useState<TerminalModifiers>({ ctrl: false, alt: false });
   const toggleModifier = (modifier: keyof TerminalModifiers) => {
@@ -87,6 +91,28 @@ export function TerminalKeyBar({
           {label}
         </button>
       ))}
+      <button
+        type="button"
+        className={keyClass}
+        aria-label="Scroll up"
+        data-terminal-scroll="up"
+        disabled={disabled}
+        onPointerDown={(event) => event.preventDefault()}
+        onClick={onScrollUp}
+      >
+        Scroll↑
+      </button>
+      <button
+        type="button"
+        className={keyClass}
+        aria-label="Scroll down"
+        data-terminal-scroll="down"
+        disabled={disabled}
+        onPointerDown={(event) => event.preventDefault()}
+        onClick={onScrollDown}
+      >
+        Scroll↓
+      </button>
       <button
         type="button"
         className={`${keyClass} ${historyActive ? "border-cyan-400/40 bg-cyan-400/10 text-cyan-200" : ""}`}

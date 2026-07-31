@@ -310,7 +310,6 @@ export function XTerminal({
         if (!ws || ws.readyState !== WebSocket.OPEN) return;
         ws.send(encoder.encode(sequence));
         requestCaptureRefresh(target);
-        term.focus();
       };
       const scrollTmuxHistory = (direction: "up" | "down", steps: number) => {
         sendSequence(tmuxMouseWheelSequence(direction, steps, term.cols, term.rows));
@@ -322,20 +321,26 @@ export function XTerminal({
         const detail = (event as CustomEvent<{
           target?: string;
           sequence?: string;
-          action?: "history" | "live" | "focus";
+          action?: "history" | "live" | "focus" | "scrollUp" | "scrollDown";
         }>).detail;
         if (!detail || detail.target !== target) return;
-        if (detail.action === "history") {
+        if (detail.action === "scrollUp") {
+          scrollTmuxHistory("up", 40);
+        } else if (detail.action === "scrollDown") {
+          scrollTmuxHistory("down", 40);
+        } else if (detail.action === "history") {
           scrollTmuxHistory("up", 120);
         } else if (detail.action === "live") {
           sendSequence(TERMINAL_KEY_SEQUENCES.esc);
           term.scrollToBottom();
           updateHistoryActive(false);
+          term.focus();
         } else if (detail.action === "focus") {
           term.focus();
         } else if (typeof detail.sequence === "string") {
           sendSequence(detail.sequence);
           if (detail.sequence === TERMINAL_KEY_SEQUENCES.esc) updateHistoryActive(false);
+          term.focus();
         }
       };
       window.addEventListener(TERMINAL_KEY_EVENT, terminalKeyHandler);
@@ -452,7 +457,7 @@ export function XTerminal({
     };
   }, [target, readOnly, staticMode]);
 
-  const dispatchTerminalInput = (detail: { sequence?: string; action?: "history" | "live" | "focus" }) => {
+  const dispatchTerminalInput = (detail: { sequence?: string; action?: "history" | "live" | "focus" | "scrollUp" | "scrollDown" }) => {
     window.dispatchEvent(new CustomEvent(TERMINAL_KEY_EVENT, { detail: { target, ...detail } }));
   };
 
@@ -464,7 +469,7 @@ export function XTerminal({
     <div className="terminal-shell relative w-full h-full min-h-0 flex flex-col">
       <div
         ref={containerRef}
-        className="flex-1 min-h-0 w-full overflow-auto overscroll-contain"
+        className="flex-1 min-h-0 w-full overflow-hidden"
         data-terminal-touch-surface
       />
       {!readOnly && inputAccessory}
@@ -474,6 +479,8 @@ export function XTerminal({
           onKey={handleVirtualKey}
           onHistoryToggle={() => dispatchTerminalInput({ action: historyActive ? "live" : "history" })}
           onKeyboard={() => dispatchTerminalInput({ action: "focus" })}
+          onScrollUp={() => dispatchTerminalInput({ action: "scrollUp" })}
+          onScrollDown={() => dispatchTerminalInput({ action: "scrollDown" })}
         />
       )}
     </div>
