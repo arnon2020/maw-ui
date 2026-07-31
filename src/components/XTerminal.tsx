@@ -216,7 +216,7 @@ export function XTerminal({
         term.open(container);
         try {
           const webgl = new WebglAddon();
-          webgl.onContextLoss(() => webgl.dispose());
+          webgl.onContextLoss(() => { if (container.isConnected) webgl.dispose(); });
           term.loadAddon(webgl);
         } catch { /* fallback to canvas renderer if WebGL unavailable */ }
         fit.fit();
@@ -460,7 +460,26 @@ export function XTerminal({
       dataSub?.dispose();
       binSub?.dispose();
       ws?.close();
-      term.dispose();
+      try {
+        term.dispose();
+      } catch {
+        // @xterm/addon-webgl's own teardown can throw here: it registers an
+        // internal disposable (during WebglAddon.activate()) that reads
+        // `this._terminal._core._store._isDisposed` with no optional
+        // chaining. When term.dispose() cascades into AddonManager.dispose()
+        // -> WebglAddon.dispose(), `_core._store` can already be undefined,
+        // producing "Cannot read properties of undefined (reading
+        // '_isDisposed')" — verified by loading the real xterm.js +
+        // addon-webgl bundles and reproducing the exact stack trace. This is
+        // a disposal-order bug inside the third-party addon, not in this
+        // component, and it happens regardless of whether the WebGL addon is
+        // disposed explicitly first or left to term.dispose()'s cascade.
+        // Swallow it: the container is being unmounted by React anyway, so
+        // there is nothing left to keep consistent, but an uncaught throw
+        // here happens during React's commit phase and trips the
+        // ErrorBoundary ("Something crashed / Reload") for what is actually
+        // a clean exit.
+      }
     };
   }, [target, readOnly, staticMode]);
 
