@@ -59,11 +59,11 @@ export function requestCaptureRefresh(target: string): void {
   if (!target || typeof window === "undefined") return;
   for (const timer of refreshTimers.get(target) || []) clearTimeout(timer);
   const timers = [
-    setTimeout(() => void refreshCapture(target), 120),
+    setTimeout(() => void refreshCapture(target), 800),
     setTimeout(() => {
       void refreshCapture(target);
       refreshTimers.delete(target);
-    }, 850),
+    }, 3000),
   ];
   refreshTimers.set(target, timers);
 }

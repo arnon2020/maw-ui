@@ -5,7 +5,6 @@ import "@xterm/xterm/css/xterm.css";
 import { wsUrl } from "../lib/api";
 import { TERMINAL_KEY_EVENT, TERMINAL_KEY_SEQUENCES, tmuxMouseWheelSequence, type TerminalKey } from "../lib/terminalInput";
 import { useStaticMode } from "../lib/staticMode";
-import { requestCaptureRefresh } from "../lib/captureStore";
 import type { AgentState } from "../lib/types";
 import { TerminalKeyBar } from "./TerminalKeyBar";
 
@@ -309,7 +308,6 @@ export function XTerminal({
       const sendSequence = (sequence: string) => {
         if (!ws || ws.readyState !== WebSocket.OPEN) return;
         ws.send(encoder.encode(sequence));
-        requestCaptureRefresh(target);
       };
       const scrollTmuxHistory = (direction: "up" | "down", steps: number) => {
         sendSequence(tmuxMouseWheelSequence(direction, steps, term.cols, term.rows));
