@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
+import { WebglAddon } from "@xterm/addon-webgl";
 import "@xterm/xterm/css/xterm.css";
 import { wsUrl } from "../lib/api";
 import { TERMINAL_KEY_EVENT, TERMINAL_KEY_SEQUENCES, tmuxMouseWheelSequence, type TerminalKey } from "../lib/terminalInput";
@@ -213,6 +214,11 @@ export function XTerminal({
     const openTimer = setTimeout(() => {
       try {
         term.open(container);
+        try {
+          const webgl = new WebglAddon();
+          webgl.onContextLoss(() => webgl.dispose());
+          term.loadAddon(webgl);
+        } catch { /* fallback to canvas renderer if WebGL unavailable */ }
         fit.fit();
         const requestedSize = requestedTerminalSize(term);
         if (term.cols !== requestedSize.cols || term.rows !== requestedSize.rows) {
