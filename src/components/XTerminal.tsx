@@ -216,7 +216,7 @@ export function XTerminal({
         term.open(container);
         try {
           const webgl = new WebglAddon();
-          webgl.onContextLoss(() => webgl.dispose());
+          webgl.onContextLoss(() => { if (container.isConnected) webgl.dispose(); });
           term.loadAddon(webgl);
         } catch { /* fallback to canvas renderer if WebGL unavailable */ }
         fit.fit();
