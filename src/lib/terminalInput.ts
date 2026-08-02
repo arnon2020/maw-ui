@@ -1,6 +1,7 @@
 export const TERMINAL_KEY_SEQUENCES = {
   esc: "\x1b",
   tab: "\t",
+  shiftTab: "\x1b[Z",
   up: "\x1b[A",
   down: "\x1b[B",
   left: "\x1b[D",

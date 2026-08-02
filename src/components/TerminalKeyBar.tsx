@@ -18,6 +18,7 @@ interface TerminalKeyBarProps {
 const KEYS: { key: TerminalKey; label: string; ariaLabel: string; group: string }[] = [
   { key: "esc", label: "Esc", ariaLabel: "Escape", group: "control" },
   { key: "tab", label: "Tab", ariaLabel: "Tab", group: "control" },
+  { key: "shiftTab", label: "⇧Tab", ariaLabel: "Shift Tab", group: "control" },
   { key: "left", label: "←", ariaLabel: "Arrow left", group: "navigation" },
   { key: "up", label: "↑", ariaLabel: "Arrow up", group: "navigation" },
   { key: "down", label: "↓", ariaLabel: "Arrow down", group: "navigation" },
