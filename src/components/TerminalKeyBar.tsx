@@ -1,8 +1,6 @@
-import { useState } from "react";
 import {
   terminalKeySequence,
   type TerminalKey,
-  type TerminalModifiers,
 } from "../lib/terminalInput";
 
 interface TerminalKeyBarProps {
@@ -18,12 +16,12 @@ interface TerminalKeyBarProps {
 const KEYS: { key: TerminalKey; label: string; ariaLabel: string; group: string }[] = [
   { key: "esc", label: "Esc", ariaLabel: "Escape", group: "control" },
   { key: "tab", label: "Tab", ariaLabel: "Tab", group: "control" },
+  { key: "shiftTab", label: "⇧Tab", ariaLabel: "Shift Tab", group: "control" },
   { key: "left", label: "←", ariaLabel: "Arrow left", group: "navigation" },
   { key: "up", label: "↑", ariaLabel: "Arrow up", group: "navigation" },
   { key: "down", label: "↓", ariaLabel: "Arrow down", group: "navigation" },
   { key: "right", label: "→", ariaLabel: "Arrow right", group: "navigation" },
-  { key: "home", label: "Home", ariaLabel: "Home", group: "navigation" },
-  { key: "end", label: "End", ariaLabel: "End", group: "navigation" },
+  { key: "ctrlEnd", label: "Ctrl+End", ariaLabel: "Control End", group: "navigation" },
   { key: "pageUp", label: "PgUp", ariaLabel: "Page up", group: "navigation" },
   { key: "pageDown", label: "PgDn", ariaLabel: "Page down", group: "navigation" },
   { key: "ctrlC", label: "Ctrl+C", ariaLabel: "Control C", group: "control" },
@@ -47,12 +45,8 @@ export function TerminalKeyBar({
   onScrollUp,
   onScrollDown,
 }: TerminalKeyBarProps) {
-  const [modifiers, setModifiers] = useState<TerminalModifiers>({ ctrl: false, alt: false });
-  const toggleModifier = (modifier: keyof TerminalModifiers) => {
-    setModifiers((current) => ({ ...current, [modifier]: !current[modifier] }));
-  };
   const sendKey = (key: TerminalKey) => {
-    onKey(key, terminalKeySequence(key, modifiers));
+    onKey(key, terminalKeySequence(key));
   };
 
   return (
@@ -61,21 +55,6 @@ export function TerminalKeyBar({
       aria-label="Terminal virtual keys"
       data-terminal-key-bar
     >
-      {(["ctrl", "alt"] as const).map((modifier) => (
-        <button
-          key={modifier}
-          type="button"
-          className={`${keyClass} ${modifiers[modifier] ? "border-cyan-400/50 bg-cyan-400/15 text-cyan-100" : ""}`}
-          aria-label={`${modifier === "ctrl" ? "Control" : "Alt"} sticky modifier`}
-          aria-pressed={modifiers[modifier]}
-          data-terminal-modifier={modifier}
-          disabled={disabled}
-          onPointerDown={(event) => event.preventDefault()}
-          onClick={() => toggleModifier(modifier)}
-        >
-          {modifier === "ctrl" ? "Ctrl" : "Alt"}
-        </button>
-      ))}
       {KEYS.map(({ key, label, ariaLabel, group }) => (
         <button
           key={key}

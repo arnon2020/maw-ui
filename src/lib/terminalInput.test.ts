@@ -10,12 +10,14 @@ describe("terminal input sequences", () => {
     expect(TERMINAL_KEY_SEQUENCES).toEqual({
       esc: "\x1b",
       tab: "\t",
+      shiftTab: "\x1b[Z",
       up: "\x1b[A",
       down: "\x1b[B",
       left: "\x1b[D",
       right: "\x1b[C",
       home: "\x1b[1~",
       end: "\x1b[4~",
+      ctrlEnd: "\x1b[1;5F",
       pageUp: "\x1b[5~",
       pageDown: "\x1b[6~",
       ctrlC: "\x03",
@@ -34,6 +36,7 @@ describe("terminal input sequences", () => {
     expect(terminalKeySequence("pageDown", { ctrl: true, alt: false })).toBe("\x1b[6;5~");
     expect(terminalKeySequence("slash", { ctrl: true, alt: false })).toBe("\x1f");
     expect(terminalKeySequence("pipe", { ctrl: true, alt: false })).toBe("\x1c");
+    expect(terminalKeySequence("shiftTab", { ctrl: false, alt: false })).toBe("\x1b[Z");
     expect(terminalKeySequence("left", { ctrl: false, alt: true })).toBe("\x1b\x1b[D");
     expect(terminalKeySequence("home", { ctrl: true, alt: true })).toBe("\x1b\x1b[1;5H");
     expect(terminalKeySequence("ctrlD", { ctrl: true, alt: false })).toBe("\x04");
