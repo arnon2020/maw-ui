@@ -17,6 +17,7 @@ describe("terminal input sequences", () => {
       right: "\x1b[C",
       home: "\x1b[1~",
       end: "\x1b[4~",
+      ctrlEnd: "\x1b[1;5F",
       pageUp: "\x1b[5~",
       pageDown: "\x1b[6~",
       ctrlC: "\x03",
