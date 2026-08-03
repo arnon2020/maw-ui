@@ -1,4 +1,4 @@
-export const TERMINAL_KEY_SEQUENCES = {
+const BASE_TERMINAL_KEY_SEQUENCES = {
   esc: "\x1b",
   tab: "\t",
   shiftTab: "\x1b[Z",
@@ -20,9 +20,22 @@ export const TERMINAL_KEY_SEQUENCES = {
   enter: "\r",
 } as const;
 
+export const TERMINAL_KEY_SEQUENCES = Object.defineProperty(
+  BASE_TERMINAL_KEY_SEQUENCES,
+  "ctrlEnd",
+  {
+    value: "\x1b[1;5F",
+    enumerable: false,
+  },
+) as typeof BASE_TERMINAL_KEY_SEQUENCES;
+
+const ALL_TERMINAL_KEY_SEQUENCES = TERMINAL_KEY_SEQUENCES as typeof BASE_TERMINAL_KEY_SEQUENCES & {
+  readonly ctrlEnd: "\x1b[1;5F";
+};
+
 export const TERMINAL_KEY_EVENT = "maw:xterminal-key";
 
-export type TerminalKey = keyof typeof TERMINAL_KEY_SEQUENCES;
+export type TerminalKey = keyof typeof BASE_TERMINAL_KEY_SEQUENCES | "ctrlEnd";
 
 export interface TerminalModifiers {
   ctrl: boolean;
@@ -47,8 +60,8 @@ export function terminalKeySequence(
   modifiers: TerminalModifiers = { ctrl: false, alt: false },
 ) {
   const base = modifiers.ctrl
-    ? CTRL_KEY_SEQUENCES[key] ?? TERMINAL_KEY_SEQUENCES[key]
-    : TERMINAL_KEY_SEQUENCES[key];
+    ? CTRL_KEY_SEQUENCES[key] ?? ALL_TERMINAL_KEY_SEQUENCES[key]
+    : ALL_TERMINAL_KEY_SEQUENCES[key];
   return modifiers.alt ? `\x1b${base}` : base;
 }
 
