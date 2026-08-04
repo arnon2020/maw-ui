@@ -10,7 +10,7 @@ import { useChatLog, useOracleNames, useFilteredEntries, useTimelineGroups, useL
 type Mode = "live" | "timeline" | "threads";
 
 /** Name the human participant posts under — matches isHuman() in chat/types.ts */
-const HUMAN_NAME = "nat";
+const HUMAN_NAME = "arnon";
 
 interface ChatViewProps {
   agents: AgentState[];

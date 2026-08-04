@@ -31,5 +31,5 @@ export function displayName(name: string): string {
 }
 
 export function isHuman(name: string): boolean {
-  return name === "nat";
+  return name === "arnon";
 }
