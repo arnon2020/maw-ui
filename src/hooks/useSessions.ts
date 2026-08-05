@@ -17,15 +17,32 @@ import { fetchWithRetry } from "../lib/fetchWithRetry";
 const BUSY_TIMEOUT = 15_000; // 15s without feed → ready
 const IDLE_TIMEOUT = 60_000; // 60s without feed → idle
 
+export interface WsErrorNotice {
+  id: number;
+  message: string;
+  target?: string;
+  action?: string;
+}
+
 function normalizePaneStatus(status: unknown): PaneStatus | undefined {
   return status === "busy" || status === "ready" || status === "idle" || status === "crashed"
     ? status
     : undefined;
 }
 
+function wsErrorMessage(data: any): string {
+  if (typeof data.error === "string" && data.error.trim()) return data.error;
+  if (typeof data.message === "string" && data.message.trim()) return data.message;
+  if (data.error && typeof data.error === "object") {
+    try { return JSON.stringify(data.error); } catch {}
+  }
+  return "Backend action failed";
+}
+
 export function useSessions() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [registryRevision, setRegistryRevision] = useState(0);
+  const [wsError, setWsError] = useState<WsErrorNotice | null>(null);
   const sessionsRef = useRef(sessions);
   sessionsRef.current = sessions;
 
@@ -254,6 +271,8 @@ export function useSessions() {
     }
   }, []);
 
+  const dismissWsError = useCallback(() => setWsError(null), []);
+
   const handleMessage = useCallback((data: any) => {
     if (data.type === "sessions") {
       const nextSessions = (data.sessions as Session[]).filter(s => !s.name.startsWith("maw-pty-"));
@@ -326,6 +345,15 @@ export function useSessions() {
     } else if (data.type === "action-ok") {
       if (data.action === "sleep") markSlept(data.target);
       else if (data.action === "wake") clearSlept(data.target);
+    } else if (data.type === "error") {
+      const target = typeof data.target === "string" ? data.target : undefined;
+      const action = typeof data.action === "string" ? data.action : undefined;
+      setWsError({
+        id: Date.now(),
+        message: wsErrorMessage(data),
+        target,
+        action,
+      });
     }
   }, []);
 
@@ -387,5 +415,7 @@ export function useSessions() {
     agentFeedLog,
     teams,
     registryRevision,
+    wsError,
+    dismissWsError,
   };
 }

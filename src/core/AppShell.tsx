@@ -10,6 +10,7 @@ import { useFleetStore } from "../lib/store";
 import { StatusBar } from "../components/StatusBar";
 import { ErrorBoundary } from "../components/ErrorBoundary";
 import { PinLock } from "../components/PinLock";
+import { WsErrorNotice } from "../components/WsErrorNotice";
 import { setSoundMuted } from "../lib/sounds";
 import type { AgentState } from "../lib/types";
 
@@ -50,6 +51,8 @@ export function AppShell({ view, fullHeight, children }: AppShellProps) {
     agentFeedLog,
     teams,
     registryRevision,
+    wsError,
+    dismissWsError,
   } = useSessions();
 
   const muted = useFleetStore((s) => s.muted);
@@ -98,6 +101,7 @@ export function AppShell({ view, fullHeight, children }: AppShellProps) {
               onToggleMute={toggleMuted}
             />
           </div>
+          <WsErrorNotice notice={wsError} onDismiss={dismissWsError} />
           {children(ctx)}
           {reconnecting && (
             <div className="fixed inset-0 z-[9998] flex items-center justify-center pointer-events-none">

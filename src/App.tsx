@@ -21,6 +21,7 @@ import { DashboardView } from "./components/DashboardView";
 import FederationView from "./components/FederationView";
 import DashboardPro from "./components/DashboardPro";
 import { ConnectPage } from "./components/ConnectPage";
+import { WsErrorNotice } from "./components/WsErrorNotice";
 import { isRemote } from "./lib/api";
 // BoBFaceView, BoardView, LoopsView, JarvisView, HallOfFameView, IPadDashboard
 // removed from nav — no upstream backends. Files kept per Nothing is Deleted.
@@ -170,7 +171,7 @@ function useAudioUnlock() {
 }
 
 /** Shared layout — StatusBar + overlays rendered once for all views */
-function Layout({ activeView, connected, reconnecting, agentCount, sessionCount, tabCount, askCount, muted, onToggleMute, onJump, onInbox, statusBarChildren, terminalModal, showShortcuts, onCloseShortcuts, jumpOverlay, inboxOverlay, broadcastModal, fullHeight, children }: {
+function Layout({ activeView, connected, reconnecting, agentCount, sessionCount, tabCount, askCount, muted, onToggleMute, onJump, onInbox, statusBarChildren, terminalModal, showShortcuts, onCloseShortcuts, jumpOverlay, inboxOverlay, broadcastModal, wsErrorNotice, onDismissWsError, fullHeight, children }: {
   activeView: string;
   connected: boolean;
   reconnecting?: boolean;
@@ -189,6 +190,8 @@ function Layout({ activeView, connected, reconnecting, agentCount, sessionCount,
   jumpOverlay: ReactNode;
   inboxOverlay: ReactNode;
   broadcastModal?: ReactNode;
+  wsErrorNotice?: ReturnType<typeof useSessions>["wsError"];
+  onDismissWsError?: ReturnType<typeof useSessions>["dismissWsError"];
   fullHeight?: boolean;
   children: ReactNode;
 }) {
@@ -210,6 +213,7 @@ function Layout({ activeView, connected, reconnecting, agentCount, sessionCount,
       {jumpOverlay}
       {inboxOverlay}
       {broadcastModal}
+      <WsErrorNotice notice={wsErrorNotice || null} onDismiss={onDismissWsError || (() => {})} />
 
       {/* Connection lost overlay */}
       {reconnecting && (
@@ -303,6 +307,8 @@ export function App() {
     agentFeedLog,
     teams,
     registryRevision,
+    wsError,
+    dismissWsError,
   } = useSessions();
 
   // Source filter: all / local / remote (synced via CustomEvent from FloatingButtons)
@@ -430,6 +436,8 @@ export function App() {
       {showBroadcast && <BroadcastModal agents={agents} send={send} onClose={onCloseBroadcast} />}
       {showOracleSearch && <OracleSearch onClose={onCloseSearch} />}
     </>),
+    wsErrorNotice: wsError,
+    onDismissWsError: dismissWsError,
   };
 
   // Show loading skeleton while WebSocket is connecting (before first sessions message)
