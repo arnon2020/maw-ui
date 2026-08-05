@@ -6,7 +6,7 @@ import {
   showingAgentCount,
 } from "./SummonPanel";
 import { renderToStaticMarkup } from "react-dom/server";
-import { summonAction } from "../lib/summonAgent";
+import { summonAction, summonSuccessMessage } from "../lib/summonAgent";
 
 describe("SummonPanel confirm keyboard guard", () => {
   test("does not launch from the combobox Enter that advances to confirm", () => {
@@ -97,6 +97,23 @@ describe("SummonPanel registry status badges", () => {
     );
     expect(markup).toContain("DORMANT");
     expect(markup).toContain("status: dormant");
+  });
+});
+
+describe("SummonPanel summon success message", () => {
+  test("names the session:window the wake actually resolved to", () => {
+    // The whole point: a summon can land somewhere other than the name that
+    // was clicked (a registry window sharing the oracle's repo). Say where.
+    expect(summonSuccessMessage("", undefined, "lao-index:scout-oracle"))
+      .toBe("Launch sent → lao-index:scout-oracle");
+    expect(summonSuccessMessage("do the thing", "queued", "53-citation:citation-oracle"))
+      .toBe("Task queued → 53-citation:citation-oracle");
+  });
+
+  test("reads exactly as before against a build that sends no resolved target", () => {
+    expect(summonSuccessMessage("")).toBe("Launch sent");
+    expect(summonSuccessMessage("do the thing")).toBe("Task sent");
+    expect(summonSuccessMessage("do the thing", "queued")).toBe("Task queued");
   });
 });
 

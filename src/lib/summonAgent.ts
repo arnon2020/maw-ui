@@ -34,6 +34,27 @@ export function summonAction(
     : { kind: "request", path: "/api/wake", body: { target: name, oracle: name } };
 }
 
+/**
+ * What to say after an accepted summon.
+ *
+ * `resolved` is the `session:window` maw says this wake actually lands on, and
+ * it is NOT always the name that was clicked: a registry window can carry an
+ * oracle's name because it shares that oracle's repo, so "summon holmes" once
+ * woke `lao-index:scout-oracle`. Showing the resolved target makes that
+ * visible here instead of only inside the pane that woke up. Older maw-js /
+ * maw-rs builds omit the field — then this reads exactly as it did before.
+ */
+export function summonSuccessMessage(
+  task: string,
+  state?: string,
+  resolved?: string,
+): string {
+  const base = task.trim()
+    ? state === "queued" ? "Task queued" : "Task sent"
+    : "Launch sent";
+  return resolved ? `${base} → ${resolved}` : base;
+}
+
 export async function launchAgent(
   name: string,
   task: string,
@@ -77,9 +98,7 @@ export async function launchAgent(
     const state = textField(data.state);
     return {
       ok: true,
-      message: task.trim()
-        ? state === "queued" ? "Task queued" : "Task sent"
-        : "Launch sent",
+      message: summonSuccessMessage(task, state, textField(data.resolved)),
     };
   } catch (error) {
     return { ok: false, error: error instanceof Error ? error.message : String(error) };
