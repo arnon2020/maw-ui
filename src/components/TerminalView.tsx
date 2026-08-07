@@ -77,6 +77,25 @@ export const TerminalView = memo(function TerminalView({
     dispatchTerminalInput({ sequence });
   }, [dispatchTerminalInput, ptyConnected]);
 
+  // Erase has to be caught at `beforeinput`, not `keydown`. A tablet's virtual
+  // keyboard reports Backspace as keyCode 229 / key "Unidentified" and only
+  // names the edit in the InputEvent, so a keydown branch never fires there —
+  // which left the pane's own prompt impossible to erase from a tablet, since
+  // this box is the only way in. `beforeinput` fires for hardware keys too, and
+  // fires even when the box is empty and there is nothing local to delete
+  // (verified in Chromium), so one listener covers both.
+  useEffect(() => {
+    const field = keyboardInputRef.current;
+    if (!field) return;
+    const forwardErase = (event: Event) => {
+      if ((event as InputEvent).inputType !== "deleteContentBackward" || inputBuf) return;
+      event.preventDefault();
+      sendSequence(TERMINAL_KEY_SEQUENCES.backspace);
+    };
+    field.addEventListener("beforeinput", forwardErase);
+    return () => field.removeEventListener("beforeinput", forwardErase);
+  }, [inputBuf, sendSequence, selectedTarget, ptyConnected]);
+
   const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
     if (!selectedTarget) return;
     if (event.key === "Enter") {

@@ -24,6 +24,7 @@ const KEYS: { key: TerminalKey; label: string; ariaLabel: string; group: string 
   { key: "ctrlEnd", label: "Ctrl+End", ariaLabel: "Control End", group: "navigation" },
   { key: "pageUp", label: "PgUp", ariaLabel: "Page up", group: "navigation" },
   { key: "pageDown", label: "PgDn", ariaLabel: "Page down", group: "navigation" },
+  { key: "backspace", label: "⌫", ariaLabel: "Backspace", group: "control" },
   { key: "ctrlC", label: "Ctrl+C", ariaLabel: "Control C", group: "control" },
   { key: "ctrlD", label: "Ctrl+D", ariaLabel: "Control D", group: "control" },
   { key: "ctrlZ", label: "Ctrl+Z", ariaLabel: "Control Z", group: "control" },

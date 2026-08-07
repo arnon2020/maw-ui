@@ -22,6 +22,7 @@ describe("terminal input sequences", () => {
       pageDown: "\x1b[6~",
       ctrlC: "\x03",
       ctrlD: "\x04",
+      backspace: "\x7f",
       ctrlZ: "\x1a",
       ctrlL: "\x0c",
       ctrlR: "\x12",

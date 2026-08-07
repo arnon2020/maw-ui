@@ -13,6 +13,8 @@ export const TERMINAL_KEY_SEQUENCES = {
   pageDown: "\x1b[6~",
   ctrlC: "\x03",
   ctrlD: "\x04",
+  // DEL, not BS — what a terminal's erase key actually sends.
+  backspace: "\x7f",
   ctrlZ: "\x1a",
   ctrlL: "\x0c",
   ctrlR: "\x12",
