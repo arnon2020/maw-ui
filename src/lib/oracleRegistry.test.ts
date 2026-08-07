@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import {
   canonicalOracleName,
+  coalesceOracleRegistryRefresh,
   filterOracleNames,
   namesFromConfig,
   namesFromOracleResponse,
@@ -47,6 +48,36 @@ describe("oracle registry normalization", () => {
 });
 
 describe("oracle registry refresh triggers", () => {
+  test("coalesces simultaneous lifecycle and WebSocket refresh triggers", async () => {
+    const gate = { current: null as Promise<void> | null };
+    let fetchCount = 0;
+    let finishFetch!: () => void;
+    const fetchRegistry = () => {
+      fetchCount++;
+      return new Promise<void>((resolve) => {
+        finishFetch = resolve;
+      });
+    };
+
+    const lifecycleRefresh = coalesceOracleRegistryRefresh(gate, fetchRegistry);
+    const websocketRefresh = coalesceOracleRegistryRefresh(gate, fetchRegistry);
+
+    expect(lifecycleRefresh).toBe(websocketRefresh);
+    await Promise.resolve();
+    expect(fetchCount).toBe(1);
+
+    finishFetch();
+    await lifecycleRefresh;
+    expect(gate.current).toBeNull();
+
+    const nextRefresh = coalesceOracleRegistryRefresh(gate, async () => {
+      fetchCount++;
+    });
+    expect(nextRefresh).not.toBe(lifecycleRefresh);
+    await nextRefresh;
+    expect(fetchCount).toBe(2);
+  });
+
   test("refetches on every WebSocket open/reconnect and detaches cleanly", async () => {
     const openListeners = new Set<() => void>();
     const socket: OracleRegistryOpenSource = {

@@ -13,6 +13,29 @@ export type OracleRegistryOpenSource = {
 
 type OracleRegistryFetcher = () => Promise<OracleRegistryResult>;
 
+export type OracleRegistryRefreshGate = {
+  current: Promise<void> | null;
+};
+
+/**
+ * Share one in-flight registry refresh across lifecycle and WebSocket triggers.
+ * Once it settles, the next real trigger starts a fresh request.
+ */
+export function coalesceOracleRegistryRefresh(
+  gate: OracleRegistryRefreshGate,
+  refresh: () => Promise<void>,
+): Promise<void> {
+  if (gate.current) return gate.current;
+
+  const pending = Promise.resolve()
+    .then(refresh)
+    .finally(() => {
+      if (gate.current === pending) gate.current = null;
+    });
+  gate.current = pending;
+  return pending;
+}
+
 function isRecord(value: unknown): value is UnknownRecord {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }

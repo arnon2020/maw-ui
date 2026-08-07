@@ -2,7 +2,11 @@ import { memo, useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { ansiToHtml, processCapture } from "../lib/ansi";
 import { roomStyle } from "../lib/constants";
 import { refreshCapture, useCaptureContent } from "../lib/captureStore";
-import { canonicalOracleName, fetchOracleRegistry } from "../lib/oracleRegistry";
+import {
+  canonicalOracleName,
+  coalesceOracleRegistryRefresh,
+  fetchOracleRegistry,
+} from "../lib/oracleRegistry";
 import { useFps } from "./FpsCounter";
 import { useFleetStore } from "../lib/store";
 import { useStaticMode } from "../lib/staticMode";
@@ -165,6 +169,7 @@ export const OverviewGrid = memo(function OverviewGrid({
   const [registryLoading, setRegistryLoading] = useState(true);
   const [registryError, setRegistryError] = useState<string | null>(null);
   const registryRequestRef = useRef(0);
+  const registryRefreshRef = useRef<Promise<void> | null>(null);
   const registryMountedRef = useRef(true);
 
   const grouped = useFleetStore((s) => s.grouped);
@@ -172,30 +177,48 @@ export const OverviewGrid = memo(function OverviewGrid({
     return () => { registryMountedRef.current = false; };
   }, []);
 
-  const refreshRegistry = useCallback(async () => {
-    const request = ++registryRequestRef.current;
-    setRegistryLoading(true);
-    try {
-      const result = await fetchOracleRegistry();
-      if (!registryMountedRef.current || request !== registryRequestRef.current) return;
-      setKnownAgents(result.names);
-      setRegistryError(null);
-    } catch (error) {
-      if (!registryMountedRef.current || request !== registryRequestRef.current) return;
-      // Keep the last-known-good list; only freshness changes.
-      setRegistryError(error instanceof Error ? error.message : "Registry refresh failed");
-    } finally {
-      if (registryMountedRef.current && request === registryRequestRef.current) {
-        setRegistryLoading(false);
+  const refreshRegistry = useCallback(() => {
+    return coalesceOracleRegistryRefresh(registryRefreshRef, async () => {
+      const request = ++registryRequestRef.current;
+      setRegistryLoading(true);
+      try {
+        const result = await fetchOracleRegistry();
+        if (!registryMountedRef.current || request !== registryRequestRef.current) return;
+        setKnownAgents(result.names);
+        setRegistryError(null);
+      } catch (error) {
+        if (!registryMountedRef.current || request !== registryRequestRef.current) return;
+        // Keep the last-known-good list; only freshness changes.
+        setRegistryError(error instanceof Error ? error.message : "Registry refresh failed");
+      } finally {
+        if (registryMountedRef.current && request === registryRequestRef.current) {
+          setRegistryLoading(false);
+        }
       }
-    }
+    });
   }, []);
 
   // Mount fetch, registry-changed events, disconnects, and reconnects all
-  // re-evaluate the list. Request ordering prevents an older response winning.
+  // re-evaluate the list. Coalescing avoids duplicate lifecycle/WS requests;
+  // request ordering still prevents an older response winning.
   useEffect(() => {
     void refreshRegistry();
   }, [connected, refreshRegistry, registryRevision]);
+
+  // Event-driven fallback for servers that do not emit registry-changed yet.
+  // Returning to this page is a bounded user event, so Static Mode stays idle:
+  // no interval, animation frame, or recursive timeout is introduced.
+  useEffect(() => {
+    const refreshOnReturn = () => {
+      if (document.visibilityState === "visible") void refreshRegistry();
+    };
+    document.addEventListener("visibilitychange", refreshOnReturn);
+    window.addEventListener("focus", refreshOnReturn);
+    return () => {
+      document.removeEventListener("visibilitychange", refreshOnReturn);
+      window.removeEventListener("focus", refreshOnReturn);
+    };
+  }, [refreshRegistry]);
 
   const liveAgentMap = useMemo(() => {
     const map = new Map<string, string>();
