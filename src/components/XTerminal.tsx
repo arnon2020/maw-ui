@@ -128,6 +128,12 @@ const TERMINAL_FONT_SIZE = 12;
 const TERMINAL_LINE_HEIGHT = 1.2;
 const PTY_WS_BASE_DELAY = 1000;
 const PTY_WS_MAX_DELAY = 15000;
+// The dev-server WebSocket proxy keeps its upstream connection to maw open —
+// and answers maw's protocol-level Pings itself — after this page is gone, so
+// the backend cannot tell a closed tab from an idle viewer. An application
+// frame it can only get from us is the signal it needs; without it, one
+// `tmux attach` client stays welded to the agent's pane per page view.
+const PTY_KEEPALIVE_INTERVAL = 10000;
 
 function requestedTerminalSize(term: Terminal) {
   return {
@@ -200,6 +206,7 @@ export function XTerminal({
     let touchEndHandler: ((event: TouchEvent) => void) | null = null;
     let attachedSize: { cols: number; rows: number } | null = null;
     let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+    let keepaliveTimer: ReturnType<typeof setInterval> | null = null;
     let reconnectAttempt = 0;
     let alive = true;
     let cleanupReconnectListeners: (() => void) | null = null;
@@ -265,6 +272,11 @@ export function XTerminal({
         }, retryDelay);
       };
 
+      const stopKeepalive = () => {
+        if (keepaliveTimer) clearInterval(keepaliveTimer);
+        keepaliveTimer = null;
+      };
+
       const connectPty = () => {
         if (!alive) return;
         try { ws?.close(); } catch {}
@@ -274,6 +286,12 @@ export function XTerminal({
         ws.onopen = () => {
           reconnectAttempt = 0;
           attachCurrentTarget();
+          stopKeepalive();
+          keepaliveTimer = setInterval(() => {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ type: "keepalive" }));
+            }
+          }, PTY_KEEPALIVE_INTERVAL);
         };
 
         ws.onmessage = (e) => {
@@ -303,6 +321,7 @@ export function XTerminal({
 
         ws.onclose = () => {
           onConnectedChangeRef.current?.(false);
+          stopKeepalive();
           if (!alive) return;
           term.write("\r\n\x1b[33m[connection closed - reconnecting]\x1b[0m\r\n");
           scheduleReconnect();
@@ -455,6 +474,7 @@ export function XTerminal({
       clearTimeout(openTimer);
       clearTimeout(resizeTimer);
       if (reconnectTimer) clearTimeout(reconnectTimer);
+      if (keepaliveTimer) clearInterval(keepaliveTimer);
       cleanupReconnectListeners?.();
       resizeObserver?.disconnect();
       dataSub?.dispose();
