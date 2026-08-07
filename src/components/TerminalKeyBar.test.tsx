@@ -34,6 +34,7 @@ describe("TerminalKeyBar virtual keys", () => {
       "Ctrl+End",
       "PgUp",
       "PgDn",
+      "⌫",
       "Ctrl+C",
       "Ctrl+D",
       "Ctrl+Z",
@@ -51,6 +52,25 @@ describe("TerminalKeyBar virtual keys", () => {
     expect(markup).toContain('data-terminal-key="ctrlEnd"');
     expect(markup).not.toContain('data-terminal-key="home"');
     expect(markup).not.toContain('data-terminal-key="end"');
+  });
+
+  test("Backspace emits DEL, the byte a terminal's erase key sends", () => {
+    const emitted: { key: TerminalKey; sequence: string }[] = [];
+    const tree = TerminalKeyBar({
+      historyActive: false,
+      onKey: (key, sequence) => emitted.push({ key, sequence }),
+      onHistoryToggle: noop,
+      onKeyboard: noop,
+      onScrollUp: noop,
+      onScrollDown: noop,
+    });
+    const children = (tree.props.children as unknown[]).flat() as {
+      props: { "data-terminal-key"?: string; onClick?: () => void };
+    }[];
+
+    children.find((child) => child.props["data-terminal-key"] === "backspace")?.props.onClick?.();
+
+    expect(emitted).toEqual([{ key: "backspace", sequence: "\x7f" }]);
   });
 
   test("Ctrl+End emits the existing ctrl-end byte sequence", () => {
