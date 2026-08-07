@@ -78,6 +78,37 @@ describe("oracle registry refresh triggers", () => {
     expect(fetchCount).toBe(2);
   });
 
+  test("releases a failed refresh so a later trigger can recover", async () => {
+    const gate = { current: null as Promise<void> | null };
+    let fetchCount = 0;
+    let failFetch!: (error: Error) => void;
+    const fetchRegistry = () => {
+      fetchCount++;
+      return new Promise<void>((_resolve, reject) => {
+        failFetch = reject;
+      });
+    };
+
+    const failingRefresh = coalesceOracleRegistryRefresh(gate, fetchRegistry);
+    const concurrentRefresh = coalesceOracleRegistryRefresh(gate, fetchRegistry);
+
+    expect(concurrentRefresh).toBe(failingRefresh);
+    await Promise.resolve();
+    expect(fetchCount).toBe(1);
+
+    const networkError = new Error("network unavailable");
+    failFetch(networkError);
+    expect(await failingRefresh.catch((error) => error)).toBe(networkError);
+    expect(gate.current).toBeNull();
+
+    const recoveryRefresh = coalesceOracleRegistryRefresh(gate, async () => {
+      fetchCount++;
+    });
+    expect(recoveryRefresh).not.toBe(failingRefresh);
+    await recoveryRefresh;
+    expect(fetchCount).toBe(2);
+  });
+
   test("refetches on every WebSocket open/reconnect and detaches cleanly", async () => {
     const openListeners = new Set<() => void>();
     const socket: OracleRegistryOpenSource = {
