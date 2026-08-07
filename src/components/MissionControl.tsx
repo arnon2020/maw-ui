@@ -20,6 +20,9 @@ interface MissionControlProps {
   eventLog: AgentEvent[];
   addEvent: (target: string, type: AgentEvent["type"], detail: string) => void;
   teams?: Team[];
+  /** Let a busy agent open its own card. The office shell has a 📺 toggle to
+   *  turn that back off; the standalone mission page does not, so it passes false. */
+  autoCards?: boolean;
 }
 
 export const MissionControl = memo(function MissionControl({
@@ -31,8 +34,9 @@ export const MissionControl = memo(function MissionControl({
   eventLog,
   addEvent,
   teams,
+  autoCards = true,
 }: MissionControlProps) {
-  const mc = useMissionControl({ sessions, agents, send, onSelectAgent, addEvent });
+  const mc = useMissionControl({ sessions, agents, send, onSelectAgent, addEvent, autoCards });
 
   return (
     <div
@@ -189,7 +193,7 @@ export const MissionControl = memo(function MissionControl({
       })()}
 
       {/* Multi-card bar */}
-      {mc.multiCards.size > 0 && !mc.pinnedPreview && (
+      {autoCards && mc.multiCards.size > 0 && !mc.pinnedPreview && (
         <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center gap-2 overflow-x-auto pointer-events-auto p-3" style={{ height: "calc(100dvh - 80px)", scrollbarWidth: "none", background: "transparent" }}>
           {[...mc.multiCards].map(target => {
             const agent = agents.find(a => a.target === target);

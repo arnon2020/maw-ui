@@ -8,9 +8,12 @@ interface UseMissionControlProps {
   send: (msg: object) => void;
   onSelectAgent: (agent: AgentState) => void;
   addEvent: (target: string, type: AgentEvent["type"], detail: string) => void;
+  /** Open a card by itself when an agent goes busy. Off on the standalone
+   *  mission page, which carries no multi-view toggle to turn them back off. */
+  autoCards?: boolean;
 }
 
-export function useMissionControl({ sessions, agents, send, onSelectAgent, addEvent }: UseMissionControlProps) {
+export function useMissionControl({ sessions, agents, send, onSelectAgent, addEvent, autoCards = true }: UseMissionControlProps) {
   const [groupSolo, setGroupSolo] = useState(true);
   const [hoveredAgent, setHoveredAgent] = useState<string | null>(null);
   const [hoverPreview, setHoverPreview] = useState<{ agent: AgentState; room: { label: string; accent: string }; pos: { x: number; y: number } } | null>(null);
@@ -27,8 +30,9 @@ export function useMissionControl({ sessions, agents, send, onSelectAgent, addEv
   }, [pinnedPreview]);
 
   // Multi-card: track all busy agents, user can dismiss individually
-  const [multiMode, setMultiMode] = useState(() => localStorage.getItem("office-multiview") !== "0");
+  const [multiMode, setMultiMode] = useState(() => autoCards && localStorage.getItem("office-multiview") !== "0");
   const [multiCards, setMultiCards] = useState<Set<string>>(() => {
+    if (!autoCards) return new Set();
     try {
       const saved = localStorage.getItem("office-multicards");
       return saved ? new Set(JSON.parse(saved)) : new Set();
@@ -36,19 +40,23 @@ export function useMissionControl({ sessions, agents, send, onSelectAgent, addEv
   });
   const seenBusy = useRef<Set<string>>(new Set());
 
-  // Persist multiCards to localStorage
+  // Persist multiCards to localStorage — skipped when autoCards is off, so a
+  // surface that never hydrated the set cannot wipe what another one stored.
   useEffect(() => {
+    if (!autoCards) return;
     localStorage.setItem("office-multicards", JSON.stringify([...multiCards]));
-  }, [multiCards]);
+  }, [multiCards, autoCards]);
 
   // Listen for toggle from FloatingButtons
   const prevMultiMode = useRef(multiMode);
   useEffect(() => {
+    if (!autoCards) return;
     const handler = (e: Event) => setMultiMode((e as CustomEvent).detail);
     window.addEventListener("multiview-change", handler);
     return () => window.removeEventListener("multiview-change", handler);
-  }, []);
+  }, [autoCards]);
   useEffect(() => {
+    if (!autoCards) return;
     const busyAgents = agents.filter(a => a.status === "busy");
 
     // When switching back to multi mode, re-add all busy agents
@@ -83,7 +91,7 @@ export function useMissionControl({ sessions, agents, send, onSelectAgent, addEv
     for (const target of seenBusy.current) {
       if (!busyAgents.find(a => a.target === target)) seenBusy.current.delete(target);
     }
-  }, [agents, multiMode]);
+  }, [agents, multiMode, autoCards]);
 
   const dismissCard = useCallback((target: string) => {
     setMultiCards(prev => { const next = new Set(prev); next.delete(target); return next; });
