@@ -74,9 +74,15 @@ export function AppShell({ view, fullHeight, children }: AppShellProps) {
     window.open(`/terminal.html?target=${encodeURIComponent(agent.target)}&name=${encodeURIComponent(agent.name)}`, "_blank");
   }, [send]);
 
+  // h-dvh, not h-screen. On iOS Safari `100vh` is the *large* viewport — the
+  // height the page would have if the browser chrome were retracted — so a
+  // `h-screen overflow-hidden` column is taller than what is actually visible
+  // and cannot be scrolled to. The pane fills that oversized box and everything
+  // below it sits under the browser UI, unreachable. `100dvh` tracks the real
+  // visible viewport; MissionControl and HoverPreviewCard already use it.
   const wrapperClass = fullHeight
-    ? "relative flex flex-col h-screen overflow-hidden"
-    : "relative min-h-screen";
+    ? "relative flex flex-col h-dvh overflow-hidden"
+    : "relative min-h-dvh";
 
   const ctx: AppContext = {
     sessions, agents, eventLog, addEvent, feedEvents, feedActive, agentFeedLog, teams, registryRevision,
@@ -94,6 +100,7 @@ export function AppShell({ view, fullHeight, children }: AppShellProps) {
               sessionCount={sessions.length}
               tabCount={sessions.reduce((sum, s) => sum + s.windows.length, 0)}
               activeView={view}
+              standalone
               onJump={() => {}}
               askCount={askCount}
               onInbox={() => { window.location.href = "/inbox.html"; }}

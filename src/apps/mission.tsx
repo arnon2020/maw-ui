@@ -14,7 +14,7 @@ mount(() => (
         eventLog={ctx.eventLog}
         addEvent={ctx.addEvent}
         teams={ctx.teams}
-        autoCards={false}
+        cards={false}
       />
     )}
   </AppShell>
