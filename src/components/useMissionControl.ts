@@ -8,12 +8,14 @@ interface UseMissionControlProps {
   send: (msg: object) => void;
   onSelectAgent: (agent: AgentState) => void;
   addEvent: (target: string, type: AgentEvent["type"], detail: string) => void;
-  /** Open a card by itself when an agent goes busy. Off on the standalone
-   *  mission page, which carries no multi-view toggle to turn them back off. */
-  autoCards?: boolean;
+  /** Show agent cards on this surface at all — the busy-agent bar, the hover
+   *  preview, and the click-to-pin card. Off on the standalone mission page:
+   *  it has no multi-view toggle to dismiss them, and on a touch screen there
+   *  is no hover, so every tap opens a card over the map. */
+  cards?: boolean;
 }
 
-export function useMissionControl({ sessions, agents, send, onSelectAgent, addEvent, autoCards = true }: UseMissionControlProps) {
+export function useMissionControl({ sessions, agents, send, onSelectAgent, addEvent, cards = true }: UseMissionControlProps) {
   const [groupSolo, setGroupSolo] = useState(true);
   const [hoveredAgent, setHoveredAgent] = useState<string | null>(null);
   const [hoverPreview, setHoverPreview] = useState<{ agent: AgentState; room: { label: string; accent: string }; pos: { x: number; y: number } } | null>(null);
@@ -30,33 +32,35 @@ export function useMissionControl({ sessions, agents, send, onSelectAgent, addEv
   }, [pinnedPreview]);
 
   // Multi-card: track all busy agents, user can dismiss individually
-  const [multiMode, setMultiMode] = useState(() => autoCards && localStorage.getItem("office-multiview") !== "0");
+  const [multiMode, setMultiMode] = useState(() => cards && localStorage.getItem("office-multiview") !== "0");
   const [multiCards, setMultiCards] = useState<Set<string>>(() => {
-    if (!autoCards) return new Set();
+    if (!cards) return new Set();
     try {
       const saved = localStorage.getItem("office-multicards");
       return saved ? new Set(JSON.parse(saved)) : new Set();
     } catch { return new Set(); }
   });
   const seenBusy = useRef<Set<string>>(new Set());
+  /** Targets the user closed by hand; re-openable only after the agent goes idle. */
+  const dismissedCards = useRef<Set<string>>(new Set());
 
-  // Persist multiCards to localStorage — skipped when autoCards is off, so a
+  // Persist multiCards to localStorage — skipped when cards are off, so a
   // surface that never hydrated the set cannot wipe what another one stored.
   useEffect(() => {
-    if (!autoCards) return;
+    if (!cards) return;
     localStorage.setItem("office-multicards", JSON.stringify([...multiCards]));
-  }, [multiCards, autoCards]);
+  }, [multiCards, cards]);
 
   // Listen for toggle from FloatingButtons
   const prevMultiMode = useRef(multiMode);
   useEffect(() => {
-    if (!autoCards) return;
+    if (!cards) return;
     const handler = (e: Event) => setMultiMode((e as CustomEvent).detail);
     window.addEventListener("multiview-change", handler);
     return () => window.removeEventListener("multiview-change", handler);
-  }, [autoCards]);
+  }, [cards]);
   useEffect(() => {
-    if (!autoCards) return;
+    if (!cards) return;
     const busyAgents = agents.filter(a => a.status === "busy");
 
     // When switching back to multi mode, re-add all busy agents
@@ -74,7 +78,7 @@ export function useMissionControl({ sessions, agents, send, onSelectAgent, addEv
 
     for (const a of busyAgents) {
       if (multiMode) {
-        // Always ensure busy agents are in multiCards (re-adds dismissed agents)
+        if (dismissedCards.current.has(a.target)) continue;
         setMultiCards(prev => {
           if (prev.has(a.target)) return prev;
           return new Set([...prev, a.target]);
@@ -91,9 +95,17 @@ export function useMissionControl({ sessions, agents, send, onSelectAgent, addEv
     for (const target of seenBusy.current) {
       if (!busyAgents.find(a => a.target === target)) seenBusy.current.delete(target);
     }
-  }, [agents, multiMode, autoCards]);
+    // An agent that went idle may open a card again on its next busy episode.
+    for (const target of dismissedCards.current) {
+      if (!busyAgents.find(a => a.target === target)) dismissedCards.current.delete(target);
+    }
+  }, [agents, multiMode, cards]);
 
+  // Closing a card has to outlast the busy-agent effect. Without this the effect
+  // re-adds the agent on its next run — the card reappears seconds after the ✕,
+  // and no amount of closing gets rid of it while the agent stays busy.
   const dismissCard = useCallback((target: string) => {
+    dismissedCards.current.add(target);
     setMultiCards(prev => { const next = new Set(prev); next.delete(target); return next; });
   }, []);
 
@@ -160,11 +172,11 @@ export function useMissionControl({ sessions, agents, send, onSelectAgent, addEv
   }, [svgToScreen]);
 
   const showPreview = useCallback((agent: AgentState, room: { label: string; accent: string }, svgX: number, svgY: number) => {
-    if (pinnedPreview) return;
+    if (!cards || pinnedPreview) return;
     clearTimeout(hoverTimeout.current);
     const pos = calcCardPos(svgX, svgY);
     setHoverPreview({ agent, room, pos });
-  }, [calcCardPos, pinnedPreview]);
+  }, [calcCardPos, pinnedPreview, cards]);
 
   const hidePreview = useCallback(() => {
     hoverTimeout.current = setTimeout(() => setHoverPreview(null), 300);
@@ -258,6 +270,11 @@ export function useMissionControl({ sessions, agents, send, onSelectAgent, addEv
   // Click agent -> pin preview card
   const onAgentClick = useCallback(
     (agent: AgentState, svgX: number, svgY: number, room: { label: string; accent: string }) => {
+      if (!cards) {
+        // Cards are off on this surface — record the interaction, open nothing.
+        addEvent(agent.target, "command", `clicked ${agent.name}`);
+        return;
+      }
       if (pinnedPreview) {
         addEvent(agent.target, "command", `clicked ${agent.name}`);
         return;
@@ -268,7 +285,7 @@ export function useMissionControl({ sessions, agents, send, onSelectAgent, addEv
       setHoverPreview(null);
       send({ type: "subscribe", target: agent.target });
     },
-    [calcCardPos, send, pinnedPreview, addEvent]
+    [calcCardPos, send, pinnedPreview, addEvent, cards]
   );
 
   // Fullscreen -> close pin first, then open modal
