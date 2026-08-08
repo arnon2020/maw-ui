@@ -65,6 +65,8 @@ interface StatusBarProps {
   onJump?: () => void;
   muted?: boolean;
   onToggleMute?: () => void;
+  /** Set by AppShell: this page has no hash router, so nav must use real paths. */
+  standalone?: boolean;
   children?: ReactNode;
 }
 
@@ -84,6 +86,30 @@ const NAV_ITEMS = [
   // (from BankCurfew's fork, PR #19). Files kept per Nothing is Deleted.
   { href: "#config", label: "Config", id: "config" },
 ];
+
+/** NAV_ITEMS are hash routes, which only mean anything inside App.tsx's
+ *  useHashRoute SPA. Pages mounted through AppShell have no router at all, so a
+ *  bare "#fleet" sets the fragment and nothing else happens — the link looks
+ *  dead. In standalone mode each id resolves to the page that actually serves it. */
+const STANDALONE_PAGE: Record<string, string> = {
+  mission: "/mission.html",
+  dashboard: "/dashboard.html",
+  fleet: "/fleet.html",
+  office: "/office.html",
+  overview: "/overview.html",
+  terminal: "/terminal.html",
+  chat: "/chat.html",
+  config: "/config.html",
+  federation: "/federation.html",
+  // No teams.html exists — that view is reachable only inside the SPA.
+  teams: "/index.html#teams",
+};
+
+/** Real paths (e.g. "/federation_2d.html") already work everywhere; leave them. */
+function navHref(href: string, id: string, standalone: boolean): string {
+  if (!standalone || href.startsWith("/")) return href;
+  return STANDALONE_PAGE[id] ?? `/index.html${href}`;
+}
 
 const isTouch = typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0);
 
@@ -115,12 +141,12 @@ function useFleetTotal() {
   return { total };
 }
 
-export const StatusBar = memo(function StatusBar({ connected, agentCount, sessionCount, tabCount = 0, activeView = "office", askCount = 0, onInbox, onJump, muted, onToggleMute, children }: StatusBarProps) {
+export const StatusBar = memo(function StatusBar({ connected, agentCount, sessionCount, tabCount = 0, activeView = "office", askCount = 0, onInbox, onJump, muted, onToggleMute, standalone = false, children }: StatusBarProps) {
   const { total } = useFleetTotal();
   const networkStatus = useNetworkStatusStore((state) => state.status);
   return (
     <header className="sticky top-0 z-20 flex flex-wrap items-center gap-x-3 gap-y-2 mx-4 sm:mx-6 mt-3 px-4 sm:px-6 py-2.5 rounded-2xl bg-black/50 backdrop-blur-xl border border-white/[0.06] shadow-[0_4px_30px_rgba(0,0,0,0.4)]">
-      <a href="#office" className="text-base sm:text-lg font-bold tracking-[4px] sm:tracking-[6px] text-cyan-400 uppercase whitespace-nowrap hover:text-cyan-300 transition-colors">
+      <a href={navHref("#office", "office", standalone)} className="text-base sm:text-lg font-bold tracking-[4px] sm:tracking-[6px] text-cyan-400 uppercase whitespace-nowrap hover:text-cyan-300 transition-colors">
         ARRA Office
       </a>
 
@@ -144,7 +170,7 @@ export const StatusBar = memo(function StatusBar({ connected, agentCount, sessio
       )}
 
       {isRemote && activeHost && (
-        <a href="#config" className="text-[10px] font-mono px-2 py-0.5 rounded-md whitespace-nowrap no-underline hover:brightness-125 transition-all" style={{ background: "rgba(168,85,247,0.12)", color: "#c084fc", border: "1px solid rgba(168,85,247,0.2)" }}>
+        <a href={navHref("#config", "config", standalone)} className="text-[10px] font-mono px-2 py-0.5 rounded-md whitespace-nowrap no-underline hover:brightness-125 transition-all" style={{ background: "rgba(168,85,247,0.12)", color: "#c084fc", border: "1px solid rgba(168,85,247,0.2)" }}>
           {activeHost}
         </a>
       )}
@@ -206,7 +232,7 @@ export const StatusBar = memo(function StatusBar({ connected, agentCount, sessio
         {NAV_ITEMS.map((item) => (
           <a
             key={item.id}
-            href={item.href}
+            href={navHref(item.href, item.id, standalone)}
             className={`transition-colors whitespace-nowrap ${
               activeView === item.id
                 ? "text-cyan-400 font-bold"
