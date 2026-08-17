@@ -126,6 +126,17 @@ function attachedSizeFromMessage(msg: { cols?: unknown; rows?: unknown }) {
 const WIDE_TERMINAL_MIN_COLS = 100;
 const TERMINAL_FONT_SIZE = 12;
 const TERMINAL_LINE_HEIGHT = 1.2;
+// Floors only. A container caught mid-collapse can propose a grid too small for
+// any TUI to draw in, and every size we accept is a real re-wrap of the agent's
+// live pane — so clamp rather than forward it.
+const TERMINAL_MIN_ROWS = 5;
+// Columns follow the window, but a window mid-collapse must not ask tmux to
+// re-wrap the agent's pane to something no TUI can draw in.
+const TERMINAL_MIN_COLS = 40;
+const TERMINAL_MAX_COLS = 500;
+// Long enough to sit past the end of a window drag, since each settled size is
+// a real re-wrap of the agent's pane rather than a repaint of this tab.
+const TERMINAL_RESIZE_DEBOUNCE = 400;
 const PTY_WS_BASE_DELAY = 1000;
 const PTY_WS_MAX_DELAY = 15000;
 // The dev-server WebSocket proxy keeps its upstream connection to maw open —
@@ -204,17 +215,70 @@ export function XTerminal({
     let terminalKeyHandler: ((event: Event) => void) | null = null;
     let touchStartHandler: ((event: TouchEvent) => void) | null = null;
     let touchEndHandler: ((event: TouchEvent) => void) | null = null;
-    let attachedSize: { cols: number; rows: number } | null = null;
+    let sentSize: { cols: number; rows: number } | null = null;
+    let fitFrame: number | null = null;
     let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
     let keepaliveTimer: ReturnType<typeof setInterval> | null = null;
     let reconnectAttempt = 0;
     let alive = true;
     let cleanupReconnectListeners: (() => void) | null = null;
+    // Both axes follow the browser, at a fixed readable font. That is what a
+    // terminal emulator normally does, and it is the only rule that stays true
+    // when the window changes: xterm's FitAddon divides the container by the
+    // measured cell and yields whole cols AND rows, so nothing has to be pinned
+    // and the font never has to be squeezed.
+    //
+    // The earlier design pinned rows to whatever the pane happened to report and
+    // shrank the font until that many rows fit. It filled the box, but the row
+    // count was a historical accident — a pane left at 36 rows forced ~9.5px text
+    // in a 640px-tall window. Splitting the axes was never justified either: once
+    // the width is allowed to re-wrap the agent's live pane, protecting the
+    // height buys nothing.
+    //
+    // fit() reads xterm's own render dimensions, so unlike measuring `.xterm-rows`
+    // it behaves identically under the DOM and WebGL renderers.
+    const sizeForViewport = () => {
+      const box = container.getBoundingClientRect();
+      if (box.width < 1 || box.height < 1) return null;
+      const proposed = fit.proposeDimensions();
+      if (!proposed?.cols || !proposed?.rows) return null;
+      return {
+        cols: Math.min(TERMINAL_MAX_COLS, Math.max(TERMINAL_MIN_COLS, proposed.cols)),
+        rows: Math.max(TERMINAL_MIN_ROWS, proposed.rows),
+      };
+    };
+
+    // Only the settled size is worth telling tmux about: every frame sent here
+    // re-sizes the agent's live window, so a drag that emitted one per frame
+    // would re-wrap the pane dozens of times on the way to the size wanted.
+    const sendResize = (cols: number, rows: number) => {
+      if (!ws || ws.readyState !== WebSocket.OPEN) return;
+      if (sentSize && sentSize.cols === cols && sentSize.rows === rows) return;
+      sentSize = { cols, rows };
+      ws.send(JSON.stringify({ type: "resize", cols, rows }));
+    };
+
+    // One frame of settle before measuring: the container may still be mid-layout
+    // when a resize or an attach lands.
+    const syncSizeToViewport = () => {
+      if (fitFrame !== null) cancelAnimationFrame(fitFrame);
+      fitFrame = requestAnimationFrame(() => {
+        fitFrame = null;
+        const size = sizeForViewport();
+        if (!size) return;
+        if (term.cols !== size.cols || term.rows !== size.rows) {
+          term.resize(size.cols, size.rows);
+        }
+        sendResize(size.cols, size.rows);
+      });
+    };
+
     const applyAttachedSize = (size: { cols: number; rows: number }) => {
-      attachedSize = size;
-      if (term.cols !== size.cols || term.rows !== size.rows) {
-        term.resize(size.cols, size.rows);
-      }
+      // The backend opens the PTY at the pane's own size and reports it. Record
+      // it so sendResize can tell whether our size differs, then immediately ask
+      // for the size this window actually wants.
+      sentSize = { cols: size.cols, rows: size.rows };
+      syncSizeToViewport();
     };
 
     // Defer open until container has dimensions (avoids "dimensions" crash on first render)
@@ -303,7 +367,7 @@ export function XTerminal({
                 const size = attachedSizeFromMessage(msg);
                 try {
                   if (size) applyAttachedSize(size);
-                  else if (!attachedSize) fit.fit();
+                  else syncSizeToViewport();
                 } catch {}
               }
               if (msg.type === "detached") {
@@ -437,24 +501,16 @@ export function XTerminal({
         return true;
       });
 
-      // Auto-resize with debounce — cols are locked to backend's PINNED_COLS
-      // (reported via the "attached" message). Only rows float with the viewport.
+      // Auto-resize, debounced past the end of a drag rather than through it:
+      // each settled size becomes a real tmux resize, so emitting mid-drag would
+      // re-wrap the agent's pane at every intermediate width.
       resizeObserver = new ResizeObserver(() => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
           try {
-            fit.fit();
-            const requestedSize = requestedTerminalSize(term);
-            const cols = attachedSize ? attachedSize.cols : requestedSize.cols;
-            const rows = requestedSize.rows;
-            if (term.cols !== cols || term.rows !== rows) {
-              term.resize(cols, rows);
-            }
-            if (ws && ws.readyState === WebSocket.OPEN) {
-              ws.send(JSON.stringify({ type: "resize", cols: term.cols, rows: term.rows }));
-            }
+            syncSizeToViewport();
           } catch {}
-        }, 200);
+        }, TERMINAL_RESIZE_DEBOUNCE);
       });
       resizeObserver.observe(container);
 
@@ -473,6 +529,7 @@ export function XTerminal({
       if (touchEndHandler) container.removeEventListener("touchend", touchEndHandler, true);
       clearTimeout(openTimer);
       clearTimeout(resizeTimer);
+      if (fitFrame !== null) cancelAnimationFrame(fitFrame);
       if (reconnectTimer) clearTimeout(reconnectTimer);
       if (keepaliveTimer) clearInterval(keepaliveTimer);
       cleanupReconnectListeners?.();
